@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lasanha à Bolonhesa - Receita Fácil</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#e7eefd",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#1a1c1e",
+                        "outline": "#8d7168",
+                        "primary-fixed": "#ffdbd0",
+                        "on-tertiary-fixed": "#191c1d",
+                        "surface-tint": "#ab3500",
+                        "surface-container-highest": "#dce3f2",
+                        "tertiary-fixed": "#e1e3e4",
+                        "warm-surface": "#f8f9ff",
+                        "surface-bright": "#f8f9ff",
+                        "tertiary-fixed-dim": "#c5c7c8",
+                        "surface-container-low": "#eff3ff",
+                        "secondary-fixed": "#e2e2e5",
+                        "outline-variant": "#e1bfb5",
+                        "on-background": "#151c26",
+                        "on-tertiary-container": "#d7d9da",
+                        "background": "#f8f9ff",
+                        "surface-dim": "#d3dae9",
+                        "secondary-fixed-dim": "#c6c6c9",
+                        "on-secondary-fixed-variant": "#45474a",
+                        "surface": "#f8f9ff",
+                        "inverse-surface": "#2a313c",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#ff6b35",
+                        "on-primary-fixed-variant": "#832700",
+                        "on-secondary-container": "#616265",
+                        "on-error-container": "#93000a",
+                        "on-surface-variant": "#59413a",
+                        "on-surface": "#151c26",
+                        "surface-variant": "#dce3f2",
+                        "on-primary-fixed": "#390c00",
+                        "on-primary-container": "#5f1900",
+                        "secondary-container": "#e0dfe3",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#ebf1ff",
+                        "primary-fixed-dim": "#ffb59d",
+                        "error": "#ba1a1a",
+                        "surface-container-high": "#e2e8f7",
+                        "secondary": "#5d5e61",
+                        "outline-warm": "#8d7168",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#444748",
+                        "on-primary": "#ffffff",
+                        "primary": "#832600",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#ffb59d",
+                        "tertiary": "#444748",
+                        "tertiary-container": "#5c5f60"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "stack-lg": "24px",
+                        "stack-md": "16px",
+                        "stack-xl": "32px",
+                        "gutter": "16px",
+                        "margin-page": "20px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Be Vietnam Pro"],
+                        "label-sm": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "headline-md": ["Be Vietnam Pro"],
+                        "headline-xl": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "headline-xl-mobile": ["Be Vietnam Pro"],
+                        "headline-lg": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-sm": ["10px", { "lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-md": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "headline-xl": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-xl-mobile": ["24px", { "lineHeight": "30px", "fontWeight": "700" }],
+                        "headline-lg": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; background-color: theme('colors.background'); color: theme('colors.on-surface'); }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+<!-- TopNavBar Shared Component -->
+<header class="bg-surface-container-lowest dark:bg-surface-dim shadow-sm border-b border-outline-variant w-full sticky top-0 z-50">
+<div class="flex items-center justify-between px-margin-page py-stack-sm max-w-[1280px] mx-auto w-full">
+<!-- Brand Logo -->
+<div class="font-headline-lg text-headline-lg text-primary tracking-tight">
+                Receita Fácil
+            </div>
+<!-- Search Bar -->
+<div class="hidden md:flex flex-1 max-w-md mx-8 relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full text-body-md focus:ring-2 focus:ring-primary focus:outline-none placeholder-on-surface-variant transition-all" placeholder="Buscar receitas, ingredientes..." type="text"/>
+</div>
+<!-- Navigation Links (Desktop) -->
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-primary border-b-2 border-primary pb-1 font-bold text-body-md hover:bg-surface-container transition-all duration-200 px-2 rounded-t-sm" href="#">Browse</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors text-body-md hover:bg-surface-container duration-200 px-2 py-1 rounded-sm" href="#">Popular</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors text-body-md hover:bg-surface-container duration-200 px-2 py-1 rounded-sm" href="#">Seasonal</a>
+</nav>
+<!-- Actions -->
+<div class="flex items-center gap-4">
+<button class="hidden md:flex items-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-full font-label-md text-label-md hover:opacity-90 transition-opacity scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+                    Add Recipe
+                </button>
+<div class="flex items-center gap-2 text-primary">
+<button aria-label="Favorites" class="p-2 hover:bg-surface-container rounded-full transition-colors scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+<button aria-label="notifications" class="p-2 hover:bg-surface-container rounded-full transition-colors scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button aria-label="person" class="p-2 hover:bg-surface-container rounded-full transition-colors scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">person</span>
+</button>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 w-full max-w-[1280px] mx-auto px-margin-page py-stack-lg md:py-stack-xl">
+<!-- Recipe Details Header (Two Column) -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-stack-xl mb-stack-xl">
+<!-- Left: Hero Image -->
+<div class="relative w-full aspect-square md:aspect-[4/3] lg:aspect-square rounded-2xl overflow-hidden shadow-md group">
+<img alt="Lasanha à Bolonhesa" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A mouth-watering, close-up shot of a freshly baked Lasanha à Bolonhesa resting on a rustic wooden table. The lasagna has perfectly browned, bubbling cheese on top, with visible layers of rich red meat sauce and pasta. The lighting is warm and natural, evoking a cozy, appetizing atmosphere. Garnished with a sprig of fresh basil." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXSRcCn7yMZcwYhmkY8fS_lPp8ryNndvgFWM0wLr04gTWbHasV9x3jAQDFoePSSIOOiDX4FNqdrhHh61hNlgfgAKh32lWg_9NrG9Za73cl0uM7PJwvigoSfDbE6vXWEnj-l6bcTjdNV8SFIw2-R3-EEPF3Tv5E86ozpdgxIFbOq7T7MqJuoPIwPtYra1fZVuG0JERmvkmbe60Z-7yYo8h8QAa7uqhBK0guhaUjxqBpx9anZZNZNF9J"/>
+<button class="absolute top-4 right-4 bg-surface-container-lowest/80 backdrop-blur-md p-3 rounded-full text-primary hover:bg-surface-container-lowest hover:text-primary-container transition-all shadow-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+</div>
+<!-- Right: Recipe Info -->
+<div class="flex flex-col justify-center gap-stack-lg">
+<div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface mb-2">Lasanha à Bolonhesa</h1>
+<div class="flex items-center gap-2 text-body-md text-on-surface-variant mb-4">
+<div class="flex items-center text-primary-container">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-bold ml-1">4.9</span>
+</div>
+<span class="text-sm">(128 avaliações)</span>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+                        Clássica, saborosa e perfeita para reunir a família. Camadas de massa, molho à bolonhesa rico e muito queijo derretido, assada até a perfeição dourada.
+                    </p>
+</div>
+<!-- Quick Info Cards -->
+<div class="grid grid-cols-3 gap-gutter bg-surface-container-low p-stack-md rounded-xl border border-outline-variant/30">
+<div class="flex flex-col items-center justify-center text-center gap-1 border-r border-outline-variant/50 last:border-0 pr-gutter">
+<span class="material-symbols-outlined text-primary-container">schedule</span>
+<span class="font-headline-md text-headline-md text-on-surface mt-1">90 min</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Tempo Total</span>
+</div>
+<div class="flex flex-col items-center justify-center text-center gap-1 border-r border-outline-variant/50 last:border-0 px-gutter">
+<span class="material-symbols-outlined text-primary-container">speed</span>
+<span class="font-headline-md text-headline-md text-on-surface mt-1">Média</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Dificuldade</span>
+</div>
+<div class="flex flex-col items-center justify-center text-center gap-1 pl-gutter">
+<span class="material-symbols-outlined text-primary-container">restaurant</span>
+<span class="font-headline-md text-headline-md text-on-surface mt-1">6 porções</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Rendimento</span>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center gap-4 mt-4">
+<button class="flex-1 bg-primary text-on-primary py-3 px-6 rounded-full font-headline-md text-headline-md hover:bg-primary-container transition-colors shadow-sm flex justify-center items-center gap-2">
+<span class="material-symbols-outlined">play_circle</span>
+                        Iniciar Preparo
+                    </button>
+<button class="p-3 border border-outline text-on-surface-variant rounded-full hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">share</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Recipe Content (Tabs & Lists) -->
+<div class="max-w-4xl mx-auto w-full bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant overflow-hidden">
+<!-- Tabs -->
+<div class="flex border-b border-outline-variant">
+<button class="flex-1 py-4 text-center font-headline-md text-headline-md text-primary border-b-2 border-primary bg-surface-container-low transition-colors">
+                    Ingredientes
+                </button>
+<button class="flex-1 py-4 text-center font-headline-md text-headline-md text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors">
+                    Modo de preparo
+                </button>
+</div>
+<div class="p-stack-lg md:p-stack-xl">
+<h3 class="font-headline-lg text-headline-lg text-on-surface mb-stack-md flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">kitchen</span>
+                    O que você vai precisar
+                </h3>
+<!-- Ingredients List -->
+<ul class="space-y-4">
+<li class="flex items-start gap-4 p-3 hover:bg-surface-container-low rounded-lg transition-colors group cursor-pointer">
+<div class="relative flex items-center justify-center w-6 h-6 mt-0.5">
+<input class="peer appearance-none w-6 h-6 border-2 border-outline rounded-md checked:bg-primary checked:border-primary transition-colors cursor-pointer" type="checkbox"/>
+<span class="material-symbols-outlined absolute text-on-primary opacity-0 peer-checked:opacity-100 pointer-events-none text-sm transition-opacity" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-surface group-hover:text-primary transition-colors">500g de massa para lasanha</span>
+</li>
+<li class="flex items-start gap-4 p-3 hover:bg-surface-container-low rounded-lg transition-colors group cursor-pointer">
+<div class="relative flex items-center justify-center w-6 h-6 mt-0.5">
+<input class="peer appearance-none w-6 h-6 border-2 border-outline rounded-md checked:bg-primary checked:border-primary transition-colors cursor-pointer" type="checkbox"/>
+<span class="material-symbols-outlined absolute text-on-primary opacity-0 peer-checked:opacity-100 pointer-events-none text-sm transition-opacity" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-surface group-hover:text-primary transition-colors">500g de carne moída</span>
+</li>
+<li class="flex items-start gap-4 p-3 hover:bg-surface-container-low rounded-lg transition-colors group cursor-pointer">
+<div class="relative flex items-center justify-center w-6 h-6 mt-0.5">
+<input class="peer appearance-none w-6 h-6 border-2 border-outline rounded-md checked:bg-primary checked:border-primary transition-colors cursor-pointer" type="checkbox"/>
+<span class="material-symbols-outlined absolute text-on-primary opacity-0 peer-checked:opacity-100 pointer-events-none text-sm transition-opacity" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-surface group-hover:text-primary transition-colors">1 cebola picada</span>
+</li>
+<li class="flex items-start gap-4 p-3 hover:bg-surface-container-low rounded-lg transition-colors group cursor-pointer">
+<div class="relative flex items-center justify-center w-6 h-6 mt-0.5">
+<input class="peer appearance-none w-6 h-6 border-2 border-outline rounded-md checked:bg-primary checked:border-primary transition-colors cursor-pointer" type="checkbox"/>
+<span class="material-symbols-outlined absolute text-on-primary opacity-0 peer-checked:opacity-100 pointer-events-none text-sm transition-opacity" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-surface group-hover:text-primary transition-colors">2 dentes de alho amassados</span>
+</li>
+<li class="flex items-start gap-4 p-3 hover:bg-surface-container-low rounded-lg transition-colors group cursor-pointer">
+<div class="relative flex items-center justify-center w-6 h-6 mt-0.5">
+<input class="peer appearance-none w-6 h-6 border-2 border-outline rounded-md checked:bg-primary checked:border-primary transition-colors cursor-pointer" type="checkbox"/>
+<span class="material-symbols-outlined absolute text-on-primary opacity-0 peer-checked:opacity-100 pointer-events-none text-sm transition-opacity" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-surface group-hover:text-primary transition-colors">1 lata de molho de tomate pelado</span>
+</li>
+<li class="flex items-start gap-4 p-3 hover:bg-surface-container-low rounded-lg transition-colors group cursor-pointer">
+<div class="relative flex items-center justify-center w-6 h-6 mt-0.5">
+<input class="peer appearance-none w-6 h-6 border-2 border-outline rounded-md checked:bg-primary checked:border-primary transition-colors cursor-pointer" type="checkbox"/>
+<span class="material-symbols-outlined absolute text-on-primary opacity-0 peer-checked:opacity-100 pointer-events-none text-sm transition-opacity" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-surface group-hover:text-primary transition-colors">2 xícaras de chá de queijo mussarela ralado</span>
+</li>
+<li class="flex items-start gap-4 p-3 hover:bg-surface-container-low rounded-lg transition-colors group cursor-pointer">
+<div class="relative flex items-center justify-center w-6 h-6 mt-0.5">
+<input class="peer appearance-none w-6 h-6 border-2 border-outline rounded-md checked:bg-primary checked:border-primary transition-colors cursor-pointer" type="checkbox"/>
+<span class="material-symbols-outlined absolute text-on-primary opacity-0 peer-checked:opacity-100 pointer-events-none text-sm transition-opacity" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-surface group-hover:text-primary transition-colors">Sal e pimenta a gosto</span>
+</li>
+</ul>
+</div>
+</div>
+</main>
+<!-- Footer Shared Component -->
+<footer class="bg-surface-container-highest dark:bg-inverse-surface w-full mt-stack-xl py-stack-xl px-margin-page border-t border-outline-variant dark:border-outline">
+<div class="max-w-[1280px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-stack-lg text-center md:text-left">
+<!-- Brand -->
+<div class="flex flex-col items-center md:items-start gap-4">
+<div class="font-headline-md text-headline-md text-on-surface dark:text-inverse-on-surface">
+                    Receita Fácil
+                </div>
+<p class="font-label-md text-label-md text-on-surface-variant dark:text-on-tertiary-container">
+                    Inspiração culinária para todos os dias.
+                </p>
+</div>
+<!-- Links -->
+<div class="flex flex-col items-center md:items-start gap-2">
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-on-tertiary-container hover:text-on-surface transition-colors hover:opacity-80 underline-offset-4" href="#">Privacy Policy</a>
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-on-tertiary-container hover:text-on-surface transition-colors hover:opacity-80 underline-offset-4" href="#">Terms of Service</a>
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-on-tertiary-container hover:text-on-surface transition-colors hover:opacity-80 underline-offset-4" href="#">Contact Us</a>
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-on-tertiary-container hover:text-on-surface transition-colors hover:opacity-80 underline-offset-4" href="#">About Us</a>
+</div>
+<!-- Copyright -->
+<div class="flex flex-col items-center md:items-end justify-end">
+<p class="font-label-md text-label-md text-on-surface-variant dark:text-on-tertiary-container">
+                    © 2024 Receita Fácil. All rights reserved.
+                </p>
+</div>
+</div>
+</footer>
+<script>
+        // Simple script to toggle checked state visual styling if needed beyond CSS peer
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const textSpan = this.closest('li').querySelector('.font-body-lg');
+                if(this.checked) {
+                    textSpan.classList.add('line-through', 'text-on-surface-variant', 'opacity-70');
+                    textSpan.classList.remove('text-on-surface', 'group-hover:text-primary');
+                } else {
+                    textSpan.classList.remove('line-through', 'text-on-surface-variant', 'opacity-70');
+                    textSpan.classList.add('text-on-surface', 'group-hover:text-primary');
+                }
+            });
+        });
+    </script>
+</body></html>

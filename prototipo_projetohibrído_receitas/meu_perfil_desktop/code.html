@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Receita Fácil - User Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#e7eefd",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#1a1c1e",
+                        "outline": "#8d7168",
+                        "primary-fixed": "#ffdbd0",
+                        "on-tertiary-fixed": "#191c1d",
+                        "surface-tint": "#ab3500",
+                        "surface-container-highest": "#dce3f2",
+                        "tertiary-fixed": "#e1e3e4",
+                        "warm-surface": "#f8f9ff",
+                        "surface-bright": "#f8f9ff",
+                        "tertiary-fixed-dim": "#c5c7c8",
+                        "surface-container-low": "#eff3ff",
+                        "secondary-fixed": "#e2e2e5",
+                        "outline-variant": "#e1bfb5",
+                        "on-background": "#151c26",
+                        "on-tertiary-container": "#d7d9da",
+                        "background": "#f8f9ff",
+                        "surface-dim": "#d3dae9",
+                        "secondary-fixed-dim": "#c6c6c9",
+                        "on-secondary-fixed-variant": "#45474a",
+                        "surface": "#f8f9ff",
+                        "inverse-surface": "#2a313c",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#ff6b35",
+                        "on-primary-fixed-variant": "#832700",
+                        "on-secondary-container": "#616265",
+                        "on-error-container": "#93000a",
+                        "on-surface-variant": "#59413a",
+                        "on-surface": "#151c26",
+                        "surface-variant": "#dce3f2",
+                        "on-primary-fixed": "#390c00",
+                        "on-primary-container": "#5f1900",
+                        "secondary-container": "#e0dfe3",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#ebf1ff",
+                        "primary-fixed-dim": "#ffb59d",
+                        "error": "#ba1a1a",
+                        "surface-container-high": "#e2e8f7",
+                        "secondary": "#5d5e61",
+                        "outline-warm": "#8d7168",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#444748",
+                        "on-primary": "#ffffff",
+                        "primary": "#832600",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#ffb59d",
+                        "tertiary": "#444748",
+                        "tertiary-container": "#5c5f60"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "stack-lg": "24px",
+                        "stack-md": "16px",
+                        "stack-xl": "32px",
+                        "gutter": "16px",
+                        "margin-page": "20px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Be Vietnam Pro"],
+                        "label-sm": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "headline-md": ["Be Vietnam Pro"],
+                        "headline-xl": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "headline-xl-mobile": ["Be Vietnam Pro"],
+                        "headline-lg": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-sm": ["10px", { "lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-md": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "headline-xl": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-xl-mobile": ["24px", { "lineHeight": "30px", "fontWeight": "700" }],
+                        "headline-lg": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest text-primary font-body-md shadow-sm border-b border-outline-variant full-width top-0 sticky z-50">
+<div class="flex items-center justify-between px-margin-page py-stack-sm max-w-[1280px] mx-auto w-full">
+<div class="flex items-center gap-stack-lg">
+<a class="font-headline-lg text-headline-lg text-primary tracking-tight" href="#">Receita Fácil</a>
+<div class="relative hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2 rounded-full bg-surface-container-low border-none focus:ring-2 focus:ring-primary text-body-md w-64" placeholder="Buscar receitas..." type="text"/>
+</div>
+</div>
+<nav class="hidden md:flex items-center gap-stack-md">
+<a class="text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container transition-all duration-200 px-3 py-2 rounded-lg" href="#">Browse</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container transition-all duration-200 px-3 py-2 rounded-lg" href="#">Popular</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container transition-all duration-200 px-3 py-2 rounded-lg" href="#">Seasonal</a>
+</nav>
+<div class="flex items-center gap-stack-sm">
+<button class="hidden md:flex bg-primary text-on-primary px-4 py-2 rounded-full font-label-md scale-95 active:scale-90 transition-transform">Add Recipe</button>
+<button class="hidden md:flex text-on-surface-variant hover:text-primary hover:bg-surface-container p-2 rounded-full scale-95 active:scale-90 transition-transform">Favorites</button>
+<button class="text-on-surface-variant hover:bg-surface-container p-2 rounded-full scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-primary border-b-2 border-primary pb-1 font-bold hover:bg-surface-container p-2 rounded-full scale-95 active:scale-90 transition-transform flex items-center">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Layout -->
+<div class="flex-1 max-w-[1280px] mx-auto w-full px-margin-page py-stack-lg grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-stack-xl">
+<!-- Sidebar / Profile Info -->
+<aside class="flex flex-col gap-stack-lg">
+<!-- Profile Card -->
+<div class="bg-surface-container-lowest rounded-xl p-stack-lg shadow-sm border border-surface-variant flex flex-col items-center text-center">
+<div class="relative w-32 h-32 rounded-full overflow-hidden mb-stack-md border-4 border-surface">
+<img alt="User profile photo" class="object-cover w-full h-full" data-alt="A high-quality, professional headshot of a young woman named Marina Silva, looking warm and approachable. She is in a bright, modern kitchen setting with soft, natural light filtering in. The image has a clean, appetizing aesthetic matching a food app. 50-100 words." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_titzDjMOPRsOoj5uZLfqMfSI56_d-v5KC4rsNfsu1PAA3tybeQ4Zf7Tu9o3PCmE5YXxwDlNT8fIA0VI9c6tZA8Z-z-m41EbvF8fZUiENVu__NVU-LCDY2t2kC06BibJH3fDDlnrGCiVcUQdF4upV09_cinAdyrQldr2G_wa7tA0SGruy45WEmDWdzarIUUQ7h_MgaH83OZmgLwGy7mTiXtROiboZMU724WxYJqa9YT_QSbdXRegB"/>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface mb-1">Marina Silva</h1>
+<p class="text-on-surface-variant font-body-md mb-stack-md">Home cook enthusiast &amp; baker. Sharing family recipes and modern twists.</p>
+<div class="flex justify-center gap-stack-lg w-full py-stack-sm border-t border-outline-variant mt-stack-sm">
+<div class="flex flex-col items-center">
+<span class="font-headline-md text-headline-md text-primary">124</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Saved</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="font-headline-md text-headline-md text-primary">48</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Created</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="font-headline-md text-headline-md text-primary flex items-center gap-1">4.9 <span class="material-symbols-outlined text-sm" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Rating</span>
+</div>
+</div>
+<button class="mt-stack-lg w-full bg-surface-container text-on-surface py-2 rounded-full font-label-md hover:bg-surface-variant transition-colors">Edit Profile</button>
+</div>
+<!-- Settings Links (Simulated Sidebar intent) -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm border border-surface-variant overflow-hidden">
+<nav class="flex flex-col py-stack-sm">
+<a class="flex items-center gap-stack-sm px-stack-lg py-3 text-on-surface hover:bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined text-on-surface-variant">settings</span>
+<span class="font-body-md text-body-md">Account Settings</span>
+</a>
+<a class="flex items-center gap-stack-sm px-stack-lg py-3 text-on-surface hover:bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+<span class="font-body-md text-body-md">Notification Preferences</span>
+</a>
+<a class="flex items-center gap-stack-sm px-stack-lg py-3 text-on-surface hover:bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined text-on-surface-variant">lock</span>
+<span class="font-body-md text-body-md">Privacy &amp; Security</span>
+</a>
+</nav>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex flex-col gap-stack-lg">
+<!-- Tabs -->
+<div class="flex border-b border-outline-variant gap-stack-lg overflow-x-auto pb-stack-sm">
+<button class="font-headline-md text-headline-md text-primary border-b-2 border-primary pb-1 px-2 whitespace-nowrap">My Recipes</button>
+<button class="font-headline-md text-headline-md text-on-surface-variant hover:text-primary transition-colors px-2 whitespace-nowrap">Saved</button>
+<button class="font-headline-md text-headline-md text-on-surface-variant hover:text-primary transition-colors px-2 whitespace-nowrap">Reviews</button>
+</div>
+<!-- Recipe Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-stack-md">
+<!-- Recipe Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm border border-surface-variant hover:shadow-md transition-shadow group">
+<div class="relative w-full aspect-square">
+<img alt="Recipe Image" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300" data-alt="A close-up, appetizing shot of a beautifully layered Lasagna à Bolonhesa fresh out of the oven. The cheese is golden brown and bubbly, garnished with fresh basil leaves. Warm, inviting lighting highlights the rich tomato sauce and pasta layers. Modern food photography style. 50-100 words." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaZCb_FI04QtuuhHftHBaLNeJ7sPYeNhRniJCaYudBiFLccTvMNcXRAwMndxCDUyoWikVduLdscRAWlc4xcRdC63ZuQCVcGCkDPCBt_ZFeEkiObOYkqPefWnqHGdQmAbc4ouDUAmOwBPqTrh3gjhbwtJwHDcPNbuHmSVdRvTXIhmU5KZcq-skcTYDhsm9PUKhNCa9MOxbQBikbtNyzBU6Knft6IkS2AtSkQjFtQtpfZFpjjo2Z3dZG"/>
+<button class="absolute top-2 right-2 p-2 bg-surface-container-lowest/80 backdrop-blur-sm rounded-full text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+</div>
+<div class="p-stack-md flex flex-col gap-stack-sm">
+<h3 class="font-headline-md text-headline-md text-on-surface line-clamp-1">Lasanha à Bolonhesa</h3>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-md">
+<span class="flex items-center text-primary-container gap-1"><span class="material-symbols-outlined text-sm" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span> 4.9</span>
+<span>•</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> 90 min</span>
+</div>
+</div>
+</div>
+<!-- Recipe Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm border border-surface-variant hover:shadow-md transition-shadow group">
+<div class="relative w-full aspect-square">
+<img alt="Recipe Image" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300" data-alt="A rustic overhead shot of a decadent chocolate brownie, sliced into neat squares. The surface is crinkly and glossy, with a slightly gooey interior visible on the cut sides. Served on a dark wooden board with a dusting of cocoa powder and a few chocolate chips scattered around. Warm, cozy lighting. 50-100 words." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1m1X-1Ifdv0fu8P3Ki6G9pI7X-Sy3onyGhkweXLYqkxh6cdFFDF06I1e41gpE7TF5QZgOOCgYfVFeg_6Te0x5SXcHJLGHO2o2NX5ifGpcB3gDbnz2P44bqT9TFWNZJhslD4fNm6AjUo_Wn459Ge9sQZ6UnwyW9nPYMGBUVN8UV_AT2SD3EIHrOuJwdvg92BW_6qCH9emtGCXL-AXMuZZ1ESttJ5ZnzrYTGEWioM6G3nUaKxfamH30"/>
+<button class="absolute top-2 right-2 p-2 bg-surface-container-lowest/80 backdrop-blur-sm rounded-full text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+</div>
+<div class="p-stack-md flex flex-col gap-stack-sm">
+<h3 class="font-headline-md text-headline-md text-on-surface line-clamp-1">Brownie de Chocolate</h3>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-md">
+<span class="flex items-center text-primary-container gap-1"><span class="material-symbols-outlined text-sm" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span> 4.8</span>
+<span>•</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> 60 min</span>
+</div>
+</div>
+</div>
+<!-- Recipe Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm border border-surface-variant hover:shadow-md transition-shadow group">
+<div class="relative w-full aspect-square flex items-center justify-center bg-surface-container-low border-2 border-dashed border-outline-variant">
+<div class="text-center flex flex-col items-center text-on-surface-variant">
+<span class="material-symbols-outlined text-4xl mb-2">add_circle</span>
+<span class="font-headline-md text-headline-md">New Recipe</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Footer -->
+<footer class="bg-surface-container-highest w-full py-stack-xl px-margin-page border-t border-outline-variant grid grid-cols-1 md:grid-cols-3 gap-stack-lg max-w-[1280px] mx-auto mt-auto">
+<div>
+<span class="font-headline-md text-headline-md text-on-surface">Receita Fácil</span>
+<p class="font-label-md text-label-md text-on-surface-variant mt-stack-sm">© 2024 Receita Fácil. All rights reserved.</p>
+</div>
+<div class="md:col-span-2 flex flex-wrap gap-stack-md md:justify-end items-center">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors hover:opacity-80 transition-opacity" href="#">Privacy Policy</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors hover:opacity-80 transition-opacity" href="#">Terms of Service</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors hover:opacity-80 transition-opacity" href="#">Contact Us</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors hover:opacity-80 transition-opacity" href="#">About Us</a>
+</div>
+</footer>
+</body></html>
