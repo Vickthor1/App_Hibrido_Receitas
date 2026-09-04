@@ -100,6 +100,7 @@ export default function ReceitaDetalhes() {
               <Text style={styles.btnIconText}>↗</Text>
             </TouchableOpacity>
           </View>
+          </View>
         </View>
 
         {/* Tabs */}
