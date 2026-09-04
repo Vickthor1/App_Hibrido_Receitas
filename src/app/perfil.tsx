@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { TopBar } from "../componentes/TopBar";
 import { BottomNav } from "../componentes/BottomNav";
 import { useFavoritos } from "../hooks/useFavoritos";
+import { useAuth } from "../contexto/AuthContext";
 import { CartaoReceita } from "../componentes/CartaoReceita";
 import { cores } from "../tema/cores";
 import { espacamentos, arredondamento } from "../tema/espacamentos";
@@ -11,6 +12,23 @@ import { espacamentos, arredondamento } from "../tema/espacamentos";
 export default function Perfil() {
   const router = useRouter();
   const { favoritos } = useFavoritos();
+  const { user, isAutenticado, logout, carregando } = useAuth();
+
+  if (carregando) return null;
+  if (!isAutenticado) {
+    return (
+      <SafeAreaView style={styles.safe}>
+        <TopBar titulo="Perfil" />
+        <View style={styles.locked}>
+          <Text style={styles.lockIcon}>🔒</Text>
+          <Text style={styles.lockTitle}>Acesso restrito</Text>
+          <Text style={styles.lockText}>Faça login para ver seu perfil e receitas salvas.</Text>
+          <TouchableOpacity style={styles.lockBtn} onPress={() => router.push("/login" as never)} activeOpacity={0.8}><Text style={styles.lockBtnText}>Entrar / Criar conta</Text></TouchableOpacity>
+        </View>
+        <BottomNav />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -24,14 +42,15 @@ export default function Perfil() {
               style={styles.avatar}
             />
           </View>
-          <Text style={styles.nome}>Marina Silva</Text>
-          <Text style={styles.handle}>@marinasilva_cooks</Text>
+          <Text style={styles.nome}>{user?.nome ?? "Usuário"}</Text>
+          <Text style={styles.handle}>@{user?.email.split("@")[0]}</Text>
           <Text style={styles.bio}>Amante da culinária caseira. Sempre em busca da receita perfeita de bolo de cenoura. 🥕🍰</Text>
           <View style={styles.stats}>
             <View style={styles.stat}><Text style={styles.statVal}>{favoritos.length}</Text><Text style={styles.statLabel}>Salvas</Text></View>
             <View style={styles.stat}><Text style={styles.statVal}>12</Text><Text style={styles.statLabel}>Criadas</Text></View>
             <View style={styles.stat}><Text style={styles.statVal}>4.8</Text><Text style={styles.statLabel}>Avaliação</Text></View>
           </View>
+          <TouchableOpacity style={styles.logoutBtn} onPress={logout} activeOpacity={0.7}><Text style={styles.logoutText}>Sair</Text></TouchableOpacity>
         </View>
 
         {/* Tabs */}
@@ -107,4 +126,12 @@ const styles = StyleSheet.create({
   addIcon: { width: 56, height: 56, borderRadius: 28, backgroundColor: cores.primaryContainer, alignItems: "center", justifyContent: "center" },
   addPlus: { color: cores.onPrimaryContainer, fontSize: 28, fontWeight: "700" },
   addText: { fontSize: 12, fontWeight: "600", color: cores.onSurfaceVariant },
+  locked: { flex: 1, alignItems: "center", justifyContent: "center", padding: 32, gap: 12 },
+  lockIcon: { fontSize: 48 },
+  lockTitle: { fontSize: 20, fontWeight: "700", color: cores.onSurface },
+  lockText: { fontSize: 14, color: cores.onSurfaceVariant, textAlign: "center" },
+  lockBtn: { marginTop: 8, backgroundColor: cores.primary, paddingHorizontal: 24, paddingVertical: 12, borderRadius: arredondamento.pill },
+  lockBtnText: { color: cores.onPrimary, fontWeight: "700" },
+  logoutBtn: { marginTop: 12, paddingHorizontal: 20, paddingVertical: 8, borderRadius: arredondamento.pill, borderWidth: 1, borderColor: cores.outlineVariant },
+  logoutText: { color: cores.onSurfaceVariant, fontWeight: "600" },
 });

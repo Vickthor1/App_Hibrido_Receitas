@@ -2,6 +2,7 @@ import { useState } from "react";
 import { View, TextInput, TouchableOpacity, StyleSheet, Text } from "react-native";
 import { cores } from "../tema/cores";
 import { espacamentos, arredondamento } from "../tema/espacamentos";
+import { sanitizarEntrada } from "../utils/seguranca";
 
 interface Props {
   valorInicial?: string;
@@ -14,7 +15,8 @@ export function BarraPesquisa({ valorInicial = "", placeholder = "Buscar receita
   const [texto, setTexto] = useState(valorInicial);
 
   function handleSubmit() {
-    onBuscar(texto.trim());
+    const limpo = sanitizarEntrada(texto, 60);
+    onBuscar(limpo);
   }
 
   return (
@@ -26,9 +28,12 @@ export function BarraPesquisa({ valorInicial = "", placeholder = "Buscar receita
           placeholder={placeholder}
           placeholderTextColor={cores.onSurfaceVariant}
           value={texto}
-          onChangeText={setTexto}
+          onChangeText={(v) => setTexto(v.slice(0, 60))}
           onSubmitEditing={handleSubmit}
           returnKeyType="search"
+          maxLength={60}
+          autoCorrect={false}
+          autoCapitalize="none"
         />
         {texto.length > 0 && (
           <TouchableOpacity onPress={() => setTexto("")} style={styles.clearBtn}>
