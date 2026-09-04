@@ -30,11 +30,12 @@ export default function Login() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-        <Text style={styles.logo}>Receita Fácil</Text>
-        <Text style={styles.sub}>Acesse para salvar e criar receitas</Text>
+      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+        <View style={styles.centerWrap}>
+          <Text style={styles.logo}>Receita Fácil</Text>
+          <Text style={styles.sub}>Acesse para salvar e criar receitas</Text>
 
-        <View style={styles.card}>
+          <View style={styles.card}>
           <View style={styles.tabs}>
             <TouchableOpacity style={[styles.tab, modo === "login" && styles.tabAtivo]} onPress={() => setModo("login")}><Text style={[styles.tabText, modo === "login" && styles.tabTextAtivo]}>Entrar</Text></TouchableOpacity>
             <TouchableOpacity style={[styles.tab, modo === "registro" && styles.tabAtivo]} onPress={() => setModo("registro")}><Text style={[styles.tabText, modo === "registro" && styles.tabTextAtivo]}>Criar conta</Text></TouchableOpacity>
@@ -63,6 +64,7 @@ export default function Login() {
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => router.back()} style={styles.voltar}><Text style={styles.voltarText}>Voltar</Text></TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -71,10 +73,11 @@ export default function Login() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: cores.background },
-  scroll: { padding: espacamentos.page, gap: 16, paddingTop: 32 },
-  logo: { fontSize: 28, fontWeight: "700", color: cores.primary, textAlign: "center" },
-  sub: { fontSize: 14, color: cores.onSurfaceVariant, textAlign: "center" },
-  card: { backgroundColor: cores.surfaceContainerLowest, borderRadius: arredondamento.lg, padding: espacamentos.lg, gap: 16, borderWidth: 1, borderColor: cores.surfaceVariant, marginTop: 8 },
+  scroll: { flexGrow: 1, padding: espacamentos.page, gap: 16, paddingTop: 24, paddingBottom: 32, justifyContent: "center" },
+  centerWrap: { width: "100%", maxWidth: 480, alignSelf: "center", gap: 16 },
+  logo: { fontSize: 28, fontFamily: "BeVietnamPro_700Bold", color: cores.primary, textAlign: "center" },
+  sub: { fontSize: 14, fontFamily: "BeVietnamPro_400Regular", color: cores.onSurfaceVariant, textAlign: "center" },
+  card: { backgroundColor: cores.surfaceContainerLowest, borderRadius: 16, padding: 20, gap: 16, borderWidth: 1, borderColor: cores.surfaceVariant, width: "100%" },
   tabs: { flexDirection: "row", borderBottomWidth: 1, borderBottomColor: cores.outlineVariant, marginBottom: 8 },
   tab: { flex: 1, paddingVertical: 12, alignItems: "center", borderBottomWidth: 2, borderBottomColor: "transparent" },
   tabAtivo: { borderBottomColor: cores.primary },
