@@ -1,6 +1,6 @@
-// Essa parte do código define as interfaces para representar os dados de receitas e categorias de receitas. 
-// As interfaces são usadas para tipar os objetos que serão manipulados no código, 
-// garantindo que eles tenham a estrutura esperada.
+// Tipos centrais do app — espelham a TheMealDB API (https://www.themealdb.com/api.php)
+// Mantidos em português para consistência com o restante do código.
+
 export interface Receita {
   idMeal: string;
   strMeal: string;
@@ -67,4 +67,28 @@ export interface Categoria {
   strCategory: string;
   strCategoryThumb: string;
   strCategoryDescription: string;
+}
+
+// Retorno resumido de filter.php (apenas id, nome e thumb)
+export interface ReceitaResumo {
+  idMeal: string;
+  strMeal: string;
+  strMealThumb: string;
+}
+
+export interface RespostaFiltro {
+  meals: ReceitaResumo[] | null;
+}
+
+// Ingrediente normalizado para exibição
+export interface Ingrediente {
+  nome: string;
+  medida: string;
+}
+
+// Erro padronizado da camada de serviço
+export interface ErroApi {
+  mensagem: string;
+  codigo?: number;
+  original?: unknown;
 }
