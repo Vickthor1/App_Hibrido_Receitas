@@ -20,11 +20,20 @@ if (!supabaseUrl || !supabaseAnonKey) {
 const url = supabaseUrl ?? "https://placeholder.supabase.co";
 const anonKey = supabaseAnonKey ?? "placeholder-anon-key";
 
+const isWeb = typeof window !== "undefined";
+const safeStorage = isWeb
+  ? AsyncStorage
+  : ({
+      getItem: async () => null,
+      setItem: async () => {},
+      removeItem: async () => {},
+    } as unknown as typeof AsyncStorage);
+
 export const supabase = createClient(url, anonKey, {
   auth: {
-    storage: AsyncStorage,
-    autoRefreshToken: true,
-    persistSession: true,
+    storage: safeStorage,
+    autoRefreshToken: isWeb,
+    persistSession: isWeb,
     detectSessionInUrl: false,
   },
 });
