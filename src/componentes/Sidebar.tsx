@@ -4,11 +4,11 @@ import { cores } from "../tema/cores";
 import { espacamentos, arredondamento } from "../tema/espacamentos";
 
 const items = [
-  { label: "Home", icon: "⌂", href: "/" },
-  { label: "My Recipes", icon: "⚔", href: "/receita/52772" },
-  { label: "Saved", icon: "♡", href: "/favoritos" },
-  { label: "Meal Plan", icon: "▦", href: "/categorias" },
-  { label: "Settings", icon: "⚙", href: "/perfil" },
+  { label: "Início", icon: "⌂", href: "/" },
+  { label: "Minhas Receitas", icon: "⚔", href: "/receita/52772" },
+  { label: "Salvos", icon: "♡", href: "/favoritos" },
+  { label: "Plano Alimentar", icon: "▦", href: "/categorias" },
+  { label: "Configurações", icon: "⚙", href: "/perfil" },
 ];
 
 export function Sidebar() {
@@ -34,10 +34,10 @@ export function Sidebar() {
       </View>
       <View style={styles.bottom}>
         <TouchableOpacity style={styles.createBtn} activeOpacity={0.85}>
-          <Text style={styles.createText}>Create New Plan</Text>
+          <Text style={styles.createText}>Criar Novo Plano</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.link}><Text style={styles.linkIcon}>?</Text><Text style={styles.linkText}>Help</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.link}><Text style={styles.linkIcon}>↗</Text><Text style={styles.linkText}>Logout</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.link}><Text style={styles.linkIcon}>?</Text><Text style={styles.linkText}>Ajuda</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.link}><Text style={styles.linkIcon}>↗</Text><Text style={styles.linkText}>Sair</Text></TouchableOpacity>
       </View>
     </View>
   );

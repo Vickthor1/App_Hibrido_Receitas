@@ -38,22 +38,22 @@ export default function Perfil() {
       <View style={styles.avatarWrap}><Image source={{ uri: "https://i.pravatar.cc/300?img=5" }} style={styles.avatar} /></View>
       <Text style={styles.nome}>{user?.nome ?? "Marina Silva"}</Text>
       <Text style={styles.handle}>@{user?.email.split("@")[0] ?? "marinasilva_cooks"}</Text>
-      <Text style={styles.bio}>Home cook enthusiast & baker. Sharing family recipes and modern twists.</Text>
+      <Text style={styles.bio}>Amante da culinária caseira e confeiteira. Compartilhando receitas de família e toques modernos.</Text>
       <View style={styles.stats}>
-        <View style={styles.stat}><Text style={styles.statVal}>{favoritos.length}</Text><Text style={styles.statLabel}>SAVED</Text></View>
-        <View style={styles.stat}><Text style={styles.statVal}>48</Text><Text style={styles.statLabel}>CREATED</Text></View>
-        <View style={styles.stat}><Text style={styles.statVal}>4.9 ★</Text><Text style={styles.statLabel}>RATING</Text></View>
+        <View style={styles.stat}><Text style={styles.statVal}>{favoritos.length}</Text><Text style={styles.statLabel}>SALVOS</Text></View>
+        <View style={styles.stat}><Text style={styles.statVal}>48</Text><Text style={styles.statLabel}>CRIADAS</Text></View>
+        <View style={styles.stat}><Text style={styles.statVal}>4.9 ★</Text><Text style={styles.statLabel}>AVALIAÇÃO</Text></View>
       </View>
-      <TouchableOpacity style={styles.editBtn} activeOpacity={0.8}><Text style={styles.editText}>Edit Profile</Text></TouchableOpacity>
+      <TouchableOpacity style={styles.editBtn} activeOpacity={0.8}><Text style={styles.editText}>Editar Perfil</Text></TouchableOpacity>
       <TouchableOpacity style={styles.logoutBtn} onPress={logout}><Text style={styles.logoutText}>Sair</Text></TouchableOpacity>
     </View>
   );
 
   const settingsCard = (
     <View style={styles.settingsCard}>
-      <TouchableOpacity style={styles.settingsRow}><Text style={styles.settingsIcon}>⚙</Text><Text style={styles.settingsText}>Account Settings</Text></TouchableOpacity>
-      <TouchableOpacity style={styles.settingsRow}><Text style={styles.settingsIcon}>🔔</Text><Text style={styles.settingsText}>Notification Preferences</Text></TouchableOpacity>
-      <TouchableOpacity style={styles.settingsRow}><Text style={styles.settingsIcon}>🔒</Text><Text style={styles.settingsText}>Privacy & Security</Text></TouchableOpacity>
+      <TouchableOpacity style={styles.settingsRow}><Text style={styles.settingsIcon}>⚙</Text><Text style={styles.settingsText}>Configurações da Conta</Text></TouchableOpacity>
+      <TouchableOpacity style={styles.settingsRow}><Text style={styles.settingsIcon}>🔔</Text><Text style={styles.settingsText}>Preferências de Notificação</Text></TouchableOpacity>
+      <TouchableOpacity style={styles.settingsRow}><Text style={styles.settingsIcon}>🔒</Text><Text style={styles.settingsText}>Privacidade e Segurança</Text></TouchableOpacity>
     </View>
   );
 
@@ -68,13 +68,13 @@ export default function Perfil() {
           </View>
           <ScrollView style={styles.desktopRight} contentContainerStyle={styles.desktopRightContent} showsVerticalScrollIndicator={false}>
             <View style={styles.tabs}>
-              <TouchableOpacity style={[styles.tab, styles.tabAtivo]}><Text style={[styles.tabText, styles.tabTextAtivo]}>My Recipes</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.tab}><Text style={styles.tabText}>Saved</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.tab}><Text style={styles.tabText}>Reviews</Text></TouchableOpacity>
+              <TouchableOpacity style={[styles.tab, styles.tabAtivo]}><Text style={[styles.tabText, styles.tabTextAtivo]}>Minhas Receitas</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.tab}><Text style={styles.tabText}>Salvos</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.tab}><Text style={styles.tabText}>Avaliações</Text></TouchableOpacity>
             </View>
             <View style={styles.grid}>
               <TouchableOpacity style={styles.addCard} activeOpacity={0.7} onPress={() => router.push("/busca" as never)}>
-                <View style={styles.addIcon}><Text style={styles.addPlus}>+</Text></View><Text style={styles.addText}>New Recipe</Text>
+                <View style={styles.addIcon}><Text style={styles.addPlus}>+</Text></View><Text style={styles.addText}>Nova Receita</Text>
               </TouchableOpacity>
               {favoritos.slice(0, 4).map((r) => (
                 <View key={r.idMeal} style={styles.gridItem}><CartaoReceita id={r.idMeal} titulo={r.strMeal} imagem={r.strMealThumb} onPress={() => router.push(`/receita/${r.idMeal}` as never)} /></View>

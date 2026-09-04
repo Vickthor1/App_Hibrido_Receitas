@@ -44,15 +44,15 @@ export function TopBar({ titulo }: { titulo?: string }) {
 
           <View style={styles.centerNav}>
             <TouchableOpacity onPress={() => go("/")} style={[styles.navItem, pathname === "/" && styles.navActive]}>
-              <Text style={[styles.navText, pathname === "/" && styles.navTextActive]}>Browse</Text>
+              <Text style={[styles.navText, pathname === "/" && styles.navTextActive]}>Explorar</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => go("/categorias")}><Text style={styles.navText}>Popular</Text></TouchableOpacity>
-            <TouchableOpacity onPress={() => go("/categorias")}><Text style={styles.navText}>Seasonal</Text></TouchableOpacity>
+            <TouchableOpacity onPress={() => go("/categorias")}><Text style={styles.navText}>Populares</Text></TouchableOpacity>
+            <TouchableOpacity onPress={() => go("/categorias")}><Text style={styles.navText}>Sazonais</Text></TouchableOpacity>
           </View>
 
           <View style={styles.right}>
-            <TouchableOpacity style={styles.addBtn} onPress={() => go("/busca")} activeOpacity={0.85}><Text style={styles.addText}>+ Add Recipe</Text></TouchableOpacity>
-            <TouchableOpacity onPress={() => go("/favoritos")} style={styles.iconBtn}><Text style={styles.icon}>♡</Text><Text style={styles.iconLabel}>Favorites</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.addBtn} onPress={() => go("/busca")} activeOpacity={0.85}><Text style={styles.addText}>+ Adicionar Receita</Text></TouchableOpacity>
+            <TouchableOpacity onPress={() => go("/favoritos")} style={styles.iconBtn}><Text style={styles.icon}>♡</Text><Text style={styles.iconLabel}>Favoritos</Text></TouchableOpacity>
             <TouchableOpacity style={styles.iconBtn}><Text style={styles.icon}>🔔</Text></TouchableOpacity>
             <TouchableOpacity onPress={() => go("/perfil")} style={styles.avatarBtn}><Text style={styles.avatarTxt}>◯</Text></TouchableOpacity>
           </View>

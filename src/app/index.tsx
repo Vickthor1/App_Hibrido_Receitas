@@ -143,7 +143,7 @@ export default function Inicio() {
         </View>
       </View>
 
-      <View style={styles.footer}><Text style={styles.footerTitle}>Receita Fácil</Text><Text style={styles.footerText}>© 2024 Receita Fácil. All rights reserved.</Text></View>
+      <View style={styles.footer}><Text style={styles.footerTitle}>Receita Fácil</Text><Text style={styles.footerText}>© 2024 Receita Fácil. Todos os direitos reservados.</Text></View>
     </ScrollView>
   );
 
