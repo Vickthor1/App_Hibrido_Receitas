@@ -5,6 +5,7 @@
     "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "moduleResolution": "bundler",
+    "types": ["node"],
     "paths": {
       "@/*": [
         "./src/*"
