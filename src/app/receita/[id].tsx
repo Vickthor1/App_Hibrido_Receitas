@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, Linking } from "react-native";
+import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, Linking, useWindowDimensions } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { buscarReceitaPorId, extrairIngredientes } from "../../servicos/api";
@@ -7,6 +7,7 @@ import { Receita, Ingrediente } from "../../tipos/receita";
 import { useFavoritos } from "../../hooks/useFavoritos";
 import { Carregamento } from "../../componentes/Carregamento";
 import { EstadoVazio } from "../../componentes/EstadoVazio";
+import { TopBar } from "../../componentes/TopBar";
 import { cores } from "../../tema/cores";
 import { espacamentos, arredondamento } from "../../tema/espacamentos";
 
@@ -52,26 +53,30 @@ export default function ReceitaDetalhes() {
   );
 
   const fav = isFavorito(receita.idMeal);
+  const { width } = useWindowDimensions();
+  const isDesktop = width >= 768;
 
   return (
     <SafeAreaView style={styles.safe}>
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      {isDesktop && <TopBar />}
+      <ScrollView contentContainerStyle={[styles.scroll, isDesktop && styles.scrollDesktop]} showsVerticalScrollIndicator={false}>
         {/* Header voltar */}
         <View style={styles.topRow}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}><Text style={styles.backIcon}>‹</Text></TouchableOpacity>
-          <TouchableOpacity onPress={() => fav ? null : null} style={styles.spacer} />
+          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}><Text style={styles.backIcon}>‹ Voltar</Text></TouchableOpacity>
+          <View style={styles.spacer} />
         </View>
 
-        {/* Hero */}
-        <View style={styles.hero}>
-          <Image source={{ uri: receita.strMealThumb }} style={styles.heroImage} />
-          <TouchableOpacity style={styles.favBtn} onPress={() => alternarFavorito(receita)} activeOpacity={0.8}>
-            <Text style={[styles.favIcon, fav && styles.favAtivo]}>{fav ? "♥" : "♡"}</Text>
-          </TouchableOpacity>
-        </View>
+        <View style={isDesktop ? styles.twoCol : undefined}>
+          {/* Hero */}
+          <View style={[styles.hero, isDesktop && styles.heroDesktop]}>
+            <Image source={{ uri: receita.strMealThumb }} style={styles.heroImage} />
+            <TouchableOpacity style={styles.favBtn} onPress={() => alternarFavorito(receita)} activeOpacity={0.8}>
+              <Text style={[styles.favIcon, fav && styles.favAtivo]}>{fav ? "♥" : "♡"}</Text>
+            </TouchableOpacity>
+          </View>
 
-        {/* Info */}
-        <View style={styles.info}>
+          {/* Info */}
+          <View style={[styles.info, isDesktop && styles.infoDesktop]}>
           <Text style={styles.titulo}>{receita.strMeal}</Text>
           <View style={styles.metaRow}>
             <Text style={styles.metaStar}>★ 4.9</Text>
@@ -142,17 +147,21 @@ export default function ReceitaDetalhes() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: cores.background },
   safeErro: { flex: 1, backgroundColor: cores.background, justifyContent: "center" },
-  scroll: { paddingBottom: 32 },
+  scroll: { paddingBottom: 32, maxWidth: 1280, alignSelf: "center", width: "100%" },
+  scrollDesktop: { paddingHorizontal: 24 },
   topRow: { flexDirection: "row", justifyContent: "space-between", paddingHorizontal: espacamentos.page, paddingVertical: 8 },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: cores.surfaceContainerLowest, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: cores.surfaceVariant },
-  backIcon: { fontSize: 20, color: cores.onSurface },
+  backBtn: { paddingHorizontal: 12, height: 36, borderRadius: 18, backgroundColor: cores.surfaceContainerLowest, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: cores.surfaceVariant, flexDirection: "row", gap: 4 },
+  backIcon: { fontSize: 14, color: cores.onSurface, fontFamily: "BeVietnamPro_600SemiBold" },
   spacer: { width: 36 },
-  hero: { marginHorizontal: espacamentos.page, height: 320, borderRadius: arredondamento.lg, overflow: "hidden", backgroundColor: cores.surfaceVariant },
+  twoCol: { flexDirection: "row", gap: 24, paddingHorizontal: 24, marginTop: 8 },
+  hero: { marginHorizontal: espacamentos.page, height: 320, borderRadius: 16, overflow: "hidden", backgroundColor: cores.surfaceVariant },
+  heroDesktop: { marginHorizontal: 0, flex: 1, height: 420 },
   heroImage: { width: "100%", height: "100%" },
   favBtn: { position: "absolute", top: 12, right: 12, width: 44, height: 44, borderRadius: 22, backgroundColor: "rgba(255,255,255,0.92)", alignItems: "center", justifyContent: "center" },
   favIcon: { fontSize: 20, color: cores.onSurfaceVariant },
   favAtivo: { color: cores.primary },
   info: { padding: espacamentos.page, gap: 12 },
+  infoDesktop: { flex: 1, padding: 0, justifyContent: "center" },
   titulo: { fontSize: 26, fontWeight: "700", color: cores.onSurface, lineHeight: 30 },
   metaRow: { flexDirection: "row", alignItems: "center", gap: 8 },
   metaStar: { color: cores.primary, fontWeight: "700", fontSize: 13 },
