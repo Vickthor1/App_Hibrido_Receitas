@@ -23,7 +23,9 @@ export default function Inicio() {
   const { isFavorito, alternarFavorito } = useFavoritos();
 
   const [categorias, setCategorias] = useState<Categoria[]>([]);
-  const [destaque, setDestaque] = useState<Receita | null>(null);
+  const [featured, setFeatured] = useState<Receita[]>([]);
+  const [featuredIndex, setFeaturedIndex] = useState(0);
+  const destaque = featured[featuredIndex] ?? null;
   const [maisAmadas, setMaisAmadas] = useState<Receita[]>([]);
   const [rapidas, setRapidas] = useState<Receita[]>([]);
   const [carregando, setCarregando] = useState(true);
@@ -40,16 +42,19 @@ export default function Inicio() {
       const todasArray = Array.isArray(todas) ? todas : [];
       setCategorias(catsArray.slice(0, 8));
       if (todasArray.length > 0) {
-        setDestaque(todasArray[0]);
-        setMaisAmadas(todasArray.slice(1, 5));
-        setRapidas(todasArray.slice(5, 9));
+        setFeatured(todasArray.slice(0, 4));
+        setFeaturedIndex(0);
+        setMaisAmadas(todasArray.slice(4, 8));
+        setRapidas(todasArray.slice(8, 12));
       } else {
+        setFeatured([]);
         setMaisAmadas([]);
         setRapidas([]);
       }
     } catch (e: unknown) {
       const m = (e as { mensagem?: string })?.mensagem ?? (e instanceof Error ? e.message : "Erro");
       setErro(m);
+      setFeatured([]);
       setMaisAmadas([]);
       setRapidas([]);
     } finally {
@@ -107,7 +112,13 @@ export default function Inicio() {
               <View style={styles.heroMeta}><Text style={styles.heroMetaStar}>★ 4.8</Text><Text style={styles.heroMetaTime}>◷ 25 min</Text></View>
             </View>
           </TouchableOpacity>
-          <View style={styles.dots}><View style={[styles.dot, styles.dotAtivo]} /><View style={styles.dot} /><View style={styles.dot} /><View style={styles.dot} /></View>
+            <View style={styles.dots}>
+              {featured.map((_, i) => (
+                <TouchableOpacity key={i} onPress={() => setFeaturedIndex(i)} activeOpacity={0.7} hitSlop={8}>
+                  <View style={[styles.dot, i === featuredIndex && styles.dotAtivo]} />
+                </TouchableOpacity>
+              ))}
+            </View>
         </View>
       )}
 

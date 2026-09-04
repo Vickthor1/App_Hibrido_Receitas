@@ -51,7 +51,7 @@ export function TopBar({ titulo }: { titulo?: string }) {
           </View>
 
           <View style={styles.right}>
-            <TouchableOpacity style={styles.addBtn} onPress={() => go("/busca")} activeOpacity={0.85}><Text style={styles.addText}>+ Adicionar Receita</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.addBtn} onPress={() => go("/adicionar")} activeOpacity={0.85}><Text style={styles.addText}>+ Adicionar Receita</Text></TouchableOpacity>
             <TouchableOpacity onPress={() => go("/favoritos")} style={styles.iconBtn}><Text style={styles.icon}>♡</Text><Text style={styles.iconLabel}>Favoritos</Text></TouchableOpacity>
             <TouchableOpacity style={styles.iconBtn}><Text style={styles.icon}>🔔</Text></TouchableOpacity>
             <TouchableOpacity onPress={() => go("/perfil")} style={styles.avatarBtn}><Text style={styles.avatarTxt}>◯</Text></TouchableOpacity>

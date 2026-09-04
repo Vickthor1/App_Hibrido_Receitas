@@ -73,7 +73,7 @@ export default function Perfil() {
               <TouchableOpacity style={styles.tab}><Text style={styles.tabText}>Avaliações</Text></TouchableOpacity>
             </View>
             <View style={styles.grid}>
-              <TouchableOpacity style={styles.addCard} activeOpacity={0.7} onPress={() => router.push("/busca" as never)}>
+              <TouchableOpacity style={styles.addCard} activeOpacity={0.7} onPress={() => router.push("/adicionar" as never)}>
                 <View style={styles.addIcon}><Text style={styles.addPlus}>+</Text></View><Text style={styles.addText}>Nova Receita</Text>
               </TouchableOpacity>
               {favoritos.slice(0, 4).map((r) => (
@@ -97,7 +97,7 @@ export default function Perfil() {
           <TouchableOpacity style={styles.tab}><Text style={styles.tabText}>Avaliações</Text></TouchableOpacity>
         </View>
         <View style={styles.grid}>
-          <TouchableOpacity style={styles.addCard} activeOpacity={0.7} onPress={() => router.push("/busca" as never)}><View style={styles.addIcon}><Text style={styles.addPlus}>+</Text></View><Text style={styles.addText}>Criar Receita</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.addCard} activeOpacity={0.7} onPress={() => router.push("/adicionar" as never)}><View style={styles.addIcon}><Text style={styles.addPlus}>+</Text></View><Text style={styles.addText}>Criar Receita</Text></TouchableOpacity>
           {favoritos.slice(0, 4).map((r) => (
             <View key={r.idMeal} style={styles.gridItem}><CartaoReceita id={r.idMeal} titulo={r.strMeal} imagem={r.strMealThumb} onPress={() => router.push(`/receita/${r.idMeal}` as never)} /></View>
           ))}

@@ -1,7 +1,8 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter, usePathname } from "expo-router";
+import { useAuth } from "../contexto/AuthContext";
 import { cores } from "../tema/cores";
-import { espacamentos, arredondamento } from "../tema/espacamentos";
+import { espacamentos } from "../tema/espacamentos";
 
 const items = [
   { label: "Início", icon: "⌂", href: "/" },
@@ -14,6 +15,7 @@ const items = [
 export function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
+  const { isAutenticado, logout } = useAuth();
   return (
     <View style={styles.wrap}>
       <View style={styles.menu}>
@@ -33,11 +35,15 @@ export function Sidebar() {
         })}
       </View>
       <View style={styles.bottom}>
-        <TouchableOpacity style={styles.createBtn} activeOpacity={0.85}>
+        <TouchableOpacity style={styles.createBtn} activeOpacity={0.85} onPress={() => router.push(isAutenticado ? "/adicionar" as never : "/login" as never)}>
           <Text style={styles.createText}>Criar Novo Plano</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.link}><Text style={styles.linkIcon}>?</Text><Text style={styles.linkText}>Ajuda</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.link}><Text style={styles.linkIcon}>↗</Text><Text style={styles.linkText}>Sair</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.link} onPress={() => router.push("/perfil" as never)}><Text style={styles.linkIcon}>?</Text><Text style={styles.linkText}>Ajuda</Text></TouchableOpacity>
+        {isAutenticado ? (
+          <TouchableOpacity style={styles.link} onPress={logout}><Text style={styles.linkIcon}>↗</Text><Text style={styles.linkText}>Sair</Text></TouchableOpacity>
+        ) : (
+          <TouchableOpacity style={styles.link} onPress={() => router.push("/login" as never)}><Text style={styles.linkIcon}>→</Text><Text style={[styles.linkText, { color: cores.primary }]}>Entrar</Text></TouchableOpacity>
+        )}
       </View>
     </View>
   );

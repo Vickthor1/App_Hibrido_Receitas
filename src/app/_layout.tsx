@@ -46,6 +46,7 @@ export default function RootLayout() {
           <Stack.Screen name="categorias" />
           <Stack.Screen name="perfil" />
           <Stack.Screen name="login" options={{ animation: "slide_from_bottom" }} />
+          <Stack.Screen name="adicionar" options={{ animation: "slide_from_bottom" }} />
           <Stack.Screen name="receita/[id]" />
         </Stack>
       </AuthProvider>

@@ -1,6 +1,8 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { memo } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { Image } from "expo-image";
 import { cores } from "../tema/cores";
-import { espacamentos, arredondamento } from "../tema/espacamentos";
+import { arredondamento } from "../tema/espacamentos";
 
 export type VarianteCartao = "vertical" | "horizontal";
 
@@ -16,11 +18,11 @@ interface Props {
   onFavoritar?: () => void;
 }
 
-export function CartaoReceita({ titulo, imagem, nota = "4.8", tempo = "30 min", variante = "vertical", favoritado = false, onPress, onFavoritar }: Props) {
+export const CartaoReceita = memo(function CartaoReceita({ titulo, imagem, nota = "4.8", tempo = "30 min", variante = "vertical", favoritado = false, onPress, onFavoritar }: Props) {
   if (variante === "horizontal") {
     return (
       <TouchableOpacity style={styles.horizontal} onPress={onPress} activeOpacity={0.8}>
-        <Image source={{ uri: imagem }} style={styles.hImage} />
+        <Image source={{ uri: imagem }} style={styles.hImage} contentFit="cover" transition={200} cachePolicy="memory-disk" />
         <View style={styles.hConteudo}>
           <Text style={styles.hTitulo} numberOfLines={1}>{titulo}</Text>
           <View style={styles.meta}>
@@ -29,7 +31,7 @@ export function CartaoReceita({ titulo, imagem, nota = "4.8", tempo = "30 min", 
             <Text style={styles.metaTime}>◷ {tempo}</Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.hFav} onPress={onFavoritar} activeOpacity={0.7}>
+        <TouchableOpacity style={styles.hFav} onPress={onFavoritar} activeOpacity={0.7} hitSlop={8}>
           <Text style={[styles.favIcon, favoritado && styles.favActive]}>{favoritado ? "♥" : "♡"}</Text>
         </TouchableOpacity>
       </TouchableOpacity>
@@ -39,8 +41,8 @@ export function CartaoReceita({ titulo, imagem, nota = "4.8", tempo = "30 min", 
   return (
     <TouchableOpacity style={styles.vertical} onPress={onPress} activeOpacity={0.85}>
       <View style={styles.vImageWrap}>
-        <Image source={{ uri: imagem }} style={styles.vImage} />
-        <TouchableOpacity style={styles.vFav} onPress={onFavoritar} activeOpacity={0.7}>
+        <Image source={{ uri: imagem }} style={styles.vImage} contentFit="cover" transition={200} cachePolicy="memory-disk" />
+        <TouchableOpacity style={styles.vFav} onPress={onFavoritar} activeOpacity={0.7} hitSlop={8}>
           <Text style={[styles.favIconSmall, favoritado && styles.favActive]}>{favoritado ? "♥" : "♡"}</Text>
         </TouchableOpacity>
       </View>
@@ -54,7 +56,7 @@ export function CartaoReceita({ titulo, imagem, nota = "4.8", tempo = "30 min", 
       </View>
     </TouchableOpacity>
   );
-}
+})
 
 const styles = StyleSheet.create({
   // vertical: 1:1 imagem, card arredondado 16px, borda surface-variant

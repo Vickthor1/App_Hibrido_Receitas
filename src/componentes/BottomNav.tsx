@@ -5,7 +5,7 @@ import { cores } from "../tema/cores";
 const tabs = [
   { label: "Início", icon: "⌂", href: "/" },
   { label: "Favoritos", icon: "♡", href: "/favoritos" },
-  { label: "central", icon: "+", href: "/busca", fab: true },
+  { label: "central", icon: "+", href: "/adicionar", fab: true },
   { label: "Minhas Receitas", icon: "⚔", href: "/categorias" },
   { label: "Perfil", icon: "◯", href: "/perfil" },
 ];
