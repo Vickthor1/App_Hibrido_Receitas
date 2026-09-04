@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getItemSeguro, setItemSeguro } from "../utils/storageSeguro";
 import { Receita, ReceitaResumo } from "../tipos/receita";
 
 const CHAVE_FAVORITOS = "@receita_facil:favoritos";
@@ -16,7 +17,9 @@ function isReceitaCompleta(r: Favorito): r is Receita {
 
 export async function salvarFavoritos(favoritos: Favorito[]): Promise<void> {
   try {
-    await AsyncStorage.setItem(CHAVE_FAVORITOS, JSON.stringify(favoritos));
+    // limita tamanho para evitar DoS via storage (max 200 itens)
+    const limitado = favoritos.slice(0, 200);
+    await setItemSeguro(CHAVE_FAVORITOS, JSON.stringify(limitado));
   } catch (e) {
     console.error("[favoritos] erro ao salvar", e);
     throw new Error("Não foi possível salvar os favoritos.");
@@ -25,14 +28,14 @@ export async function salvarFavoritos(favoritos: Favorito[]): Promise<void> {
 
 export async function carregarFavoritos(): Promise<Favorito[]> {
   try {
-    const dados = await AsyncStorage.getItem(CHAVE_FAVORITOS);
+    const dados = await getItemSeguro(CHAVE_FAVORITOS);
     if (!dados) return [];
     const parsed = JSON.parse(dados) as Favorito[];
     if (!Array.isArray(parsed)) return [];
-    return parsed;
+    // valida estrutura mínima para evitar injeção de dados malformados
+    return parsed.filter((f) => f && typeof f.idMeal === "string" && typeof f.strMeal === "string" && typeof f.strMealThumb === "string");
   } catch (e) {
     console.error("[favoritos] erro ao carregar", e);
-    // dados corrompidos -> limpa
     await AsyncStorage.removeItem(CHAVE_FAVORITOS).catch(() => {});
     return [];
   }

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Perfil do Usuário - Receitas</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#e2e2e5",
+                        "on-tertiary-fixed-variant": "#454748",
+                        "surface-variant": "#dce3f2",
+                        "inverse-primary": "#ffb59d",
+                        "outline": "#8d7168",
+                        "on-tertiary-container": "#2f3233",
+                        "error-container": "#ffdad6",
+                        "primary": "#ab3500",
+                        "on-primary-container": "#5f1900",
+                        "primary-container": "#ff6b35",
+                        "surface-container-high": "#e2e8f7",
+                        "surface": "#f8f9ff",
+                        "on-secondary-container": "#636467",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#191c1d",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-low": "#eff3ff",
+                        "primary-fixed": "#ffdbd0",
+                        "tertiary-container": "#989a9b",
+                        "error": "#ba1a1a",
+                        "secondary": "#5d5e61",
+                        "primary-fixed-dim": "#ffb59d",
+                        "surface-tint": "#ab3500",
+                        "outline-variant": "#e1bfb5",
+                        "tertiary-fixed": "#e1e3e4",
+                        "tertiary-fixed-dim": "#c5c7c8",
+                        "tertiary": "#5c5f60",
+                        "inverse-surface": "#2a313c",
+                        "on-secondary-fixed": "#1a1c1e",
+                        "background": "#f8f9ff",
+                        "surface-container-highest": "#dce3f2",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container": "#e7eefd",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#c6c6c9",
+                        "on-surface-variant": "#594139",
+                        "on-secondary-fixed-variant": "#454749",
+                        "on-surface": "#151c26",
+                        "inverse-on-surface": "#ebf1ff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#832600",
+                        "surface-dim": "#d3dae9",
+                        "secondary-container": "#e2e2e5",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f8f9ff",
+                        "on-background": "#151c26",
+                        "on-primary-fixed": "#390c00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "16px",
+                        "stack-sm": "8px",
+                        "margin-page": "20px",
+                        "stack-xl": "32px",
+                        "gutter": "16px",
+                        "stack-lg": "24px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "headline-md": ["Be Vietnam Pro"],
+                        "headline-xl-mobile": ["Be Vietnam Pro"],
+                        "label-md": ["Be Vietnam Pro"],
+                        "headline-lg": ["Be Vietnam Pro"],
+                        "label-sm": ["Be Vietnam Pro"],
+                        "headline-xl": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "headline-xl-mobile": ["24px", { "lineHeight": "30px", "fontWeight": "700" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-lg": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "label-sm": ["10px", { "lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-xl": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased pb-24 md:pb-0">
+<!-- Top App Bar (Mobile hidden, Desktop visible logic applied to shell layout) -->
+<header class="bg-surface dark:bg-surface-container-low docked full-width top-0 flat no shadows flex justify-between items-center px-margin-page py-stack-md w-full md:hidden sticky z-40">
+<button class="text-on-surface dark:text-inverse-on-surface hover:bg-surface-variant dark:hover:bg-on-surface-variant transition-colors p-2 rounded-full focus:outline-none">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-headline-xl-mobile text-headline-xl-mobile font-bold text-on-surface dark:text-inverse-on-surface">Perfil</h1>
+<button class="text-on-surface dark:text-inverse-on-surface hover:bg-surface-variant dark:hover:bg-on-surface-variant transition-colors p-2 rounded-full focus:outline-none">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</header>
+<div class="flex">
+<!-- SideNav for Desktop (Suppressed on mobile) -->
+<aside class="hidden md:flex flex-col h-screen py-stack-lg bg-surface dark:bg-surface-container border-r border-outline-variant w-80 rounded-r-xl sticky top-0 z-40">
+<div class="px-margin-page mb-stack-xl">
+<h2 class="font-headline-lg text-headline-lg text-primary">Receita Fácil</h2>
+</div>
+<nav class="flex-1 px-4 space-y-2">
+<a class="flex items-center p-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors rounded-full mx-2 font-body-lg text-body-lg" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="explore">explore</span>
+                     Explorar
+                 </a>
+<a class="flex items-center p-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors rounded-full mx-2 font-body-lg text-body-lg" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="category">category</span>
+                     Categorias
+                 </a>
+<a class="flex items-center p-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors rounded-full mx-2 font-body-lg text-body-lg" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="flatware">flatware</span>
+                     Dietas Especiais
+                 </a>
+<a class="flex items-center p-3 bg-primary-container text-on-primary-container rounded-full mx-2 font-body-lg text-body-lg font-bold" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="person" data-weight="fill" style="font-variation-settings: 'FILL' 1;">person</span>
+                     Perfil
+                 </a>
+<a class="flex items-center p-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors rounded-full mx-2 font-body-lg text-body-lg" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="settings">settings</span>
+                     Configurações
+                 </a>
+</nav>
+<div class="px-4 mt-auto">
+<a class="flex items-center p-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors rounded-full mx-2 font-body-lg text-body-lg" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="logout">logout</span>
+                     Sair
+                 </a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 max-w-7xl mx-auto w-full">
+<div class="px-margin-page py-stack-md md:py-stack-xl space-y-stack-lg">
+<!-- Profile Header Card -->
+<section class="bg-surface-container-lowest rounded-xl p-stack-md md:p-stack-lg shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col items-center text-center space-y-stack-md relative overflow-hidden">
+<div class="absolute inset-0 bg-primary-container/10 -z-10 rounded-xl"></div>
+<div class="relative w-24 h-24 md:w-32 md:h-32">
+<img class="w-full h-full object-cover rounded-full border-4 border-surface shadow-md" data-alt="A close-up portrait of a cheerful home cook smiling warmly in a bright, modern kitchen setting. Soft, natural light illuminates their face, conveying approachability and culinary passion. The aesthetic is clean, inviting, and consistent with a high-end food app profile picture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAok5A0XmRAU4nRscC7buvJqrbS-VYSN9fQFoXKwuaqoHGEZXGwCfl2H3Xy29URMUlY0NMukgOn9fTMrdbe6DpbYRr71e6CbHSQ1CIsjj2mcG4HKoJTJksGD2x0u8O8cjWEC2aloMZlYg9IeRvS1ai22aGHoOLmUceZUe8byDBXeQOHjCwIxa0nw5sm9EVekSpfFDXsn_Esm-edRGsYhv2bF8D-n9BiLAQGXbhsDuxFgMMYjvJzLPuh"/>
+<button class="absolute bottom-0 right-0 bg-primary text-on-primary rounded-full p-2 shadow-md hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</button>
+</div>
+<div>
+<h2 class="font-headline-lg text-headline-lg md:font-headline-xl md:text-headline-xl text-on-surface mb-1">Marina Silva</h2>
+<p class="font-body-md text-body-md text-secondary">@marinasilva_cooks</p>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md mx-auto">
+                        Amante da culinária caseira. Sempre em busca da receita perfeita de bolo de cenoura. 🥕🍰
+                    </p>
+<div class="flex space-x-stack-lg pt-stack-sm w-full max-w-sm justify-center border-t border-outline-variant/30 mt-stack-md">
+<div class="text-center pt-stack-sm">
+<span class="block font-headline-md text-headline-md text-primary">124</span>
+<span class="font-label-md text-label-md text-secondary uppercase tracking-wider">Salvas</span>
+</div>
+<div class="text-center pt-stack-sm border-l border-outline-variant/30 pl-stack-lg">
+<span class="block font-headline-md text-headline-md text-primary">12</span>
+<span class="font-label-md text-label-md text-secondary uppercase tracking-wider">Criadas</span>
+</div>
+<div class="text-center pt-stack-sm border-l border-outline-variant/30 pl-stack-lg">
+<span class="block font-headline-md text-headline-md text-primary">4.8</span>
+<span class="font-label-md text-label-md text-secondary uppercase tracking-wider">Avaliação</span>
+</div>
+</div>
+</section>
+<!-- Tabs -->
+<div class="flex space-x-stack-sm border-b border-outline-variant/30 overflow-x-auto no-scrollbar pb-2">
+<button class="px-4 py-2 font-label-md text-label-md text-primary border-b-2 border-primary whitespace-nowrap">Minhas Receitas</button>
+<button class="px-4 py-2 font-label-md text-label-md text-secondary hover:text-primary transition-colors whitespace-nowrap">Salvas</button>
+<button class="px-4 py-2 font-label-md text-label-md text-secondary hover:text-primary transition-colors whitespace-nowrap">Avaliações</button>
+</div>
+<!-- Recipe Grid (Bento style) -->
+<section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-gutter">
+<!-- Add New Recipe Card -->
+<div class="bg-surface-container-high rounded-xl border-2 border-dashed border-outline-variant/50 flex flex-col items-center justify-center p-stack-md cursor-pointer hover:bg-surface-container-highest transition-colors min-h-[200px]">
+<div class="bg-primary-container text-on-primary-container rounded-full p-4 mb-stack-sm">
+<span class="material-symbols-outlined text-3xl" data-icon="add">add</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant font-bold">Criar Receita</span>
+</div>
+<!-- Recipe Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] overflow-hidden group cursor-pointer">
+<div class="relative h-32 md:h-40 w-full overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A beautifully styled overhead shot of a freshly baked carrot cake with glossy chocolate ganache dripping down the sides. The setting is warm and inviting, illuminated by soft natural window light, emphasizing the rich orange color of the cake and the deep brown of the chocolate. Modern, appetizing aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzfnuBw6f4qQXyFuRyPBC8Vj6q4-GJ6yPpr8ptGzMBOtGajegTpQ4G7Y9EZxkZdG7gALxMyZ_LHpsl12UHDKLZ3IJnSPtrj-g8hyFLWeQcw39aN8GucQ7FCQegvd5lDOCQrAIsMHxXmYH5U6jKgfP1O-3lnKRsG6bQz917p6yY-TmbbzE9RUqJZWmDgTi1-b9ccN4OQmBHjY0FRqTdDt4sfopMLpuI7_XbIF8T6N13Kpblg8W2aEB-"/>
+<div class="absolute top-2 right-2 bg-surface/80 backdrop-blur-sm rounded-full p-1.5 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="favorite" data-weight="fill" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+</div>
+<div class="p-stack-sm md:p-stack-md">
+<h3 class="font-headline-md text-headline-md text-on-surface line-clamp-1 mb-1">Bolo de Cenoura Perfeito</h3>
+<div class="flex items-center text-secondary space-x-2">
+<span class="flex items-center font-label-sm text-label-sm"><span class="material-symbols-outlined text-[14px] mr-1" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span> 5.0</span>
+<span class="flex items-center font-label-sm text-label-sm"><span class="material-symbols-outlined text-[14px] mr-1" data-icon="schedule">schedule</span> 45 min</span>
+</div>
+</div>
+</div>
+<!-- Recipe Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] overflow-hidden group cursor-pointer">
+<div class="relative h-32 md:h-40 w-full overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A rustic, comforting bowl of creamy mushroom risotto garnished with fresh parsley and shaved parmesan cheese. The soft, warm lighting highlights the creamy texture and earthy tones of the dish. Set on a textured wooden table, invoking a cozy, modern home-cooking atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_amC_SFFvP5o3seFjzmCIv7_Y3wqhrz8hFFXQdiNvJzo-QUGmHrCmZJUrgsCoMTtWmTWliKRZM7-2y-OExOiTbGihaHnl4508dKO0yr0B8u1jQgBAkNW0aHQZ9QkAfzdaxQD5EgPsicMQ1SeBcNvFO5v_sytJR7mY185zh2K2KObkSeDU4RGtsrpO0O_fpW4bqkaBxREN0j7-u4BxVzT72zvivSNCFQO71F06TnB9XUWW_Psirt9m"/>
+<div class="absolute top-2 right-2 bg-surface/80 backdrop-blur-sm rounded-full p-1.5 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="favorite" data-weight="fill" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</div>
+</div>
+<div class="p-stack-sm md:p-stack-md">
+<h3 class="font-headline-md text-headline-md text-on-surface line-clamp-1 mb-1">Risoto de Cogumelos</h3>
+<div class="flex items-center text-secondary space-x-2">
+<span class="flex items-center font-label-sm text-label-sm"><span class="material-symbols-outlined text-[14px] mr-1" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span> 4.8</span>
+<span class="flex items-center font-label-sm text-label-sm"><span class="material-symbols-outlined text-[14px] mr-1" data-icon="schedule">schedule</span> 40 min</span>
+</div>
+</div>
+</div>
+<!-- Recipe Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.05)] overflow-hidden group cursor-pointer hidden md:block">
+<div class="relative h-32 md:h-40 w-full overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A vibrant, healthy quinoa bowl topped with sliced avocado, roasted sweet potatoes, and a drizzle of tahini dressing. The dish is bright and colorful, shot from a 45-degree angle in clean, light-mode lighting, perfect for a modern culinary app interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7OVbM3KCzPtpJ4Ah2d2lpI7AoU-Z56z535mcYsFQ_dHGaTYAA1JYBTl2Zj4FsESxTia94gaJnIFx917V1_9j23JxgQfCqBj3tfKMQM3ZgD3hynui_1MT33RJmORfg_OFX8p4vA__0hs_EC0Dgw-4wipnmvwbKsCWFlBqqgIAk4ahxNbit4D-wUklwnhN5BwEd7hzYKV2vYJE6Hi6KGlbKLMsa1wWLzu_c1_UHmudlihzGbdFDmZaw"/>
+</div>
+<div class="p-stack-sm md:p-stack-md">
+<h3 class="font-headline-md text-headline-md text-on-surface line-clamp-1 mb-1">Bowl de Quinoa</h3>
+<div class="flex items-center text-secondary space-x-2">
+<span class="flex items-center font-label-sm text-label-sm"><span class="material-symbols-outlined text-[14px] mr-1" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span> 4.5</span>
+<span class="flex items-center font-label-sm text-label-sm"><span class="material-symbols-outlined text-[14px] mr-1" data-icon="schedule">schedule</span> 25 min</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Settings Quick Access (Mobile Only, usually in drawer on desktop) -->
+<section class="md:hidden mt-stack-xl bg-surface-container-low rounded-xl p-stack-md space-y-4">
+<h3 class="font-headline-md text-headline-md text-on-surface">Configurações</h3>
+<ul class="space-y-2">
+<li>
+<a class="flex items-center justify-between p-3 bg-surface rounded-lg shadow-sm" href="#">
+<span class="flex items-center font-body-md text-body-md text-on-surface"><span class="material-symbols-outlined mr-3 text-secondary" data-icon="manage_accounts">manage_accounts</span> Editar Perfil</span>
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="chevron_right">chevron_right</span>
+</a>
+</li>
+<li>
+<a class="flex items-center justify-between p-3 bg-surface rounded-lg shadow-sm" href="#">
+<span class="flex items-center font-body-md text-body-md text-on-surface"><span class="material-symbols-outlined mr-3 text-secondary" data-icon="notifications">notifications</span> Notificações</span>
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="chevron_right">chevron_right</span>
+</a>
+</li>
+<li>
+<a class="flex items-center justify-between p-3 bg-surface rounded-lg shadow-sm text-error" href="#">
+<span class="flex items-center font-body-md text-body-md"><span class="material-symbols-outlined mr-3" data-icon="logout">logout</span> Sair</span>
+</a>
+</li>
+</ul>
+</section>
+</div>
+</main>
+</div>
+<!-- Bottom Nav Bar (Mobile Only) -->
+<nav class="md:hidden bg-surface-container-lowest dark:bg-inverse-surface shadow-[0px_-2px_10px_rgba(0,0,0,0.03)] fixed bottom-0 w-full z-50 rounded-t-xl flex justify-around items-end pb-4 pt-2 px-4 w-full">
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:opacity-80 transition-opacity w-16" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-label-sm text-label-sm truncate w-full text-center">Início</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:opacity-80 transition-opacity w-16" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="favorite">favorite</span>
+<span class="font-label-sm text-label-sm truncate w-full text-center">Favoritos</span>
+</a>
+<a class="flex flex-col items-center justify-center hover:opacity-80 transition-opacity relative w-16 h-full" href="#">
+<div class="bg-primary dark:bg-primary-container text-on-primary rounded-full p-stack-md shadow-md scale-110 -translate-y-4 absolute bottom-2 flex items-center justify-center">
+<span class="material-symbols-outlined text-xl" data-icon="add">add</span>
+</div>
+<span class="font-label-sm text-label-sm opacity-0 h-3">Add</span> <!-- Invisible placeholder for alignment -->
+</a>
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:opacity-80 transition-opacity w-16" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="restaurant_menu">restaurant_menu</span>
+<span class="font-label-sm text-label-sm truncate w-full text-center">Minhas Receitas</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-container font-bold hover:opacity-80 transition-opacity w-16" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person" data-weight="fill" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-sm text-label-sm truncate w-full text-center">Perfil</span>
+</a>
+</nav>
+</body></html>

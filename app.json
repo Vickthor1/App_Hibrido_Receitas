@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "App_Hibrido_Receitas",
-    "slug": "App_Hibrido_Receitas",
+    "name": "Receita Fácil",
+    "slug": "receita-facil",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -36,7 +36,7 @@
     ],
     "experiments": {
       "typedRoutes": true,
-      "reactCompiler": true
+      "reactCompiler": false
     }
   }
 }

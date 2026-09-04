@@ -3,8 +3,10 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "dependencies": {
+    "@expo-google-fonts/be-vietnam-pro": "^0.4.1",
     "@expo/ui": "~57.0.13",
     "@react-native-async-storage/async-storage": "2.2.0",
+    "@supabase/supabase-js": "^2.115.0",
     "expo": "^57.0.16",
     "expo-constants": "~57.0.14",
     "expo-device": "~57.0.1",
@@ -25,20 +27,35 @@
     "react-native-reanimated": "4.5.1",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
+    "react-native-url-polyfill": "^4.0.0",
     "react-native-web": "~0.21.0",
     "react-native-worklets": "0.10.1"
   },
   "devDependencies": {
-    "@types/react": "~19.2.2",
+    "@types/node": "^26.4.1",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.1.8",
+    "dotenv": "^17.4.2",
+    "eslint": "^9.39.5",
+    "eslint-config-expo": "~57.0.2",
     "typescript": "~6.0.3"
   },
   "scripts": {
     "start": "expo start",
+    "postinstall": "node ./scripts/fix-expo-router.js",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "test:security": "node ./scripts/test-security.js"
   },
-  "private": true
+  "private": true,
+  "overrides": {
+    "decode-uri-component": "^0.5.0",
+    "uuid": "^11.1.1"
+  },
+  "allowScripts": {
+    "unrs-resolver@1.12.2": true
+  }
 }

@@ -17,6 +17,7 @@ import {
   Ingrediente,
   ErroApi,
 } from "../tipos/receita";
+import { checkRateLimit, sanitizarEntrada, validarIdMeal } from "../utils/seguranca";
 
 const BASE_URL = "https://www.themealdb.com/api/json/v1/1";
 const TIMEOUT_MS = 12000;
@@ -29,9 +30,14 @@ function montarUrl(path: string, params?: Record<string, string>): string {
   const url = new URL(`${BASE_URL}${path}`);
   if (params) {
     Object.entries(params).forEach(([k, v]) => {
-      if (v !== undefined && v !== null && String(v).trim() !== "") {
-        url.searchParams.set(k, String(v).trim());
+      if (v === undefined || v === null) return;
+      // permite s="" para listar todas (search.php?s=)
+      if (k === "s" && v === "") {
+        url.searchParams.set(k, "");
+        return;
       }
+      if (String(v).trim() === "") return;
+      url.searchParams.set(k, String(v).trim());
     });
   }
   return url.toString();
@@ -59,6 +65,10 @@ async function fetchComTimeout(url: string): Promise<Response> {
 }
 
 async function getJson<T>(path: string, params?: Record<string, string>): Promise<T> {
+  // rate limit client-side: 30 req/min por endpoint
+  const rl = checkRateLimit(`api:${path}`, 30, 60000);
+  if (!rl.allowed) throw criarErro("Muitas requisições. Aguarde um momento.", undefined, 429);
+
   const url = montarUrl(path, params);
   let response: Response;
 
@@ -69,14 +79,15 @@ async function getJson<T>(path: string, params?: Record<string, string>): Promis
   }
 
   if (!response.ok) {
-    throw criarErro(`Erro na API: ${response.status} ${response.statusText}`, undefined, response.status);
+    // não vazar detalhes internos
+    throw criarErro("Erro ao comunicar com o serviço. Tente novamente.", undefined, response.status);
   }
 
   try {
     const data = (await response.json()) as T;
     return data;
   } catch (e) {
-    throw criarErro("Resposta inválida da API (JSON malformado).", e);
+    throw criarErro("Resposta inválida da API.", e);
   }
 }
 
@@ -86,8 +97,8 @@ async function getJson<T>(path: string, params?: Record<string, string>): Promis
 
 /** 🔎 Pesquisar receitas por nome (search.php?s=) — requisito: pesquisar por nome */
 export async function buscarReceitas(nome: string): Promise<Receita[]> {
-  // nome vazio -> retorna lista inicial (evita null da API)
-  const data = await getJson<RespostaReceitas>("/search.php", { s: nome ?? "" });
+  const q = sanitizarEntrada(nome ?? "", 60);
+  const data = await getJson<RespostaReceitas>("/search.php", { s: q });
   return data.meals ?? [];
 }
 
@@ -96,8 +107,9 @@ export const busccarReceitas = buscarReceitas;
 
 /** 🔎 Pesquisar receitas por ingrediente (filter.php?i=) — requisito: pesquisar por ingrediente */
 export async function buscarReceitasPorIngrediente(ingrediente: string): Promise<ReceitaResumo[]> {
-  if (!ingrediente?.trim()) return [];
-  const data = await getJson<RespostaFiltro>("/filter.php", { i: ingrediente.trim() });
+  const q = sanitizarEntrada(ingrediente ?? "", 40);
+  if (!q) return [];
+  const data = await getJson<RespostaFiltro>("/filter.php", { i: q });
   return data.meals ?? [];
 }
 
@@ -109,15 +121,17 @@ export async function listarReceitasDisponiveis(): Promise<Receita[]> {
 
 /** 🏷️ Filtrar receitas por categoria (filter.php?c=) — requisito: filtrar por categoria */
 export async function filtrarReceitasPorCategoria(categoria: string): Promise<ReceitaResumo[]> {
-  if (!categoria?.trim()) return [];
-  const data = await getJson<RespostaFiltro>("/filter.php", { c: categoria.trim() });
+  const q = sanitizarEntrada(categoria ?? "", 30);
+  if (!q) return [];
+  const data = await getJson<RespostaFiltro>("/filter.php", { c: q });
   return data.meals ?? [];
 }
 
 /** 📖 Buscar receita por ID (lookup.php?i=) — requisito: visualizar detalhes */
 export async function buscarReceitaPorId(id: string): Promise<Receita | null> {
-  if (!id?.trim()) return null;
-  const data = await getJson<RespostaReceitas>("/lookup.php", { i: id.trim() });
+  const q = (id ?? "").trim();
+  if (!validarIdMeal(q)) return null;
+  const data = await getJson<RespostaReceitas>("/lookup.php", { i: q });
   return data.meals?.[0] ?? null;
 }
 

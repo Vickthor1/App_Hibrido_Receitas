@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Receita Fácil - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container": "#e7eefd",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-fixed": "#1a1c1e",
+                      "outline": "#8d7168",
+                      "primary-fixed": "#ffdbd0",
+                      "on-tertiary-fixed": "#191c1d",
+                      "surface-tint": "#ab3500",
+                      "surface-container-highest": "#dce3f2",
+                      "tertiary-fixed": "#e1e3e4",
+                      "warm-surface": "#f8f9ff",
+                      "surface-bright": "#f8f9ff",
+                      "tertiary-fixed-dim": "#c5c7c8",
+                      "surface-container-low": "#eff3ff",
+                      "secondary-fixed": "#e2e2e5",
+                      "outline-variant": "#e1bfb5",
+                      "on-background": "#151c26",
+                      "on-tertiary-container": "#d7d9da",
+                      "background": "#f8f9ff",
+                      "surface-dim": "#d3dae9",
+                      "secondary-fixed-dim": "#c6c6c9",
+                      "on-secondary-fixed-variant": "#45474a",
+                      "surface": "#f8f9ff",
+                      "inverse-surface": "#2a313c",
+                      "surface-container-lowest": "#ffffff",
+                      "primary-container": "#ff6b35",
+                      "on-primary-fixed-variant": "#832700",
+                      "on-secondary-container": "#616265",
+                      "on-error-container": "#93000a",
+                      "on-surface-variant": "#59413a",
+                      "on-surface": "#151c26",
+                      "surface-variant": "#dce3f2",
+                      "on-primary-fixed": "#390c00",
+                      "on-primary-container": "#5f1900",
+                      "secondary-container": "#e0dfe3",
+                      "on-error": "#ffffff",
+                      "inverse-on-surface": "#ebf1ff",
+                      "primary-fixed-dim": "#ffb59d",
+                      "error": "#ba1a1a",
+                      "surface-container-high": "#e2e8f7",
+                      "secondary": "#5d5e61",
+                      "outline-warm": "#8d7168",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed-variant": "#444748",
+                      "on-primary": "#ffffff",
+                      "primary": "#832600",
+                      "on-secondary": "#ffffff",
+                      "inverse-primary": "#ffb59d",
+                      "tertiary": "#444748",
+                      "tertiary-container": "#5c5f60"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-sm": "8px",
+                      "stack-lg": "24px",
+                      "stack-md": "16px",
+                      "stack-xl": "32px",
+                      "gutter": "16px",
+                      "margin-page": "20px"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Be Vietnam Pro"
+                      ],
+                      "label-sm": [
+                              "Be Vietnam Pro"
+                      ],
+                      "label-md": [
+                              "Be Vietnam Pro"
+                      ],
+                      "headline-md": [
+                              "Be Vietnam Pro"
+                      ],
+                      "headline-xl": [
+                              "Be Vietnam Pro"
+                      ],
+                      "body-lg": [
+                              "Be Vietnam Pro"
+                      ],
+                      "headline-xl-mobile": [
+                              "Be Vietnam Pro"
+                      ],
+                      "headline-lg": [
+                              "Be Vietnam Pro"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-sm": [
+                              "10px",
+                              {
+                                      "lineHeight": "12px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-md": [
+                              "18px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-xl": [
+                              "28px",
+                              {
+                                      "lineHeight": "34px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-xl-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "30px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg": [
+                              "22px",
+                              {
+                                      "lineHeight": "28px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-surface-dim text-primary dark:text-primary-fixed-dim font-body-md text-body-md w-full top-0 sticky shadow-sm dark:shadow-none border-b border-outline-variant dark:border-outline z-50">
+<div class="flex items-center justify-between px-margin-page py-stack-sm max-w-[1280px] mx-auto w-full">
+<!-- Left: Logo & Search -->
+<div class="flex items-center gap-stack-lg flex-1">
+<a class="font-headline-lg text-headline-lg text-primary dark:text-primary-fixed-dim tracking-tight" href="#">Receita Fácil</a>
+<div class="hidden md:flex flex-1 max-w-md relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-lowest border border-surface-variant rounded-full py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-body-md shadow-sm" placeholder="Buscar receitas, ingredientes..." type="text"/>
+</div>
+</div>
+<!-- Center: Navigation -->
+<nav class="hidden md:flex items-center gap-stack-lg mx-stack-lg">
+<a class="text-primary dark:text-primary-fixed-dim border-b-2 border-primary dark:border-primary-fixed-dim pb-1 font-bold scale-95 active:scale-90 transition-transform" href="#">Browse</a>
+<a class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-colors scale-95 active:scale-90 transition-transform" href="#">Popular</a>
+<a class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary dark:hover:text-primary-fixed-dim transition-colors scale-95 active:scale-90 transition-transform" href="#">Seasonal</a>
+</nav>
+<!-- Right: Actions -->
+<div class="flex items-center gap-stack-md">
+<button class="hidden lg:flex bg-primary text-on-primary px-4 py-2 rounded-full font-label-md hover:bg-surface-container dark:hover:bg-surface-container-highest transition-all duration-200 scale-95 active:scale-90">Add Recipe</button>
+<button class="hidden sm:flex items-center gap-1 text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container dark:hover:bg-surface-container-highest duration-200 px-3 py-2 rounded-full scale-95 active:scale-90">
+<span class="material-symbols-outlined">favorite</span>
+<span class="font-label-md">Favorites</span>
+</button>
+<div class="flex items-center gap-2">
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container dark:hover:bg-surface-container-highest rounded-full transition-all duration-200 scale-95 active:scale-90">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container dark:hover:bg-surface-container-highest rounded-full transition-all duration-200 scale-95 active:scale-90">
+<span class="material-symbols-outlined">person</span>
+</button>
+</div>
+</div>
+</div>
+</header>
+<div class="flex flex-1 max-w-[1280px] mx-auto w-full">
+<!-- SideNavBar (Hidden on Mobile, Visible on Desktop) -->
+<aside class="hidden lg:flex flex-col h-screen py-stack-lg border-r border-outline-variant dark:border-outline bg-surface-container-low dark:bg-surface-container-lowest text-primary dark:text-primary-fixed-dim font-body-md text-body-md fixed left-0 top-0 h-full w-80 shadow-md translate-x-1 duration-200 z-40 pt-[72px]">
+<div class="flex-1 px-2 py-4 space-y-2 overflow-y-auto">
+<a class="bg-primary-container dark:bg-primary text-on-primary-container dark:text-on-primary rounded-full mx-2 flex items-center px-4 py-3 font-semibold" href="#">
+<span class="material-symbols-outlined mr-3">home</span> Home
+                </a>
+<a class="text-on-surface-variant dark:text-on-tertiary-container flex items-center px-4 py-3 mx-2 hover:bg-surface-variant dark:hover:bg-surface-container-highest rounded-full transition-all" href="#">
+<span class="material-symbols-outlined mr-3">restaurant_menu</span> My Recipes
+                </a>
+<a class="text-on-surface-variant dark:text-on-tertiary-container flex items-center px-4 py-3 mx-2 hover:bg-surface-variant dark:hover:bg-surface-container-highest rounded-full transition-all" href="#">
+<span class="material-symbols-outlined mr-3">bookmark</span> Saved
+                </a>
+<a class="text-on-surface-variant dark:text-on-tertiary-container flex items-center px-4 py-3 mx-2 hover:bg-surface-variant dark:hover:bg-surface-container-highest rounded-full transition-all" href="#">
+<span class="material-symbols-outlined mr-3">calendar_today</span> Meal Plan
+                </a>
+<a class="text-on-surface-variant dark:text-on-tertiary-container flex items-center px-4 py-3 mx-2 hover:bg-surface-variant dark:hover:bg-surface-container-highest rounded-full transition-all" href="#">
+<span class="material-symbols-outlined mr-3">settings</span> Settings
+                </a>
+</div>
+<div class="px-4 py-4 space-y-4">
+<button class="w-full bg-primary text-on-primary py-3 rounded-full font-label-md shadow-md hover:bg-surface-container-highest dark:hover:bg-surface-variant transition-colors">Create New Plan</button>
+<div class="border-t border-outline-variant dark:border-outline pt-4 space-y-2">
+<a class="text-on-surface-variant dark:text-on-tertiary-container flex items-center px-4 py-2 hover:bg-surface-variant dark:hover:bg-surface-container-highest rounded-full transition-all font-label-md" href="#">
+<span class="material-symbols-outlined mr-3">help</span> Help
+                    </a>
+<a class="text-on-surface-variant dark:text-on-tertiary-container flex items-center px-4 py-2 hover:bg-surface-variant dark:hover:bg-surface-container-highest rounded-full transition-all font-label-md" href="#">
+<span class="material-symbols-outlined mr-3">logout</span> Logout
+                    </a>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 lg:ml-80 p-margin-page md:p-stack-xl overflow-x-hidden">
+<!-- Hero Section -->
+<section class="mb-stack-xl relative rounded-xl overflow-hidden shadow-lg group">
+<div class="bg-cover bg-center w-full h-[400px] md:h-[500px]" data-alt="A high-quality, mouth-watering close-up photograph of a stack of fluffy American pancakes (Panqueca Americana) dripping with golden syrup and topped with fresh, vibrant red strawberries. The lighting is warm and inviting, suggesting a sunny morning breakfast. The scene uses a bright, light-mode aesthetic with soft, natural shadows highlighting the texture of the pancakes and fruit. The background is slightly blurred, focusing entirely on the appetizing food." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAzHoM31MP8GHcJgP-vs3Tjtn_F0lGEvhZcDb6k_V8p1WrHaLZl1riBXlJyVFJiVxFrD865-SIJiBOp5P0259mdsE_Aplin5weLuQf2Wqs4k5GcwjOOWDN1LPQr6X2KYQ57YYCtl4TQVVBZ5-xXr8yG7OSe4jv84rYE4McRl__-y3pKU6hUKeJJQaRM1k3_2l5Mgb-Z_9bSSrp-36MMPMmwVSionKlFoYqbReHuDGmmIEzu5KcH8Vmj')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-end p-stack-lg md:p-stack-xl text-white">
+<div class="flex items-center gap-2 mb-2">
+<span class="bg-primary-container text-on-primary-container px-3 py-1 rounded-full font-label-sm uppercase tracking-wider">Receita do dia</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl md:text-5xl font-bold mb-4 drop-shadow-md text-white">Panqueca Americana</h1>
+<div class="flex items-center gap-4 text-white/90 font-label-md">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-yellow-400" style="font-variation-settings: 'FILL' 1;">star</span> 4.8</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined">schedule</span> 25 min</span>
+</div>
+<button class="absolute top-stack-lg right-stack-lg p-2 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/40 transition-colors">
+<span class="material-symbols-outlined text-white">favorite_border</span>
+</button>
+</div>
+</section>
+<!-- Categories -->
+<section class="mb-stack-xl">
+<div class="flex justify-between items-center mb-stack-md">
+<h2 class="font-headline-md text-headline-md text-on-surface">Categorias</h2>
+<a class="text-primary font-label-md hover:underline" href="#">Ver todas</a>
+</div>
+<div class="flex gap-stack-md overflow-x-auto pb-4 hide-scrollbar">
+<!-- Category Cards (Placeholder items based on typical food app categories) -->
+<div class="flex flex-col items-center gap-2 min-w-[80px] group cursor-pointer">
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow group-hover:bg-primary-container group-hover:text-on-primary-container">
+<span class="material-symbols-outlined text-3xl">coffee</span>
+</div>
+<span class="font-label-md text-on-surface-variant text-center">Café da manhã</span>
+</div>
+<div class="flex flex-col items-center gap-2 min-w-[80px] group cursor-pointer">
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow group-hover:bg-primary-container group-hover:text-on-primary-container">
+<span class="material-symbols-outlined text-3xl">lunch_dining</span>
+</div>
+<span class="font-label-md text-on-surface-variant text-center">Almoço</span>
+</div>
+<div class="flex flex-col items-center gap-2 min-w-[80px] group cursor-pointer">
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow group-hover:bg-primary-container group-hover:text-on-primary-container">
+<span class="material-symbols-outlined text-3xl">dinner_dining</span>
+</div>
+<span class="font-label-md text-on-surface-variant text-center">Jantar</span>
+</div>
+<div class="flex flex-col items-center gap-2 min-w-[80px] group cursor-pointer">
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow group-hover:bg-primary-container group-hover:text-on-primary-container">
+<span class="material-symbols-outlined text-3xl">cake</span>
+</div>
+<span class="font-label-md text-on-surface-variant text-center">Sobremesas</span>
+</div>
+<div class="flex flex-col items-center gap-2 min-w-[80px] group cursor-pointer">
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow group-hover:bg-primary-container group-hover:text-on-primary-container">
+<span class="material-symbols-outlined text-3xl">local_pizza</span>
+</div>
+<span class="font-label-md text-on-surface-variant text-center">Lanches</span>
+</div>
+</div>
+</section>
+<!-- Mais amadas (Most Loved Grid) -->
+<section class="mb-stack-xl">
+<div class="flex justify-between items-center mb-stack-md">
+<h2 class="font-headline-md text-headline-md text-on-surface">Mais amadas</h2>
+<a class="text-primary font-label-md hover:underline" href="#">Ver todas</a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-stack-lg">
+<!-- Recipe Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-surface-variant flex flex-col group cursor-pointer">
+<div class="relative h-48">
+<img class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" data-alt="A professional, brightly lit food photography shot of a classic Lasanha à Bolonhesa (Bolognese Lasagna). The lasagna is presented in a white ceramic dish, featuring thick layers of pasta, rich red meat sauce, and perfectly melted, slightly golden-brown cheese on top. A fresh basil leaf rests as a garnish. The mood is comforting and rustic, set in a bright, modern kitchen aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtjM2IibrMoTGKc_xr0p6HeneHbhGl4nwEUljdkQk6-WXZtkjknnKt0BYm3DJly8XH3AIGxcdOBVdSA2wQ801q3c_nBJQnBeiacUmm-0ky1Az7zOI4t5kHV0WLnl1C8ReY4OtCD8rw25J2QHpzHHScj6huOoJOgBTLxpLnpoXR4d1OT9NpbzjsznKn-D9ZSkTeE4AdDh0-m8H0d9XUL4qSYLC7hyG6lgQ_WmxKlS3peOzV2-y0xBNP"/>
+<button class="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 backdrop-blur text-on-surface hover:text-primary transition-colors shadow-sm">
+<span class="material-symbols-outlined text-sm">favorite_border</span>
+</button>
+</div>
+<div class="p-4 flex flex-col flex-1">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2 line-clamp-1">Lasanha à Bolonhesa</h3>
+<div class="flex items-center justify-between text-on-surface-variant font-label-md mt-auto">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-yellow-500 text-sm" style="font-variation-settings: 'FILL' 1;">star</span> 4.9</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> 90 min</span>
+</div>
+</div>
+</div>
+<!-- Recipe Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-surface-variant flex flex-col group cursor-pointer">
+<div class="relative h-48">
+<img class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" data-alt="A close-up, appetizing shot of Strogonoff de Frango (Chicken Stroganoff) served in a deep bowl. The dish features tender chunks of chicken in a rich, creamy, slightly orange-tinted sauce, garnished with crispy potato sticks (batata palha) and fresh parsley. The lighting is bright and warm, highlighting the creamy texture. The setting is a bright, inviting dining environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbnrKQKv6x5TGUugOIk2BERoBMWZL__uNY1OPq0umnZyk6TtW87RIITPL_min2W7WBf-Jv8v2eRBd0UoM7JsdkA6uHXle6zKDBRStUL2IFSKbrksCIEIo7b6yW8yAcRtEJU73F2jIKbALiAocwDO9wfy9iE_s06Z3l9tTLs_fM7YvoMpBGxH3Bes53yqSy5j8jBpLqceSBy3Yj4gKy7QvnSzhzxvLK0spyTHHgltiM3u0ls81JYfuW"/>
+<button class="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 backdrop-blur text-on-surface hover:text-primary transition-colors shadow-sm">
+<span class="material-symbols-outlined text-sm">favorite_border</span>
+</button>
+</div>
+<div class="p-4 flex flex-col flex-1">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2 line-clamp-1">Strogonoff de Frango</h3>
+<div class="flex items-center justify-between text-on-surface-variant font-label-md mt-auto">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-yellow-500 text-sm" style="font-variation-settings: 'FILL' 1;">star</span> 4.7</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> 40 min</span>
+</div>
+</div>
+</div>
+<!-- Recipe Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-surface-variant flex flex-col group cursor-pointer hidden md:flex">
+<div class="relative h-48">
+<img class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" data-alt="A delectable image of a rich, fudgy Chocolate Brownie, cut into a neat square and served on a rustic plate. The surface of the brownie is crinkly and glossy, with a slightly gooey interior visible. A light dusting of powdered sugar and a few chocolate chunks add texture. The scene is brightly lit to emphasize the decadent chocolate tones against a clean, modern background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBt85ZXf0qFFLR3ti851sVi-fiqmC4G77aJzNrR4Qf_RlcarABFd8mMFQ0gFIaTVQqVbbP0AgS1il6CVEyA0Rqx9pZ7Ac4_GwXZ_xEl5qnsy_AQyCUm4b7rl0L_ecNQ-KqlW_oTWkg__sqMGu6D5sIH6f3RT1Ba1hTfVpYzkW1_2Uobo-mN8EDv36cGmSevNukBaqDpx3s6ASplyPjA66-H0QXbGkgkkGFthpZoiVp-4Lmuk78vdCOD"/>
+<button class="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 backdrop-blur text-on-surface hover:text-primary transition-colors shadow-sm">
+<span class="material-symbols-outlined text-sm">favorite_border</span>
+</button>
+</div>
+<div class="p-4 flex flex-col flex-1">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2 line-clamp-1">Brownie de Chocolate</h3>
+<div class="flex items-center justify-between text-on-surface-variant font-label-md mt-auto">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-yellow-500 text-sm" style="font-variation-settings: 'FILL' 1;">star</span> 4.8</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> 60 min</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Rápidas e fáceis (Quick and Easy - Horizontal List) -->
+<section class="mb-stack-xl">
+<div class="flex justify-between items-center mb-stack-md">
+<h2 class="font-headline-md text-headline-md text-on-surface">Rápidas e fáceis</h2>
+<a class="text-primary font-label-md hover:underline" href="#">Ver todas</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+<!-- Horizontal Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-3 flex gap-4 shadow-sm border border-surface-variant hover:shadow-md transition-shadow group cursor-pointer items-center">
+<img class="w-24 h-24 rounded-lg object-cover flex-shrink-0" data-alt="A top-down view of a fresh, colorful Salada de Frango Desfiado (Shredded Chicken Salad) in a wide, shallow bowl. The salad includes crisp green lettuce, vibrant cherry tomatoes, sweet corn, and finely shredded cooked chicken, tossed in a light dressing. The lighting is crisp and natural, promoting a healthy, vibrant, and appetizing feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzZCo4xe6Mf4zSXYxW1moogGco8wugiSoq9twASt-5cjvCPXckDwx2w9HOSA15ZeS_5PM78X3CD-Cxxfw5YgI4W9i581cv6vHNp3XeHADURV9e-WJMsVc6D7a-OgvGVjDxdpnw0DMXelASnPeEXddmA7yQdnsdvOVknlW7fKZFBddByLaGgfj9OTFlKXjEUl7T4Ph5f6vbxVWFMWmk2zeDqBPsl1L-6pSFz-_ISpxKd1I7Np6zATJB"/>
+<div class="flex-1">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">Salada de Frango</h3>
+<div class="flex items-center gap-3 text-on-surface-variant font-label-md">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-yellow-500 text-sm" style="font-variation-settings: 'FILL' 1;">star</span> 4.5</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> 20 min</span>
+</div>
+</div>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">favorite_border</span>
+</button>
+</div>
+<!-- Horizontal Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-3 flex gap-4 shadow-sm border border-surface-variant hover:shadow-md transition-shadow group cursor-pointer items-center">
+<img class="w-24 h-24 rounded-lg object-cover flex-shrink-0" data-alt="A comforting bowl of Macarrão Alho e Óleo (Garlic and Oil Pasta). Spaghetti noodles are glistening with olive oil, interspersed with thinly sliced, golden-toasted garlic and flecks of vibrant green parsley. A sprinkle of grated parmesan cheese is visible. The aesthetic is warm, simple, and elegant, shot in a bright kitchen environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVCPxwUJhD0DrEhIIypJRj6GmKWm2O8WZ__veNjkKwQZdACrIclnTd14JXpYbRdlRPvn0SBqOawJ3y5GFYmdrFJ9q3ozt3VPoVmaHzCw7MaXs5EFmGMOYLxyRdpsZ9tJPIISWvROPzewdpvNoxQGFQDnwW4Xu7IO4RSXpuVO-IWmvEpPgizHqZWEX16FyHjzz6yoxjSGMtxJdqIDWxMgKOA_1M9xEDpB6wAObxm-waX3-fxENQz9R_"/>
+<div class="flex-1">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">Macarrão Alho e Óleo</h3>
+<div class="flex items-center gap-3 text-on-surface-variant font-label-md">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-yellow-500 text-sm" style="font-variation-settings: 'FILL' 1;">star</span> 4.6</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> 15 min</span>
+</div>
+</div>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">favorite_border</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+</div>
+<!-- Footer -->
+<footer class="bg-surface-container-highest dark:bg-inverse-surface text-primary dark:text-primary-fixed-dim font-label-md text-label-md w-full mt-stack-xl py-stack-xl px-margin-page border-t border-outline-variant dark:border-outline flat no shadows mt-auto">
+<div class="max-w-[1280px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-stack-lg items-center">
+<div class="flex flex-col items-start gap-2">
+<span class="font-headline-md text-headline-md text-on-surface dark:text-inverse-on-surface">Receita Fácil</span>
+<p class="text-on-surface-variant dark:text-on-tertiary-container">© 2024 Receita Fácil. All rights reserved.</p>
+</div>
+<nav class="flex flex-wrap gap-4 justify-center md:justify-end md:col-span-2">
+<a class="text-primary dark:text-primary-fixed-dim underline hover:opacity-80 transition-opacity underline-offset-4" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant dark:text-on-tertiary-container hover:text-on-surface transition-colors hover:opacity-80 transition-opacity underline-offset-4" href="#">Terms of Service</a>
+<a class="text-on-surface-variant dark:text-on-tertiary-container hover:text-on-surface transition-colors hover:opacity-80 transition-opacity underline-offset-4" href="#">Contact Us</a>
+<a class="text-on-surface-variant dark:text-on-tertiary-container hover:text-on-surface transition-colors hover:opacity-80 transition-opacity underline-offset-4" href="#">About Us</a>
+</nav>
+</div>
+</footer>
+<!-- Mobile Bottom Navigation Shell (Would be visible on mobile, hidden here per desktop instruction, but included for complete semantic shell compliance if viewport changes) -->
+<div class="md:hidden fixed bottom-0 w-full bg-surface-container-lowest border-t border-surface-variant shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-50 flex justify-around items-center py-2 pb-safe">
+<a class="flex flex-col items-center p-2 text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-sm mt-1">Início</span>
+</a>
+<a class="flex flex-col items-center p-2 text-on-surface-variant hover:text-primary" href="#">
+<span class="material-symbols-outlined">favorite</span>
+<span class="font-label-sm mt-1">Favoritos</span>
+</a>
+<div class="relative -top-5">
+<button class="bg-primary text-on-primary w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-primary-container hover:text-on-primary-container transition-colors">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+</div>
+<a class="flex flex-col items-center p-2 text-on-surface-variant hover:text-primary" href="#">
+<span class="material-symbols-outlined">restaurant_menu</span>
+<span class="font-label-sm mt-1">Receitas</span>
+</a>
+<a class="flex flex-col items-center p-2 text-on-surface-variant hover:text-primary" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm mt-1">Perfil</span>
+</a>
+</div>
+</body></html>
