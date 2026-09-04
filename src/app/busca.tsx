@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, useWindowDimensions } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -8,8 +8,7 @@ import { Carregamento } from "../componentes/Carregamento";
 import { EstadoVazio } from "../componentes/EstadoVazio";
 import { TopBar } from "../componentes/TopBar";
 import { BottomNav } from "../componentes/BottomNav";
-import { Sidebar } from "../componentes/Sidebar";
-import { buscarReceitas, buscarReceitasPorIngrediente } from "../servicos/api";
+import { buscarReceitas, buscarReceitasPorIngrediente, filtrarReceitasPorCategoria } from "../servicos/api";
 import { Receita } from "../tipos/receita";
 import { useFavoritos } from "../hooks/useFavoritos";
 import { cores } from "../tema/cores";
@@ -17,6 +16,42 @@ import { espacamentos, arredondamento } from "../tema/espacamentos";
 
 type Filtro = "Todas" | "Receitas" | "Ingredientes" | "Categorias";
 const filtros: Filtro[] = ["Todas", "Receitas", "Ingredientes", "Categorias"];
+
+// Tradução PT -> EN para TheMealDB (inglês)
+const TRADUCAO: Record<string, string> = {
+  frango: "chicken",
+  carne: "beef",
+  porco: "pork",
+  peixe: "seafood",
+  sobremesa: "dessert",
+  massa: "pasta",
+  salada: "salad",
+};
+
+function traduzirTermo(t: string): string {
+  const low = t.toLowerCase().trim();
+  return TRADUCAO[low] ?? t;
+}
+
+// Tempo mockado (TheMealDB não tem tempo) — gera 20-70 min a partir do id
+function tempoDaReceita(r: Receita): number {
+  const n = parseInt(r.idMeal.slice(-2), 10) || 0;
+  return 20 + (n % 50); // 20-69
+}
+function filtraTempo(r: Receita, filtro: string | null): boolean {
+  if (!filtro) return true;
+  const t = tempoDaReceita(r);
+  if (filtro === "Até 30 min") return t <= 30;
+  if (filtro === "30 a 60 min") return t > 30 && t <= 60;
+  if (filtro === "Mais de 60 min") return t > 60;
+  return true;
+}
+function filtraCategoria(r: Receita, cat: string): boolean {
+  if (cat === "Todas") return true;
+  if (cat === "Prato Principal") return ["Chicken", "Beef", "Pork", "Lamb"].includes(r.strCategory);
+  if (cat === "Saladas") return ["Starter", "Side", "Vegetarian", "Vegan"].includes(r.strCategory);
+  return r.strCategory === cat;
+}
 
 export default function Busca() {
   const router = useRouter();
@@ -31,6 +66,12 @@ export default function Busca() {
   const [erro, setErro] = useState<string | null>(null);
   const { isFavorito, alternarFavorito } = useFavoritos();
   const [catFiltro, setCatFiltro] = useState<string>("Todas");
+  const [tempoFiltro, setTempoFiltro] = useState<string | null>(null);
+
+  // Resultados filtrados (sidebar) — derivado de resultados crus
+  const exibidos = useMemo(() => {
+    return resultados.filter((r) => filtraCategoria(r, catFiltro) && filtraTempo(r, tempoFiltro));
+  }, [resultados, catFiltro, tempoFiltro]);
 
   async function executarBusca(q: string, f: Filtro = filtro) {
     const t = q.trim();
@@ -38,13 +79,34 @@ export default function Busca() {
     setCarregando(true);
     setErro(null);
     try {
+      const termoEn = traduzirTermo(t);
       if (f === "Ingredientes") {
-        const resumos = await buscarReceitasPorIngrediente(t);
+        const resumos = await buscarReceitasPorIngrediente(termoEn);
         const detalhes = await Promise.all(resumos.slice(0, 9).map((r) => buscarReceitas(r.strMeal).then((a) => a[0]).catch(() => null)));
-        setResultados(detalhes.filter(Boolean) as Receita[]);
+        const validos = detalhes.filter(Boolean) as Receita[];
+        // fallback: se nada por ingrediente, tenta por nome
+        if (validos.length === 0) {
+          const porNome = await buscarReceitas(termoEn);
+          setResultados(porNome);
+        } else setResultados(validos);
+      } else if (f === "Categorias") {
+        const resumos = await filtrarReceitasPorCategoria(termoEn);
+        if (resumos.length > 0) {
+          const detalhes = await Promise.all(resumos.slice(0, 9).map((r) => buscarReceitas(r.strMeal).then((a) => a[0]).catch(() => null)));
+          setResultados(detalhes.filter(Boolean) as Receita[]);
+        } else {
+          // tenta busca por nome como fallback
+          const porNome = await buscarReceitas(termoEn);
+          setResultados(porNome.filter((r) => r.strCategory.toLowerCase().includes(termoEn.toLowerCase())));
+        }
       } else {
-        const res = await buscarReceitas(t);
-        setResultados(res);
+        // Todas / Receitas -> busca por nome (com tradução)
+        const porNome = await buscarReceitas(termoEn);
+        // se nada e termo era PT, tenta termo original também
+        if (porNome.length === 0 && termoEn !== t) {
+          const orig = await buscarReceitas(t);
+          setResultados(orig);
+        } else setResultados(porNome);
       }
     } catch (e: unknown) {
       const m = (e as { mensagem?: string })?.mensagem ?? "Erro ao buscar.";
@@ -56,8 +118,9 @@ export default function Busca() {
     if (termoInicial) { setTermo(termoInicial); executarBusca(termoInicial); }
   }, [termoInicial]);
 
-  function handleBuscar(novo: string) { setTermo(novo); executarBusca(novo); }
+  function handleBuscar(novo: string) { setTermo(novo); setCatFiltro("Todas"); setTempoFiltro(null); executarBusca(novo); }
   function handleFiltroPress(f: Filtro) { setFiltro(f); if (termo) executarBusca(termo, f); }
+  function limparFiltros() { setCatFiltro("Todas"); setTempoFiltro(null); setFiltro("Todas"); }
 
   const header = (
     <View style={styles.header}>
@@ -72,7 +135,7 @@ export default function Busca() {
       {termo ? (
         <View style={styles.resultHeader}>
           <Text style={styles.titulo}>Resultados para "{termo}"</Text>
-          <Text style={styles.count}>{resultados.length} receitas</Text>
+          <Text style={styles.count}>{exibidos.length} receitas</Text>
         </View>
       ) : null}
     </View>
@@ -82,13 +145,13 @@ export default function Busca() {
     <Carregamento mensagem="Buscando receitas..." />
   ) : erro ? (
     <EstadoVazio titulo="Erro" mensagem={erro} acaoTexto="Tentar novamente" onAcao={() => executarBusca(termo)} icon="⚠️" />
-  ) : resultados.length === 0 && termo ? (
-    <EstadoVazio titulo="Nenhum resultado" mensagem={`Não encontramos receitas para "${termo}".`} icon="🔎" />
-  ) : resultados.length === 0 ? (
+  ) : exibidos.length === 0 && termo ? (
+    <EstadoVazio titulo="Nenhum resultado" mensagem={`Não encontramos receitas para "${termo}". Tente "chicken" ou "pasta".`} icon="🔎" />
+  ) : exibidos.length === 0 ? (
     <EstadoVazio titulo="Busque receitas" mensagem="Digite um nome ou ingrediente acima." icon="🍳" />
   ) : (
     <View style={[styles.grid, isDesktop && styles.gridDesktop]}>
-      {resultados.map((r) => (
+      {exibidos.map((r) => (
         <View key={r.idMeal} style={isDesktop ? styles.cardDesktop : styles.cardMobile}>
           <CartaoReceita
             id={r.idMeal}
@@ -114,29 +177,29 @@ export default function Busca() {
             <View style={styles.filterGroup}>
               <Text style={styles.filterLabel}>CATEGORIA</Text>
               {["Todas", "Prato Principal", "Saladas"].map((c) => (
-                <TouchableOpacity key={c} style={styles.checkRow} onPress={() => setCatFiltro(c)}>
+                <TouchableOpacity key={c} style={styles.checkRow} onPress={() => setCatFiltro(c)} activeOpacity={0.7}>
                   <View style={[styles.check, catFiltro === c && styles.checkActive]}>{catFiltro === c && <Text style={styles.checkMark}>✓</Text>}</View>
-                  <Text style={styles.checkText}>{c}</Text>
+                  <Text style={[styles.checkText, catFiltro === c && styles.checkTextActive]}>{c}</Text>
                 </TouchableOpacity>
               ))}
             </View>
             <View style={styles.filterGroup}>
               <Text style={styles.filterLabel}>TEMPO DE PREPARO</Text>
               {["Até 30 min", "30 a 60 min", "Mais de 60 min"].map((c) => (
-                <TouchableOpacity key={c} style={styles.checkRow}>
-                  <View style={styles.radio} />
-                  <Text style={styles.checkText}>{c}</Text>
+                <TouchableOpacity key={c} style={styles.checkRow} onPress={() => setTempoFiltro((prev) => (prev === c ? null : c))} activeOpacity={0.7}>
+                  <View style={[styles.radio, tempoFiltro === c && styles.radioActive]}>{tempoFiltro === c && <View style={styles.radioDot} />}</View>
+                  <Text style={[styles.checkText, tempoFiltro === c && styles.checkTextActive]}>{c}</Text>
                 </TouchableOpacity>
               ))}
             </View>
-            <TouchableOpacity style={styles.limparBtn}><Text style={styles.limparText}>Limpar Filtros</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.limparBtn} onPress={limparFiltros} activeOpacity={0.8}><Text style={styles.limparText}>Limpar Filtros</Text></TouchableOpacity>
           </View>
 
           <ScrollView style={styles.desktopMain} contentContainerStyle={styles.desktopMainContent}>
             {header}
             {list}
-            {resultados.length > 0 && (
-              <TouchableOpacity style={styles.carregarMais} activeOpacity={0.8}><Text style={styles.carregarText}>Carregar Mais</Text></TouchableOpacity>
+            {exibidos.length > 0 && (
+              <TouchableOpacity style={styles.carregarMais} activeOpacity={0.8} onPress={() => executarBusca(termo)}><Text style={styles.carregarText}>Carregar Mais</Text></TouchableOpacity>
             )}
           </ScrollView>
         </View>
@@ -181,7 +244,11 @@ const styles = StyleSheet.create({
   check: { width: 18, height: 18, borderRadius: 4, borderWidth: 1, borderColor: cores.outline, alignItems: "center", justifyContent: "center" },
   checkActive: { backgroundColor: cores.primary, borderColor: cores.primary },
   checkMark: { color: cores.onPrimary, fontSize: 10, fontFamily: "BeVietnamPro_700Bold" },
-  radio: { width: 18, height: 18, borderRadius: 9, borderWidth: 1, borderColor: cores.outline },
+  checkText: { fontFamily: "BeVietnamPro_400Regular", fontSize: 13, color: cores.onSurface },
+  checkTextActive: { color: cores.primary, fontFamily: "BeVietnamPro_600SemiBold" },
+  radio: { width: 18, height: 18, borderRadius: 9, borderWidth: 1, borderColor: cores.outline, alignItems: "center", justifyContent: "center" },
+  radioActive: { borderColor: cores.primary, borderWidth: 2 },
+  radioDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: cores.primary },
   limparBtn: { borderWidth: 1, borderColor: cores.outlineVariant, borderRadius: 9999, paddingVertical: 10, alignItems: "center", marginTop: 8 },
   limparText: { color: cores.primary, fontFamily: "BeVietnamPro_600SemiBold", fontSize: 13 },
   desktopMain: { flex: 1 },
