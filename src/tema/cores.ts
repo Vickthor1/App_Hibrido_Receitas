@@ -1,67 +1,68 @@
-// Paleta warm_culinary — DESIGN.md
+// Paleta Dark Editorial — Gótico Vitoriano (sóbrio, não gamer)
+// Preto/quase preto para fundos, off-white para textos, vermelho escuro como accent
 export const cores = {
-  // Brand
-  primary: "#ab3500", // Paprika Orange — mobile (protótipo)
-  primaryDesktop: "#832600", // desktop variant
-  onPrimary: "#ffffff",
-  primaryContainer: "#ff6b35", // Terracotta
-  onPrimaryContainer: "#5f1900",
-  primaryFixed: "#ffdbd0",
-  primaryFixedDim: "#ffb59d",
-  onPrimaryFixed: "#390c00",
-  onPrimaryFixedVariant: "#832600",
+  // Brand - dark
+  primary: "#8B0000", // dark red accent (não dominante)
+  primaryHover: "#6B0000",
+  onPrimary: "#F5F1E8",
+  primaryContainer: "#1A1A1A",
+  onPrimaryContainer: "#F5F1E8",
+  primaryFixed: "#2A0A0A",
+  primaryFixedDim: "#5A1A1A",
+  onPrimaryFixed: "#F5F1E8",
+  onPrimaryFixedVariant: "#8B0000",
 
-  // Background / Surface
-  background: "#f8f9ff",
-  onBackground: "#151c26",
-  surface: "#f8f9ff",
-  onSurface: "#151c26",
-  onSurfaceVariant: "#594139",
-  surfaceVariant: "#dce3f2",
-  surfaceDim: "#d3dae9",
-  surfaceBright: "#f8f9ff",
-  surfaceContainer: "#e7eefd",
-  surfaceContainerLow: "#eff3ff",
-  surfaceContainerLowest: "#ffffff",
-  surfaceContainerHigh: "#e2e8f7",
-  surfaceContainerHighest: "#dce3f2",
-  surfaceTint: "#ab3500",
+  // Background / Surface — dark editorial
+  background: "#0A0A0A",
+  onBackground: "#F5F1E8",
+  surface: "#111111",
+  onSurface: "#F5F1E8",
+  onSurfaceVariant: "#A0A0A0",
+  surfaceVariant: "#2A2A2A",
+  surfaceDim: "#0F0F0F",
+  surfaceBright: "#1A1A1A",
+  surfaceContainer: "#1E1E1E",
+  surfaceContainerLow: "#161616",
+  surfaceContainerLowest: "#111111",
+  surfaceContainerHigh: "#252525",
+  surfaceContainerHighest: "#2E2E2E",
+  surfaceTint: "#8B0000",
 
-  // Secondary / Tertiary
-  secondary: "#5d5e61",
-  onSecondary: "#ffffff",
-  secondaryContainer: "#e0dfe3",
-  onSecondaryContainer: "#616265",
-  secondaryFixed: "#e2e2e5",
-  secondaryFixedDim: "#c6c6c9",
-  onSecondaryFixed: "#1a1c1e",
-  onSecondaryFixedVariant: "#45474a",
-  tertiary: "#444748",
-  onTertiary: "#ffffff",
-  tertiaryContainer: "#5c5f60",
-  onTertiaryContainer: "#d7d9da",
-  tertiaryFixed: "#e1e3e4",
-  tertiaryFixedDim: "#c5c7c8",
-  onTertiaryFixed: "#191c1d",
-  onTertiaryFixedVariant: "#444748",
+  // Secondary / Tertiary — cinzas desaturados
+  secondary: "#6B6B6B",
+  onSecondary: "#F5F1E8",
+  secondaryContainer: "#2A2A2A",
+  onSecondaryContainer: "#D0D0D0",
+  secondaryFixed: "#333333",
+  secondaryFixedDim: "#4A4A4A",
+  onSecondaryFixed: "#F5F1E8",
+  onSecondaryFixedVariant: "#9A9A9A",
+  tertiary: "#4A4A4A",
+  onTertiary: "#F5F1E8",
+  tertiaryContainer: "#222222",
+  onTertiaryContainer: "#C0C0C0",
+  tertiaryFixed: "#2A2A2A",
+  tertiaryFixedDim: "#3A3A3A",
+  onTertiaryFixed: "#F5F1E8",
+  onTertiaryFixedVariant: "#8A8A8A",
 
   // Outline / Error
-  outline: "#8d7168",
-  outlineVariant: "#e1bfb5",
-  outlineWarm: "#8d7168",
-  error: "#ba1a1a",
-  onError: "#ffffff",
-  errorContainer: "#ffdad6",
-  onErrorContainer: "#93000a",
+  outline: "#3A3A3A",
+  outlineVariant: "#2A2A2A",
+  outlineWarm: "#3A3A3A",
+  error: "#8B0000",
+  onError: "#F5F1E8",
+  errorContainer: "#2A0A0A",
+  onErrorContainer: "#FF8A80",
 
   // Inverse
-  inverseSurface: "#2a313c",
-  inverseOnSurface: "#ebf1ff",
-  inversePrimary: "#ffb59d",
+  inverseSurface: "#F5F1E8",
+  inverseOnSurface: "#0A0A0A",
+  inversePrimary: "#8B0000",
 
   // Accent
-  star: "#FFB02E",
-  warmSurface: "#f8f9ff",
+  star: "#C9A86A", // dourado muted, não amarelo neon
+  warmSurface: "#0A0A0A",
 } as const;
 
 export type Cores = typeof cores;
