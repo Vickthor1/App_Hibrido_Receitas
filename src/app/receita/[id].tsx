@@ -17,6 +17,8 @@ export default function ReceitaDetalhes() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { isFavorito, alternarFavorito } = useFavoritos();
+  const { width } = useWindowDimensions();
+  const isDesktop = width >= 768;
 
   const [receita, setReceita] = useState<Receita | null>(null);
   const [ingredientes, setIngredientes] = useState<Ingrediente[]>([]);
@@ -52,9 +54,7 @@ export default function ReceitaDetalhes() {
     </SafeAreaView>
   );
 
-  const fav = isFavorito(receita.idMeal);
-  const { width } = useWindowDimensions();
-  const isDesktop = width >= 768;
+  const fav = receita ? isFavorito(receita.idMeal) : false;
 
   return (
     <SafeAreaView style={styles.safe}>
