@@ -41,7 +41,7 @@ npx expo export --platform web # gera dist/
 ## 🌐 Deploy Vercel
 `vercel.json` com `buildCommand: npx expo export --platform web` + `outputDirectory: dist` + headers `HSTS/CSP`. Conectado em `main`/`Front-end`, env vars `EXPO_PUBLIC_SUPABASE_*` em `Vercel → Settings → Env Vars`.
 
-## 📂 Estrutura
+## 📂 Estrutura do Codigo
 ```
 src/app/{index,busca,receita/[id],favoritos,categorias,perfil,login,adicionar,_layout}
 src/componentes/{BarraPesquisa,CartaoReceita,CartaoCategorias,Carregamento,EstadoVazio,TopBar,BottomNav,Sidebar}
