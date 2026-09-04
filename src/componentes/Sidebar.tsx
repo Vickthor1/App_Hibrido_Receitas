@@ -51,12 +51,12 @@ export function Sidebar() {
 
 const styles = StyleSheet.create({
   wrap: {
-    width: 280,
+    width: 260,
     backgroundColor: cores.surfaceContainerLow,
     borderRightWidth: 1,
-    borderRightColor: cores.outlineVariant + "40",
-    padding: espacamentos.page,
-    gap: 24,
+    borderRightColor: cores.outlineVariant + "30",
+    padding: 16,
+    gap: 20,
     alignSelf: "stretch",
   },
   menu: { gap: 4, flex: 1 },

@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, useWindowDimensions } from "react-native";
 import { useRouter, usePathname } from "expo-router";
+import { useAuth } from "../contexto/AuthContext";
 import { cores } from "../tema/cores";
 import { espacamentos } from "../tema/espacamentos";
 import { useState } from "react";
@@ -9,6 +10,7 @@ export function TopBar({ titulo }: { titulo?: string }) {
   const isDesktop = width >= 768;
   const router = useRouter();
   const pathname = usePathname();
+  const { isAutenticado } = useAuth();
   const [q, setQ] = useState("");
 
   function go(href: string) {
@@ -51,7 +53,7 @@ export function TopBar({ titulo }: { titulo?: string }) {
           </View>
 
           <View style={styles.right}>
-            <TouchableOpacity style={styles.addBtn} onPress={() => go("/adicionar")} activeOpacity={0.85}><Text style={styles.addText}>+ Adicionar Receita</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.addBtn} onPress={() => go(isAutenticado ? "/adicionar" : "/login")} activeOpacity={0.85}><Text style={styles.addText}>+ Adicionar Receita</Text></TouchableOpacity>
             <TouchableOpacity onPress={() => go("/favoritos")} style={styles.iconBtn}><Text style={styles.icon}>♡</Text><Text style={styles.iconLabel}>Favoritos</Text></TouchableOpacity>
             <TouchableOpacity style={styles.iconBtn}><Text style={styles.icon}>🔔</Text></TouchableOpacity>
             <TouchableOpacity onPress={() => go("/perfil")} style={styles.avatarBtn}><Text style={styles.avatarTxt}>◯</Text></TouchableOpacity>
@@ -94,9 +96,9 @@ const styles = StyleSheet.create({
   desktop: {
     backgroundColor: cores.surfaceContainerLowest,
     borderBottomWidth: 1,
-    borderBottomColor: cores.outlineVariant + "40",
+    borderBottomColor: cores.outlineVariant + "30",
     paddingHorizontal: espacamentos.page,
-    height: 64,
+    height: 56,
     justifyContent: "center",
   },
   desktopInner: { maxWidth: 1280, width: "100%", alignSelf: "center", flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 16 },
@@ -104,13 +106,13 @@ const styles = StyleSheet.create({
   logo: { fontFamily: "BeVietnamPro_700Bold", fontSize: 20, color: cores.primary, letterSpacing: -0.3 },
   searchPill: {
     flex: 1,
-    maxWidth: 380,
+    maxWidth: 360,
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: cores.surfaceContainerLow,
     borderRadius: 9999,
-    height: 40,
-    paddingHorizontal: 14,
+    height: 36,
+    paddingHorizontal: 12,
     gap: 8,
     borderWidth: 1,
     borderColor: cores.surfaceVariant,

@@ -1,5 +1,6 @@
 import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions } from "react-native";
 import { useRouter, usePathname } from "expo-router";
+import { useAuth } from "../contexto/AuthContext";
 import { cores } from "../tema/cores";
 
 const tabs = [
@@ -15,6 +16,7 @@ export function BottomNav() {
   const pathname = usePathname();
   const { width } = useWindowDimensions();
   const isDesktop = width >= 768;
+  const { isAutenticado } = useAuth();
 
   if (isDesktop) return null;
   if (pathname?.startsWith("/receita/")) return null;
@@ -24,8 +26,9 @@ export function BottomNav() {
       <View style={styles.bar}>
         {tabs.map((t) => {
           if (t.fab) {
+            const href = isAutenticado ? t.href : "/login";
             return (
-              <TouchableOpacity key={t.label} onPress={() => router.push(t.href as never)} style={styles.fabWrap} activeOpacity={0.85}>
+              <TouchableOpacity key={t.label} onPress={() => router.push(href as never)} style={styles.fabWrap} activeOpacity={0.85}>
                 <View style={styles.fab}><Text style={styles.fabIcon}>{t.icon}</Text></View>
               </TouchableOpacity>
             );
