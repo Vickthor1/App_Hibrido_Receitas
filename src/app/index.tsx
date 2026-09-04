@@ -33,17 +33,23 @@ export default function Inicio() {
     setErro(null);
     try {
       const [cats, todas] = await Promise.all([buscarCategorias(), listarReceitasDisponiveis()]);
-      setCategorias(cats.slice(0, 8));
-      if (todas.length > 0) {
-        setDestaque(todas[0]);
-        setMaisAmadas(todas.slice(1, 5));
-        setRapidas(todas.slice(5, 9));
+      const catsArray = Array.isArray(cats) ? cats : [];
+      const todasArray = Array.isArray(todas) ? todas : [];
+      setCategorias(catsArray.slice(0, 8));
+      if (todasArray.length > 0) {
+        setDestaque(todasArray[0]);
+        setMaisAmadas(todasArray.slice(1, 5));
+        setRapidas(todasArray.slice(5, 9));
+      } else {
+        setMaisAmadas([]);
+        setRapidas([]);
       }
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Erro ao carregar receitas.";
-      // tenta extrair mensagem de ErroApi
       const m = (e as { mensagem?: string })?.mensagem ?? msg;
       setErro(m);
+      setMaisAmadas([]);
+      setRapidas([]);
     } finally {
       setCarregando(false);
       setRefreshing(false);
@@ -137,7 +143,7 @@ export default function Inicio() {
             <TouchableOpacity onPress={() => router.push("/categorias" as never)}><Text style={styles.verTodas}>Ver todas</Text></TouchableOpacity>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingRight: espacamentos.page }}>
-            {categorias.map((c) => (
+            {(Array.isArray(categorias) ? categorias : []).map((c) => (
               <CartaoCategorias key={c.idCategory} nome={c.strCategory} ativo={categoriaAtiva === c.strCategory} onPress={() => handleCategoriaPress(c.strCategory)} />
             ))}
           </ScrollView>
@@ -150,7 +156,7 @@ export default function Inicio() {
             <TouchableOpacity onPress={() => router.push(`/busca?termo=` as never)}><Text style={styles.verTodas}>Ver todas</Text></TouchableOpacity>
           </View>
           <View style={styles.grid}>
-            {maisAmadas.map((r) => (
+            {(Array.isArray(maisAmadas) ? maisAmadas : []).map((r) => (
               <View key={r.idMeal} style={styles.gridItem}>
                 <CartaoReceita id={r.idMeal} titulo={r.strMeal} imagem={r.strMealThumb} favoritado={isFavorito(r.idMeal)} onPress={() => handleReceitaPress(r.idMeal)} onFavoritar={() => alternarFavorito(r)} />
               </View>
@@ -164,10 +170,10 @@ export default function Inicio() {
             <Text style={styles.secaoTitulo}>Rápidas e fáceis</Text>
           </View>
           <View style={{ gap: 12 }}>
-            {rapidas.map((r) => (
+            {(Array.isArray(rapidas) ? rapidas : []).map((r) => (
               <CartaoReceita key={r.idMeal} id={r.idMeal} titulo={r.strMeal} imagem={r.strMealThumb} variante="horizontal" favoritado={isFavorito(r.idMeal)} onPress={() => handleReceitaPress(r.idMeal)} onFavoritar={() => alternarFavorito(r)} />
             ))}
-            {rapidas.length === 0 && <EstadoVazio mensagem="Nenhuma receita rápida encontrada." icon="⏱️" />}
+            {(Array.isArray(rapidas) ? rapidas : []).length === 0 && <EstadoVazio mensagem="Nenhuma receita rápida encontrada." icon="⏱️" />}
           </View>
         </View>
       </ScrollView>

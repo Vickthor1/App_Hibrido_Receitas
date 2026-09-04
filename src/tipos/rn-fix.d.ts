@@ -1,14 +1,22 @@
-import * as RN from "react-native";
-import * as React from "react";
+import "react-native";
 
 declare module "react-native" {
-  export const View: React.FC<RN.ViewProps>;
-  export const Text: React.FC<RN.TextProps>;
-  export const Image: React.FC<RN.ImageProps>;
-  export const ScrollView: React.FC<RN.ScrollViewProps>;
-  export const TouchableOpacity: React.FC<RN.TouchableOpacityProps>;
-  export const TextInput: React.FC<RN.TextInputProps>;
-  export const ActivityIndicator: React.FC<RN.ActivityIndicatorProps>;
-  export const RefreshControl: React.FC<RN.RefreshControlProps>;
-  export const SafeAreaView: React.FC<RN.ViewProps>;
+  export const View: unknown;
+  export const Text: unknown;
+  export const Image: unknown;
+  export const ScrollView: unknown;
+  export const TouchableOpacity: unknown;
+  export const TextInput: unknown;
+  export const ActivityIndicator: unknown;
+  export const RefreshControl: unknown;
+  export const SafeAreaView: unknown;
+}
+
+declare global {
+  namespace JSX {
+    interface Element extends import("react").ReactElement<unknown, string> {}
+    interface IntrinsicElements {
+      [elemName: string]: unknown;
+    }
+  }
 }

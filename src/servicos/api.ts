@@ -30,9 +30,14 @@ function montarUrl(path: string, params?: Record<string, string>): string {
   const url = new URL(`${BASE_URL}${path}`);
   if (params) {
     Object.entries(params).forEach(([k, v]) => {
-      if (v !== undefined && v !== null && String(v).trim() !== "") {
-        url.searchParams.set(k, String(v).trim());
+      if (v === undefined || v === null) return;
+      // permite s="" para listar todas (search.php?s=)
+      if (k === "s" && v === "") {
+        url.searchParams.set(k, "");
+        return;
       }
+      if (String(v).trim() === "") return;
+      url.searchParams.set(k, String(v).trim());
     });
   }
   return url.toString();
