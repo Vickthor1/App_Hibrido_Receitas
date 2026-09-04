@@ -1,5 +1,4 @@
 {
-  "framework": "vite",
   "buildCommand": "npx expo export --platform web",
   "outputDirectory": "dist",
   "headers": [
