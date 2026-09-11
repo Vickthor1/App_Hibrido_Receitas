@@ -211,3 +211,4 @@ const styles = StyleSheet.create({
   footerTitle: { fontFamily: "BeVietnamPro_700Bold", fontSize: 13, color: cores.onSurface },
   footerText: { fontFamily: "BeVietnamPro_400Regular", fontSize: 11, color: cores.onSurfaceVariant },
 });
+
