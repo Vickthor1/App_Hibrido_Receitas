@@ -44,7 +44,13 @@ export default function Perfil() {
         <View style={styles.stat}><Text style={styles.statVal}>48</Text><Text style={styles.statLabel}>CRIADAS</Text></View>
         <View style={styles.stat}><Text style={styles.statVal}>4.9 ★</Text><Text style={styles.statLabel}>AVALIAÇÃO</Text></View>
       </View>
-      <TouchableOpacity style={styles.editBtn} activeOpacity={0.8}><Text style={styles.editText}>Editar Perfil</Text></TouchableOpacity>
+      <TouchableOpacity
+  style={styles.editBtn}
+  activeOpacity={0.8}
+  onPress={() => router.push("/editar-perfil")}
+>
+  <Text style={styles.editText}>Editar Perfil</Text>
+</TouchableOpacity>
       <TouchableOpacity style={styles.logoutBtn} onPress={logout}><Text style={styles.logoutText}>Sair</Text></TouchableOpacity>
     </View>
   );
