@@ -5,10 +5,16 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../contexto/AuthContext";
 import { cores } from "../tema/cores";
 
@@ -16,50 +22,157 @@ export default function EditarPerfil() {
   const router = useRouter();
   const { user } = useAuth();
 
-  const [nome, setNome] = useState(user?.nome ?? "");
-  const [email, setEmail] = useState(user?.email ?? "");
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [salvando, setSalvando] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setNome(user.nome ?? "");
+      setEmail(user.email ?? "");
+    }
+  }, [user]);
+
+  const salvarPerfil = async () => {
+    const nomeTratado = nome.trim();
+    const emailTratado = email.trim().toLowerCase();
+
+    if (!nomeTratado) {
+      Alert.alert("Atenção", "Digite seu nome.");
+      return;
+    }
+
+    if (!emailTratado) {
+      Alert.alert("Atenção", "Digite seu e-mail.");
+      return;
+    }
+
+    const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTratado);
+
+    if (!emailValido) {
+      Alert.alert("Atenção", "Digite um e-mail válido.");
+      return;
+    }
+
+    try {
+      setSalvando(true);
+
+      // TODO:
+      // Aqui você chama sua API / banco / Firebase
+      // await atualizarPerfil({
+      //   nome: nomeTratado,
+      //   email: emailTratado,
+      // });
+
+      console.log("Nome:", nomeTratado);
+      console.log("Email:", emailTratado);
+
+      Alert.alert(
+        "Perfil atualizado",
+        "Suas informações foram salvas com sucesso.",
+        [
+          {
+            text: "OK",
+            onPress: () => router.back(),
+          },
+        ]
+      );
+    } catch (error) {
+      console.error("Erro ao salvar perfil:", error);
+
+      Alert.alert(
+        "Erro",
+        "Não foi possível salvar suas alterações. Tente novamente."
+      );
+    } finally {
+      setSalvando(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safe}>
-      <ScrollView contentContainerStyle={styles.container}>
-        
-        <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.voltar}>← Voltar</Text>
-        </TouchableOpacity>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView
+            contentContainerStyle={styles.container}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={styles.botaoVoltar}
+              accessibilityRole="button"
+              accessibilityLabel="Voltar"
+            >
+              <Text style={styles.voltar}>← Voltar</Text>
+            </TouchableOpacity>
 
-        <Text style={styles.titulo}>Editar Perfil</Text>
+            <View style={styles.header}>
+              <Text style={styles.titulo}>Editar Perfil</Text>
+              <Text style={styles.subtitulo}>
+                Atualize suas informações pessoais.
+              </Text>
+            </View>
 
-        <Text style={styles.label}>Nome</Text>
-        <TextInput
-          style={styles.input}
-          value={nome}
-          onChangeText={setNome}
-          placeholder="Digite seu nome"
-          placeholderTextColor="#777"
-        />
+            <View style={styles.form}>
+              <View style={styles.campo}>
+                <Text style={styles.label}>Nome</Text>
 
-        <Text style={styles.label}>E-mail</Text>
-        <TextInput
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-          placeholder="Digite seu e-mail"
-          placeholderTextColor="#777"
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
+                <TextInput
+                  style={styles.input}
+                  value={nome}
+                  onChangeText={setNome}
+                  placeholder="Digite seu nome"
+                  placeholderTextColor="#999"
+                  autoCapitalize="words"
+                  returnKeyType="next"
+                  accessibilityLabel="Nome"
+                />
+              </View>
 
-        <TouchableOpacity
-          style={styles.botao}
-          onPress={() => {
-            console.log("Nome:", nome);
-            console.log("Email:", email);
-          }}
-        >
-          <Text style={styles.botaoTexto}>SALVAR ALTERAÇÕES</Text>
-        </TouchableOpacity>
+              <View style={styles.campo}>
+                <Text style={styles.label}>E-mail</Text>
 
-      </ScrollView>
+                <TextInput
+                  style={styles.input}
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="Digite seu e-mail"
+                  placeholderTextColor="#999"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  returnKeyType="done"
+                  accessibilityLabel="E-mail"
+                />
+              </View>
+
+              <TouchableOpacity
+                style={[
+                  styles.botao,
+                  salvando && styles.botaoDesabilitado,
+                ]}
+                onPress={salvarPerfil}
+                disabled={salvando}
+                activeOpacity={0.8}
+                accessibilityRole="button"
+                accessibilityLabel="Salvar alterações"
+              >
+                {salvando ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.botaoTexto}>
+                    SALVAR ALTERAÇÕES
+                  </Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -70,52 +183,26 @@ const styles = StyleSheet.create({
     backgroundColor: cores.background,
   },
 
+  flex: {
+    flex: 1,
+  },
+
   container: {
     padding: 24,
-    gap: 10,
+    paddingBottom: 40,
+  },
+
+  botaoVoltar: {
+    alignSelf: "flex-start",
+    paddingVertical: 6,
+    paddingRight: 12,
+    marginBottom: 20,
   },
 
   voltar: {
     color: cores.primary,
-    fontSize: 14,
-    marginBottom: 20,
+    fontSize: 15,
+    fontWeight: "600",
   },
 
-  titulo: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: cores.onSurface,
-    marginBottom: 20,
-  },
-
-  label: {
-    fontSize: 14,
-    color: cores.onSurfaceVariant,
-    marginTop: 10,
-  },
-
-  input: {
-    backgroundColor: "#f0f0f0",
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    height: 46,
-    paddingHorizontal: 14,
-    fontSize: 14,
-    color: "#000000",
-  },
-
-  botao: {
-    backgroundColor: cores.primary,
-    borderRadius: 999,
-    height: 46,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 20,
-  },
-
-  botaoTexto: {
-    color: "#fff",
-    fontWeight: "700",
-  },
-});
+  header
