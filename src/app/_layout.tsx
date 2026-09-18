@@ -47,6 +47,12 @@ export default function RootLayout() {
           <Stack.Screen name="perfil" />
           <Stack.Screen name="login" options={{ animation: "slide_from_bottom" }} />
           <Stack.Screen name="adicionar" options={{ animation: "slide_from_bottom" }} />
+          <Stack.Screen name="ajuda" />
+          <Stack.Screen name="notificacoes" />
+          <Stack.Screen name="privacidade" />
+          <Stack.Screen name="minhas-receitas" />
+          <Stack.Screen name="avaliacoes" />
+          <Stack.Screen name="configuracoes" />
           <Stack.Screen name="receita/[id]" />
         </Stack>
       </AuthProvider>

@@ -3,7 +3,7 @@ import { supabase, isSupabaseConfigured } from "../lib/supabase";
 import { checkRateLimit, validarEmail, validarSenha } from "../utils/seguranca";
 import { getItemSeguro, setItemSeguro, removeItemSeguro } from "../utils/storageSeguro";
 
-type User = { id: string; email: string; nome: string };
+type User = { id: string; email: string; nome: string; avatarUrl?: string | null };
 
 type AuthState = {
   user: User | null;
@@ -13,6 +13,7 @@ type AuthState = {
   login: (email: string, senha: string) => Promise<{ ok: boolean; erro?: string }>;
   registrar: (nome: string, email: string, senha: string) => Promise<{ ok: boolean; erro?: string }>;
   logout: () => Promise<void>;
+  atualizarAvatar: (url: string | null) => Promise<{ ok: boolean; erro?: string }>;
 };
 
 const AuthContext = createContext<AuthState>({} as AuthState);
@@ -26,17 +27,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [carregando, setCarregando] = useState(true);
 
+  const carregarPerfilUsuario = useCallback(async (u: { id: string; email?: string; user_metadata?: Record<string, unknown> }): Promise<User> => {
+    let avatarUrl: string | null = (u.user_metadata?.avatar_url as string) ?? null;
+    let nome: string = (u.user_metadata?.nome as string) ?? u.email?.split("@")[0] ?? "";
+    try {
+      const { data } = await supabase.from("perfis").select("nome, avatar_url").eq("id", u.id).single();
+      if (data) {
+        if (data.nome) nome = data.nome;
+        if (data.avatar_url) avatarUrl = data.avatar_url;
+      }
+    } catch {}
+    return { id: u.id, email: u.email ?? "", nome, avatarUrl };
+  }, []);
+
   useEffect(() => {
     if (isSupabaseConfigured) {
-      supabase.auth.getSession().then(({ data }) => {
+      supabase.auth.getSession().then(async ({ data }) => {
         const u = data.session?.user;
-        if (u) setUser({ id: u.id, email: u.email ?? "", nome: (u.user_metadata?.nome as string) ?? u.email?.split("@")[0] ?? "" });
+        if (u) {
+          const userObj = await carregarPerfilUsuario(u);
+          setUser(userObj);
+        }
         setCarregando(false);
       });
-      const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      const { data: sub } = supabase.auth.onAuthStateChange(async (_event, session) => {
         const u = session?.user;
-        if (u) setUser({ id: u.id, email: u.email ?? "", nome: (u.user_metadata?.nome as string) ?? u.email?.split("@")[0] ?? "" });
-        else setUser(null);
+        if (u) {
+          const userObj = await carregarPerfilUsuario(u);
+          setUser(userObj);
+        } else {
+          setUser(null);
+        }
       });
       return () => sub.subscription.unsubscribe();
     } else {
@@ -48,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } catch {} finally { setCarregando(false); }
       })();
     }
-  }, []);
+  }, [carregarPerfilUsuario]);
 
   const login = useCallback(async (email: string, senha: string) => {
     const rl = checkRateLimit(KEY_TENTATIVAS, 5, 60000);
@@ -102,6 +123,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const atualizarAvatar = useCallback(async (url: string | null) => {
+    if (!user) return { ok: false, erro: "Usuário não autenticado." };
+    if (isSupabaseConfigured) {
+      try {
+        const { error } = await supabase.from("perfis").upsert({ id: user.id, nome: user.nome, avatar_url: url });
+        if (error) return { ok: false, erro: error.message };
+        setUser((prev) => (prev ? { ...prev, avatarUrl: url } : null));
+        return { ok: true };
+      } catch (e) {
+        return { ok: false, erro: e instanceof Error ? e.message : "Erro ao atualizar foto." };
+      }
+    } else {
+      const novo = { ...user, avatarUrl: url };
+      await setItemSeguro(KEY_USER, JSON.stringify(novo));
+      setUser(novo);
+      return { ok: true };
+    }
+  }, [user]);
+
   const logout = useCallback(async () => {
     if (isSupabaseConfigured) await supabase.auth.signOut();
     else await removeItemSeguro(KEY_USER);
@@ -109,7 +149,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, carregando, isAutenticado: !!user, isSupabase: isSupabaseConfigured, login, registrar, logout }}>
+    <AuthContext.Provider value={{ user, carregando, isAutenticado: !!user, isSupabase: isSupabaseConfigured, login, registrar, logout, atualizarAvatar }}>
       {children}
     </AuthContext.Provider>
   );

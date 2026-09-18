@@ -105,7 +105,7 @@ export default function Login() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: "#f1f1f1" },
+  safe: { flex: 1, backgroundColor: cores.background },
   scroll: { flexGrow: 1, padding: espacamentos.page, paddingTop: 24, paddingBottom: 32, justifyContent: "center", minHeight: "100%" },
   bgShape: {
     position: "absolute",
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     shadowRadius: 24,
     elevation: 4,
     borderWidth: 1,
-    borderColor: "#e8e8e8",
+    borderColor: cores.surfaceVariant,
   },
   title: { fontFamily: "BeVietnamPro_700Bold", fontSize: 20, color: cores.onSurface, textAlign: "left" },
   underline: { width: 64, height: 3, backgroundColor: cores.primary, borderRadius: 2, marginTop: -8, marginBottom: 4 },
@@ -140,11 +140,11 @@ const styles = StyleSheet.create({
   tabText: { fontFamily: "BeVietnamPro_600SemiBold", fontSize: 13, color: cores.onSurfaceVariant },
   tabTextActive: { color: cores.primary },
   field: { gap: 6 },
-  label: { fontFamily: "BeVietnamPro_600SemiBold", fontSize: 13, color: "#333" },
+  label: { fontFamily: "BeVietnamPro_600SemiBold", fontSize: 13, color: cores.onSurface },
   input: {
-    backgroundColor: "#f0f0f0",
+    backgroundColor: cores.surfaceContainerLow,
     borderWidth: 1,
-    borderColor: "#e0e0e0",
+    borderColor: cores.surfaceVariant,
     borderRadius: 8,
     paddingHorizontal: 14,
     height: 44,
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   checkbox: { width: 18, height: 18, borderRadius: 3, borderWidth: 1, borderColor: "#bbb", backgroundColor: "#fff", alignItems: "center", justifyContent: "center" },
   checkboxActive: { backgroundColor: cores.primary, borderColor: cores.primary },
   checkMark: { color: "#fff", fontSize: 11, fontFamily: "BeVietnamPro_700Bold" },
-  rememberText: { fontFamily: "BeVietnamPro_400Regular", fontSize: 13, color: "#333" },
+  rememberText: { fontFamily: "BeVietnamPro_400Regular", fontSize: 13, color: cores.onSurface },
   erroBox: { backgroundColor: cores.errorContainer, padding: 12, borderRadius: 8, borderWidth: 1, borderColor: "#f5c6cb" },
   erroText: { color: cores.onErrorContainer, fontSize: 13, fontFamily: "BeVietnamPro_600SemiBold" },
   btn: {
@@ -175,12 +175,12 @@ const styles = StyleSheet.create({
   btnDisabled: { opacity: 0.6 },
   btnText: { color: "#fff", fontFamily: "BeVietnamPro_700Bold", fontSize: 14, letterSpacing: 0.3 },
   linkRow: { alignItems: "center", paddingTop: 4 },
-  linkText: { fontFamily: "BeVietnamPro_400Regular", fontSize: 13, color: "#555" },
+  linkText: { fontFamily: "BeVietnamPro_400Regular", fontSize: 13, color: cores.onSurfaceVariant },
   linkHighlight: { color: cores.primary, fontFamily: "BeVietnamPro_700Bold" },
   forgotRow: { alignItems: "center" },
-  forgotText: { fontFamily: "BeVietnamPro_400Regular", fontSize: 13, color: "#555" },
+  forgotText: { fontFamily: "BeVietnamPro_400Regular", fontSize: 13, color: cores.onSurfaceVariant },
   forgotHighlight: { color: cores.primary, fontFamily: "BeVietnamPro_600SemiBold" },
   voltar: { alignItems: "center", padding: 8, marginTop: 2 },
   voltarText: { color: cores.onSurfaceVariant, fontFamily: "BeVietnamPro_500Medium", fontSize: 13 },
-  footer: { textAlign: "center", fontFamily: "BeVietnamPro_400Regular", fontSize: 11, color: "#999", marginTop: 8 },
+  footer: { textAlign: "center", fontFamily: "BeVietnamPro_400Regular", fontSize: 11, color: cores.onSurfaceVariant, marginTop: 8 },
 });
