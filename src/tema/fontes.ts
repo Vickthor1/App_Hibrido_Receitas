@@ -1,5 +1,6 @@
-// Tipografia — Be Vietnam Pro (via @expo-google-fonts/be-vietnam-pro)
-// DESIGN.md: headline-xl 28/34 700, headline-lg 22/28 700, headline-md 18/24 600, body-lg 16/24 400, body-md 14/20 400, label-md 12/16 500, label-sm 10/12 600
+// Tipografia oficial do protótipo — Be Vietnam Pro (DESIGN.md)
+// headline-xl 28/34 700 (-0.02em), headline-lg 22/28 700, headline-md 18/24 600,
+// body-lg 16/24 400, body-md 14/20 400, label-md 12/16 500 (+0.01em), label-sm 10/12 600 (+0.05em)
 export const fontes = {
   display: { fontFamily: "BeVietnamPro_700Bold", fontSize: 28, fontWeight: "700" as const, lineHeight: 34, letterSpacing: -0.56 },
   displayMobile: { fontFamily: "BeVietnamPro_700Bold", fontSize: 24, fontWeight: "700" as const, lineHeight: 30 },
@@ -14,8 +15,8 @@ export const fontes = {
 } as const;
 
 export const texto = {
-  titulo: fontes.headlineXl,
-  tituloMobile: fontes.headlineXlMobile,
+  titulo: fontes.display,
+  tituloMobile: fontes.displayMobile,
   subtitulo: fontes.headlineLg,
   subtituloMd: fontes.headlineMd,
   corpo: fontes.bodyMd,
