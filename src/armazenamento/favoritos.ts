@@ -7,10 +7,6 @@ const CHAVE_FAVORITOS = "@receita_facil:favoritos";
 // Favorito pode ser Receita completa ou resumo (filter.php)
 export type Favorito = Receita | ReceitaResumo;
 
-function isReceitaCompleta(r: Favorito): r is Receita {
-  return "strInstructions" in r;
-}
-
 // ---------------------------------------------------------------------------
 // Persistência base
 // ---------------------------------------------------------------------------

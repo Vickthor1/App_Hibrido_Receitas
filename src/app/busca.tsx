@@ -12,7 +12,7 @@ import { buscarReceitas, buscarReceitasPorIngrediente, filtrarReceitasPorCategor
 import { Receita } from "../tipos/receita";
 import { useFavoritos } from "../hooks/useFavoritos";
 import { cores } from "../tema/cores";
-import { espacamentos, arredondamento } from "../tema/espacamentos";
+import { espacamentos } from "../tema/espacamentos";
 
 type Filtro = "Todas" | "Receitas" | "Ingredientes" | "Categorias";
 const filtros: Filtro[] = ["Todas", "Receitas", "Ingredientes", "Categorias"];
@@ -73,35 +73,39 @@ export default function Busca() {
     return resultados.filter((r) => filtraCategoria(r, catFiltro) && filtraTempo(r, tempoFiltro));
   }, [resultados, catFiltro, tempoFiltro]);
 
-  async function executarBusca(q: string, f: Filtro = filtro) {
-    const t = q.trim();
-    if (!t) { setResultados([]); return; }
-    setCarregando(true);
-    setErro(null);
-    try {
-      const termoEn = traduzirTermo(t);
-      if (f === "Ingredientes") {
-        const resumos = await buscarReceitasPorIngrediente(termoEn);
-        const detalhes = await Promise.all(resumos.slice(0, 9).map((r) => buscarReceitas(r.strMeal).then((a) => a[0]).catch(() => null)));
-        const validos = detalhes.filter(Boolean) as Receita[];
-        // fallback: se nada por ingrediente, tenta por nome
-        if (validos.length === 0) {
-          const porNome = await buscarReceitas(termoEn);
-          setResultados(porNome);
-        } else setResultados(validos);
-      } else if (f === "Categorias") {
-        const resumos = await filtrarReceitasPorCategoria(termoEn);
-        if (resumos.length > 0) {
+  const executarBusca = useCallback(
+    async (q: string, f: Filtro = filtro) => {
+      const t = q.trim();
+      if (!t) {
+        setResultados([]);
+        return;
+      }
+      setCarregando(true);
+      setErro(null);
+      try {
+        const termoEn = traduzirTermo(t);
+        if (f === "Ingredientes") {
+          const resumos = await buscarReceitasPorIngrediente(termoEn);
           const detalhes = await Promise.all(resumos.slice(0, 9).map((r) => buscarReceitas(r.strMeal).then((a) => a[0]).catch(() => null)));
-          setResultados(detalhes.filter(Boolean) as Receita[]);
+          const validos = detalhes.filter(Boolean) as Receita[];
+          // fallback: se nada por ingrediente, tenta por nome
+          if (validos.length === 0) {
+            const porNome = await buscarReceitas(termoEn);
+            setResultados(porNome);
+          } else setResultados(validos);
+        } else if (f === "Categorias") {
+          const resumos = await filtrarReceitasPorCategoria(termoEn);
+          if (resumos.length > 0) {
+            const detalhes = await Promise.all(resumos.slice(0, 9).map((r) => buscarReceitas(r.strMeal).then((a) => a[0]).catch(() => null)));
+            setResultados(detalhes.filter(Boolean) as Receita[]);
+          } else {
+            // tenta busca por nome como fallback
+            const porNome = await buscarReceitas(termoEn);
+            setResultados(porNome.filter((r) => r.strCategory.toLowerCase().includes(termoEn.toLowerCase())));
+          }
         } else {
-          // tenta busca por nome como fallback
+          // Todas / Receitas -> busca por nome (com tradução)
           const porNome = await buscarReceitas(termoEn);
-          setResultados(porNome.filter((r) => r.strCategory.toLowerCase().includes(termoEn.toLowerCase())));
-        }
-      } else {
-        // Todas / Receitas -> busca por nome (com tradução)
-        const porNome = await buscarReceitas(termoEn);
         // se nada e termo era PT, tenta termo original também
         if (porNome.length === 0 && termoEn !== t) {
           const orig = await buscarReceitas(t);
@@ -111,12 +115,15 @@ export default function Busca() {
     } catch (e: unknown) {
       const m = (e as { mensagem?: string })?.mensagem ?? "Erro ao buscar.";
       setErro(m);
-    } finally { setCarregando(false); }
-  }
+    } finally {
+      setCarregando(false);
+    }
+  }, [filtro]);
 
   useEffect(() => {
-    if (termoInicial) { setTermo(termoInicial); executarBusca(termoInicial); }
-  }, [termoInicial]);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (termoInicial) executarBusca(termoInicial);
+  }, [termoInicial, executarBusca]);
 
   function handleBuscar(novo: string) { setTermo(novo); setCatFiltro("Todas"); setTempoFiltro(null); executarBusca(novo); }
   function handleFiltroPress(f: Filtro) { setFiltro(f); if (termo) executarBusca(termo, f); }
@@ -134,7 +141,7 @@ export default function Busca() {
       </View>
       {termo ? (
         <View style={styles.resultHeader}>
-          <Text style={styles.titulo}>Resultados para "{termo}"</Text>
+          <Text style={styles.titulo}>{`Resultados para "${termo}"`}</Text>
           <Text style={styles.count}>{exibidos.length} receitas</Text>
         </View>
       ) : null}

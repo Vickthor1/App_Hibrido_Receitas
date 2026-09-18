@@ -47,6 +47,7 @@ export function useFavoritos(): Retorno {
   }, [user]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     recarregar();
   }, [recarregar]);
 
