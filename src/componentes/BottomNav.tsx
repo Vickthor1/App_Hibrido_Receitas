@@ -1,17 +1,17 @@
-import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions } from "react-native";
-import { useRouter, usePathname } from "expo-router";
 import { MaterialCommunityIcons as Icone } from "@expo/vector-icons";
+import { usePathname, useRouter } from "expo-router";
+import { StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { useAuth } from "../contexto/AuthContext";
 import { cores } from "../tema/cores";
 
 type Tab = { label: string; icon: keyof typeof Icone.glyphMap; iconAtivo: keyof typeof Icone.glyphMap; href: string; tipo: "item" | "fab" };
 
 const tabs: Tab[] = [
-  { label: "Início", icon: "home-outline", iconAtivo: "home", href: "/", tipo: "item" },
+  { label: "Início", icon: "home", iconAtivo: "home", href: "/", tipo: "item" },
   { label: "Favoritos", icon: "heart-outline", iconAtivo: "heart", href: "/favoritos", tipo: "item" },
-  { label: "Adicionar", icon: "add", iconAtivo: "add", href: "/adicionar", tipo: "fab" },
+  { label: "Adicionar", icon: "plus", iconAtivo: "plus", href: "/adicionar", tipo: "fab" },
   { label: "Minhas", icon: "book-outline", iconAtivo: "book", href: "/minhas-receitas", tipo: "item" },
-  { label: "Perfil", icon: "person-outline", iconAtivo: "person", href: "/perfil", tipo: "item" },
+  { label: "Perfil", icon: "account", iconAtivo: "account", href: "/perfil", tipo: "item" },
 ];
 
 export function BottomNav() {
@@ -32,7 +32,7 @@ export function BottomNav() {
 
   return (
     <View style={styles.wrap}>
-      <View style={styles.bar} accessibilityRole="navigation">
+      <View style={styles.bar} accessibilityRole="toolbar">
         {tabs.map((t) => {
           const ativo = pathname === t.href;
           if (t.tipo === "fab") {

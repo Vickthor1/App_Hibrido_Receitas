@@ -1,16 +1,17 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
 import { MaterialCommunityIcons as Icone } from "@expo/vector-icons";
-import { useAuth } from "../contexto/AuthContext";
+import { useRouter } from "expo-router";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { CabecalhoSecao, styles as s } from "../componentes/CabecalhoSecao";
+import { Carregamento } from "../componentes/Carregamento";
+import { useAuth } from "../contexto/AuthContext";
 import { cores } from "../tema/cores";
 
 export default function Notificacoes() {
   const router = useRouter();
   const { isAutenticado, carregando } = useAuth();
 
-  if (carregando) return null;
+  if (carregando) return <Carregamento mensagem="Carregando notificações..." />;
 
   return (
     <SafeAreaView style={s.safe}>

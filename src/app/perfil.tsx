@@ -1,24 +1,25 @@
+import { Image } from "expo-image";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  useWindowDimensions,
-  ActivityIndicator,
-  Alert,
-  Modal,
+    ActivityIndicator,
+    Alert,
+    Modal,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    useWindowDimensions,
+    View,
 } from "react-native";
-import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
-import { TopBar } from "../componentes/TopBar";
 import { BottomNav } from "../componentes/BottomNav";
-import { useFavoritos } from "../hooks/useFavoritos";
-import { useAuth } from "../contexto/AuthContext";
+import { Carregamento } from "../componentes/Carregamento";
 import { CartaoReceita } from "../componentes/CartaoReceita";
-import { selecionarImagem, fazerUploadAvatar } from "../servicos/avatar";
+import { TopBar } from "../componentes/TopBar";
+import { useAuth } from "../contexto/AuthContext";
+import { useFavoritos } from "../hooks/useFavoritos";
+import { fazerUploadAvatar, selecionarImagem } from "../servicos/avatar";
 import { cores } from "../tema/cores";
 import { espacamentos } from "../tema/espacamentos";
 
@@ -35,7 +36,7 @@ export default function Perfil() {
   const [enviando, setEnviando] = useState(false);
   const [erroUpload, setErroUpload] = useState<string | null>(null);
 
-  if (carregando) return null;
+  if (carregando) return <Carregamento mensagem="Carregando perfil..." />;
   if (!isAutenticado || !user) {
     return (
       <SafeAreaView style={styles.safe}>
@@ -277,7 +278,7 @@ const styles = StyleSheet.create({
   avatarContainer: { position: "relative" },
   avatarWrap: { width: 96, height: 96, borderRadius: 48, overflow: "hidden", borderWidth: 3, borderColor: cores.surface, backgroundColor: cores.surfaceVariant },
   avatar: { width: "100%", height: "100%" },
-  avatarOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.5)", alignItems: "center", justifyContent: "center" },
+  avatarOverlay: { ...StyleSheet.absoluteFill, backgroundColor: "rgba(0,0,0,0.5)", alignItems: "center", justifyContent: "center" },
   badgeEdit: { position: "absolute", bottom: 2, right: 2, backgroundColor: cores.primary, width: 28, height: 28, borderRadius: 14, alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: cores.surfaceContainerLowest },
   badgeEditIcon: { color: cores.onPrimary, fontSize: 13, fontFamily: "BeVietnamPro_700Bold" },
   nome: { fontFamily: "BeVietnamPro_700Bold", fontSize: 22, color: cores.onSurface },

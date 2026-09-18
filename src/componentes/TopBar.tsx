@@ -1,13 +1,21 @@
-import { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, useWindowDimensions } from "react-native";
-import { useRouter, usePathname } from "expo-router";
 import { MaterialCommunityIcons as Icone } from "@expo/vector-icons";
+import { usePathname, useRouter } from "expo-router";
+import { useState } from "react";
+import { StyleSheet, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { useAuth } from "../contexto/AuthContext";
+import { cores } from "../tema/cores";
 import { AvatarUsuario } from "./AvatarUsuario";
 import { MenuLateral } from "./MenuLateral";
-import { cores } from "../tema/cores";
 
-export function TopBar({ titulo }: { titulo?: string }) {
+export function TopBar({
+  titulo,
+  mostrarVoltar = false,
+  onVoltar,
+}: {
+  titulo?: string;
+  mostrarVoltar?: boolean;
+  onVoltar?: () => void;
+}) {
   const { width } = useWindowDimensions();
   const isDesktop = width >= 768;
   const router = useRouter();
@@ -28,9 +36,14 @@ export function TopBar({ titulo }: { titulo?: string }) {
   // ------------------------- DESKTOP -------------------------
   if (isDesktop) {
     return (
-      <View style={styles.desktop} accessibilityRole="banner">
+      <View style={styles.desktop} accessibilityRole="header">
         <View style={styles.desktopInner}>
           <View style={styles.left}>
+            {mostrarVoltar ? (
+              <TouchableOpacity onPress={onVoltar ?? (() => router.back())} accessibilityRole="button" accessibilityLabel="Voltar" style={styles.backDesktopBtn}>
+                <Icone name="arrow-left" size={18} color={cores.onSurface} />
+              </TouchableOpacity>
+            ) : null}
             <TouchableOpacity onPress={() => go("/")} accessibilityRole="button" accessibilityLabel="Início">
               <Text style={styles.logo}>Receita Fácil</Text>
             </TouchableOpacity>
@@ -49,7 +62,7 @@ export function TopBar({ titulo }: { titulo?: string }) {
             </View>
           </View>
 
-          <View style={styles.centerNav} accessibilityRole="navigation">
+          <View style={styles.centerNav} accessibilityRole="toolbar">
             <TouchableOpacity onPress={() => go("/")} style={[styles.navItem, pathname === "/" && styles.navActive]} accessibilityRole="link" accessibilityState={{ selected: pathname === "/" }}>
               <Text style={[styles.navText, pathname === "/" && styles.navTextActive]}>Explorar</Text>
             </TouchableOpacity>
@@ -77,19 +90,30 @@ export function TopBar({ titulo }: { titulo?: string }) {
 
   // ------------------------- MOBILE -------------------------
   return (
-    <View style={styles.mobile} accessibilityRole="banner">
+    <View style={styles.mobile} accessibilityRole="header">
       <View style={styles.mobileRow}>
-        <TouchableOpacity
-          style={styles.mIconBtn}
-          accessibilityRole="button"
-          accessibilityLabel="Abrir menu"
-          onPress={() => setMenuAberto(true)}
-        >
-          <Icone name="menu" size={22} color={cores.onSurface} />
-        </TouchableOpacity>
+        {mostrarVoltar ? (
+          <TouchableOpacity
+            style={styles.mIconBtn}
+            accessibilityRole="button"
+            accessibilityLabel="Voltar"
+            onPress={onVoltar ?? (() => router.back())}
+          >
+            <Icone name="arrow-left" size={20} color={cores.onSurface} />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={styles.mIconBtn}
+            accessibilityRole="button"
+            accessibilityLabel="Abrir menu"
+            onPress={() => setMenuAberto(true)}
+          >
+            <Icone name="menu" size={22} color={cores.onSurface} />
+          </TouchableOpacity>
+        )}
 
         <TouchableOpacity onPress={() => go("/")} accessibilityRole="button">
-          <Text style={styles.mTitle} accessibilityRole="header">{titulo ?? "Receita Fácil"}</Text>
+          <Text style={styles.mTitle}>{titulo ?? "Receita Fácil"}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -119,6 +143,7 @@ const styles = StyleSheet.create({
   navActive: { borderBottomColor: cores.primary },
   navText: { fontFamily: "BeVietnamPro_500Medium", fontSize: 13, color: cores.onSurfaceVariant },
   navTextActive: { color: cores.onSurface, fontFamily: "BeVietnamPro_700Bold" },
+  backDesktopBtn: { width: 28, height: 28, borderRadius: 14, alignItems: "center", justifyContent: "center", backgroundColor: cores.surfaceContainerLow },
   right: { flexDirection: "row", alignItems: "center", gap: 12 },
   addBtn: { flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: cores.primary, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 9999 },
   addText: { color: cores.onPrimary, fontFamily: "BeVietnamPro_600SemiBold", fontSize: 12, letterSpacing: 0.3 },

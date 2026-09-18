@@ -1,10 +1,10 @@
-import { useCallback } from "react";
-import { Modal, View, Text, TouchableOpacity, StyleSheet, Pressable } from "react-native";
-import { useRouter, usePathname } from "expo-router";
 import { MaterialCommunityIcons as Icone } from "@expo/vector-icons";
+import { usePathname, useRouter } from "expo-router";
+import { useCallback } from "react";
+import { Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../contexto/AuthContext";
-import { AvatarUsuario } from "./AvatarUsuario";
 import { cores } from "../tema/cores";
+import { AvatarUsuario } from "./AvatarUsuario";
 
 interface ItemMenu {
   label: string;
@@ -19,13 +19,13 @@ export function MenuLateral({ aberto, onFechar }: { aberto: boolean; onFechar: (
   const { isAutenticado, user, logout } = useAuth();
 
   const itens: ItemMenu[] = [
-    { label: "Home", icon: "home-outline", href: "/" },
-    { label: "Busca", icon: "search", href: "/busca" },
-    { label: "Categorias", icon: "grid-outline", href: "/categorias" },
+    { label: "Home", icon: "home", href: "/" },
+    { label: "Busca", icon: "magnify", href: "/busca" },
+    { label: "Categorias", icon: "grid", href: "/categorias" },
     { label: "Favoritos", icon: "heart-outline", href: "/favoritos", protegido: true },
     { label: "Minhas Receitas", icon: "book-outline", href: "/minhas-receitas", protegido: true },
-    { label: "Perfil", icon: "person-outline", href: "/perfil", protegido: true },
-    { label: "Configurações", icon: "settings-outline", href: "/configuracoes", protegido: true },
+    { label: "Perfil", icon: "account", href: "/perfil", protegido: true },
+    { label: "Configurações", icon: "cog", href: "/configuracoes", protegido: true },
     { label: "Ajuda", icon: "help-circle-outline", href: "/ajuda" },
   ];
 

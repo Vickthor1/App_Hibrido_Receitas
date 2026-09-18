@@ -1,18 +1,18 @@
-import { useEffect, useState, useMemo } from "react";
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, useWindowDimensions } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BarraPesquisa } from "../componentes/BarraPesquisa";
-import { CartaoReceita } from "../componentes/CartaoReceita";
+import { BottomNav } from "../componentes/BottomNav";
 import { Carregamento } from "../componentes/Carregamento";
+import { CartaoReceita } from "../componentes/CartaoReceita";
 import { EstadoVazio } from "../componentes/EstadoVazio";
 import { TopBar } from "../componentes/TopBar";
-import { BottomNav } from "../componentes/BottomNav";
-import { buscarReceitas, buscarReceitasPorIngrediente, filtrarReceitasPorCategoria } from "../servicos/api";
-import { Receita } from "../tipos/receita";
 import { useFavoritos } from "../hooks/useFavoritos";
+import { buscarReceitas, buscarReceitasPorIngrediente, filtrarReceitasPorCategoria } from "../servicos/api";
 import { cores } from "../tema/cores";
 import { espacamentos } from "../tema/espacamentos";
+import { Receita } from "../tipos/receita";
 
 type Filtro = "Todas" | "Receitas" | "Ingredientes" | "Categorias";
 const filtros: Filtro[] = ["Todas", "Receitas", "Ingredientes", "Categorias"];
@@ -106,19 +106,21 @@ export default function Busca() {
         } else {
           // Todas / Receitas -> busca por nome (com tradução)
           const porNome = await buscarReceitas(termoEn);
-        // se nada e termo era PT, tenta termo original também
-        if (porNome.length === 0 && termoEn !== t) {
-          const orig = await buscarReceitas(t);
-          setResultados(orig);
-        } else setResultados(porNome);
+          // se nada e termo era PT, tenta termo original também
+          if (porNome.length === 0 && termoEn !== t) {
+            const orig = await buscarReceitas(t);
+            setResultados(orig);
+          } else setResultados(porNome);
+        }
+      } catch (e: unknown) {
+        const m = (e as { mensagem?: string })?.mensagem ?? "Erro ao buscar.";
+        setErro(m);
+      } finally {
+        setCarregando(false);
       }
-    } catch (e: unknown) {
-      const m = (e as { mensagem?: string })?.mensagem ?? "Erro ao buscar.";
-      setErro(m);
-    } finally {
-      setCarregando(false);
-    }
-  }, [filtro]);
+    },
+    [filtro]
+  );
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -240,6 +242,7 @@ const styles = StyleSheet.create({
   gridDesktop: { flexDirection: "row", flexWrap: "wrap", gap: 16 },
   cardMobile: {},
   cardDesktop: { width: "31%" },
+  mobileHeader: { paddingHorizontal: espacamentos.page, paddingTop: 12, paddingBottom: 8 },
   listaMobile: { padding: espacamentos.page, gap: 12, paddingBottom: 100 },
 
   desktopBody: { flex: 1, flexDirection: "row" },

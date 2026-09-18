@@ -1,16 +1,16 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { useRouter, usePathname } from "expo-router";
 import { MaterialCommunityIcons as Icone } from "@expo/vector-icons";
+import { usePathname, useRouter } from "expo-router";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../contexto/AuthContext";
 import { cores } from "../tema/cores";
 
 const items = [
-  { label: "Início", icon: "home-outline", href: "/" },
-  { label: "Categorias", icon: "grid-outline", href: "/categorias" },
+  { label: "Início", icon: "home", href: "/" },
+  { label: "Categorias", icon: "grid", href: "/categorias" },
   { label: "Favoritos", icon: "heart-outline", href: "/favoritos", protegido: true },
   { label: "Minhas Receitas", icon: "book-outline", href: "/minhas-receitas", protegido: true },
-  { label: "Perfil", icon: "person-outline", href: "/perfil", protegido: true },
-  { label: "Configurações", icon: "settings-outline", href: "/configuracoes", protegido: true },
+  { label: "Perfil", icon: "account", href: "/perfil", protegido: true },
+  { label: "Configurações", icon: "cog", href: "/configuracoes", protegido: true },
   { label: "Ajuda", icon: "help-circle-outline", href: "/ajuda" },
 ];
 
@@ -28,7 +28,7 @@ export function Sidebar() {
   }
 
   return (
-    <View style={styles.wrap} accessibilityRole="navigation">
+    <View style={styles.wrap} accessibilityRole="toolbar">
       <View style={styles.menu}>
         {items.map((it) => {
           const ativo = pathname === it.href;
