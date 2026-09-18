@@ -7,7 +7,7 @@ import { BottomNav } from "../componentes/BottomNav";
 import { useAuth } from "../contexto/AuthContext";
 import { supabase, isSupabaseConfigured } from "../lib/supabase";
 import { cores } from "../tema/cores";
-import { espacamentos, arredondamento } from "../tema/espacamentos";
+import { espacamentos } from "../tema/espacamentos";
 
 export default function AdicionarReceita() {
   const router = useRouter();
@@ -33,18 +33,19 @@ export default function AdicionarReceita() {
     }
     setSalvando(true);
     try {
-      // Salva como favorito especial (mock de "criada") — usa tabela favoritos com id temporário
-      const idTemp = `user_${Date.now()}`;
+      // Salva na tabela "receitas" (receitas criadas pelo usuário — RLS auth.uid() = user_id)
       if (isSupabaseConfigured && user) {
-        const { error } = await supabase.from("favoritos").insert({
+        const { error } = await supabase.from("receitas").insert({
           user_id: user.id,
-          id_meal: idTemp,
-          str_meal: nome.trim(),
-          str_thumb: "https://via.placeholder.com/300x300.png?text=" + encodeURIComponent(nome.trim()),
+          nome: nome.trim(),
+          categoria: categoria.trim() || null,
+          tempo: tempo.trim() || null,
+          ingredientes: ingredientes.trim(),
+          modo: modo.trim(),
         });
         if (error) throw error;
       }
-      Alert.alert("Sucesso!", `"${nome.trim()}" adicionada às suas receitas.`, [{ text: "Ver minhas receitas", onPress: () => router.push("/perfil" as never) }]);
+      Alert.alert("Sucesso!", `"${nome.trim()}" adicionada às suas receitas.`, [{ text: "Ver minhas receitas", onPress: () => router.push("/minhas-receitas" as never) }]);
       setNome(""); setCategoria(""); setTempo(""); setIngredientes(""); setModo("");
     } catch (e) {
       Alert.alert("Erro", e instanceof Error ? e.message : "Não foi possível salvar.");

@@ -14,7 +14,7 @@ import { buscarCategorias, buscarReceitas, listarReceitasDisponiveis, filtrarRec
 import { Receita, Categoria } from "../tipos/receita";
 import { useFavoritos } from "../hooks/useFavoritos";
 import { cores } from "../tema/cores";
-import { espacamentos, arredondamento } from "../tema/espacamentos";
+import { espacamentos } from "../tema/espacamentos";
 
 export default function Inicio() {
   const router = useRouter();
@@ -51,8 +51,8 @@ export default function Inicio() {
         setMaisAmadas([]);
         setRapidas([]);
       }
-    } catch (e: unknown) {
-      const m = (e as { mensagem?: string })?.mensagem ?? (e instanceof Error ? e.message : "Erro");
+    } catch {
+      const m = "Erro ao carregar receitas.";
       setErro(m);
       setFeatured([]);
       setMaisAmadas([]);
@@ -63,7 +63,10 @@ export default function Inicio() {
     }
   }
 
-  useEffect(() => { carregar(); }, []);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    carregar();
+  }, []);
 
   async function handleCategoriaPress(cat: string) {
     if (categoriaAtiva === cat) { setCategoriaAtiva(null); carregar(); return; }
@@ -211,3 +214,4 @@ const styles = StyleSheet.create({
   footerTitle: { fontFamily: "BeVietnamPro_700Bold", fontSize: 13, color: cores.onSurface },
   footerText: { fontFamily: "BeVietnamPro_400Regular", fontSize: 11, color: cores.onSurfaceVariant },
 });
+
