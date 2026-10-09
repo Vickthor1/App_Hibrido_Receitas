@@ -1,20 +1,21 @@
-import { useState } from "react";
-import { View, Text, TouchableOpacity, Alert, ScrollView, TextInput, ActivityIndicator, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
 import { MaterialCommunityIcons as Icone } from "@expo/vector-icons";
-import { supabase, isSupabaseConfigured } from "../lib/supabase";
-import { useAuth } from "../contexto/AuthContext";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { AvatarUsuario } from "../componentes/AvatarUsuario";
-import { selecionarImagem, fazerUploadAvatar } from "../servicos/avatar";
 import { CabecalhoSecao, styles as s } from "../componentes/CabecalhoSecao";
-import { cores } from "../tema/cores";
+import { useAuth } from "../contexto/AuthContext";
+import { useTema } from "../contexto/TemaContext";
+import { isSupabaseConfigured, supabase } from "../lib/supabase";
+import { fazerUploadAvatar, selecionarImagem } from "../servicos/avatar";
 
 export default function Configuracoes() {
   const router = useRouter();
   const { user, atualizarAvatar, logout } = useAuth();
   const [nome, setNome] = useState(user?.nome ?? "");
   const [enviando, setEnviando] = useState(false);
+  const { tema, coresTema, alternarTema } = useTema();
 
   async function handleSalvarNome() {
     if (!nome.trim() || nome.trim().length < 2) {
@@ -65,39 +66,108 @@ export default function Configuracoes() {
         <View style={[s.card, styles.fotoCard]}>
           <AvatarUsuario tamanho={88} />
           <TouchableOpacity style={[s.btnSecundario, { marginTop: 12 }]} onPress={handleTrocarFoto} disabled={enviando} accessibilityRole="button">
-            {enviando ? <ActivityIndicator color={cores.primary} size="small" /> : <Text style={s.btnSecundarioText}>Alterar foto</Text>}
+            {enviando ? 
+            <ActivityIndicator color={coresTema.primary} size="small" /> : <Text style={s.btnSecundarioText}>Alterar foto</Text>}
           </TouchableOpacity>
         </View>
 
         <View style={s.card}>
           <Text style={s.cardTitle}>Nome de exibição</Text>
           <Text style={s.labelCampo}>Nome</Text>
-          <TextInput value={nome} onChangeText={setNome} placeholder="Seu nome" placeholderTextColor={cores.onSurfaceVariant} style={s.campo} maxLength={60} />
+          <TextInput value={nome} onChangeText={setNome} placeholder="Seu nome" placeholderTextColor={coresTema.onSurfaceVariant} style={s.campo} maxLength={60} />
           <TouchableOpacity style={[s.btnPrimario, { opacity: enviando ? 0.6 : 1 }]} onPress={handleSalvarNome} disabled={enviando} accessibilityRole="button">
             <Text style={s.btnPrimarioText}>Salvar nome</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={s.card}>
-          <Text style={s.cardTitle}>Suas opções</Text>
-          <TouchableOpacity style={s.row} onPress={() => router.push("/privacidade" as never)} accessibilityRole="button">
-            <Text style={s.rowLabel}>Privacidade e segurança</Text>
-            <Icone name="chevron-right" size={18} color={cores.onSurfaceVariant} />
-          </TouchableOpacity>
-          <TouchableOpacity style={s.row} onPress={() => router.push("/ajuda" as never)} accessibilityRole="button">
-            <Text style={s.rowLabel}>Ajuda</Text>
-            <Icone name="chevron-right" size={18} color={cores.onSurfaceVariant} />
-          </TouchableOpacity>
-          <TouchableOpacity style={s.row} onPress={() => { logout(); router.replace("/" as never); }} accessibilityRole="button">
-            <Text style={[s.rowLabel, { color: cores.error }]}>Sair</Text>
-            <Icone name="logout" size={18} color={cores.error} />
-          </TouchableOpacity>
-        </View>
+       <View style={s.card}>
+  <Text style={s.cardTitle}>Suas opções</Text>
+
+  {/* Modo escuro */}
+  <TouchableOpacity
+    style={s.row}
+    onPress={alternarTema}
+    accessibilityRole="button"
+  >
+    <View style={{ flex: 1 }}>
+      <Text style={s.rowLabel}>Modo escuro</Text>
+
+      <Text
+        style={{
+          color: coresTema.onSurfaceVariant,
+          fontSize: 13,
+          marginTop: 4,
+        }}
+      >
+        {tema === "escuro" ? "Ativado" : "Desativado"}
+      </Text>
+    </View>
+
+    <Icone
+      name={tema === "escuro" ? "weather-night" : "white-balance-sunny"}
+      size={22}
+      color={coresTema.primary}
+    />
+  </TouchableOpacity>
+
+  {/* Privacidade */}
+  <TouchableOpacity
+    style={s.row}
+    onPress={() => router.push("/privacidade" as never)}
+    accessibilityRole="button"
+  >
+    <Text style={s.rowLabel}>Privacidade e segurança</Text>
+
+    <Icone
+      name="chevron-right"
+      size={18}
+      color={coresTema.onSurfaceVariant}
+    />
+  </TouchableOpacity>
+
+  {/* Ajuda */}
+  <TouchableOpacity
+    style={s.row}
+    onPress={() => router.push("/ajuda" as never)}
+    accessibilityRole="button"
+  >
+    <Text style={s.rowLabel}>Ajuda</Text>
+
+    <Icone
+      name="chevron-right"
+      size={18}
+      color={coresTema.onSurfaceVariant}
+    />
+  </TouchableOpacity>
+
+    {/* Sair */}
+  <TouchableOpacity
+    style={s.row}
+    onPress={() => {
+      logout();
+      router.replace("/" as never);
+    }}
+    accessibilityRole="button"
+  >
+    <Text style={[s.rowLabel, { color: coresTema.error }]}>
+      Sair
+    </Text>
+
+    <Icone
+      name="logout"
+      size={18}
+      color={coresTema.error}
+    />
+  </TouchableOpacity>
+</View>
+
       </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  fotoCard: { alignItems: "center" },
+  fotoCard: {
+    alignItems: "center",
+  },
 });

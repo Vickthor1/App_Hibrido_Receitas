@@ -1,24 +1,46 @@
-import { useEffect, useState } from "react";
-import { View, Text, ScrollView, Image, TouchableOpacity, StyleSheet, RefreshControl, useWindowDimensions } from "react-native";
 import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import {
+  Image,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
 import { BarraPesquisa } from "../componentes/BarraPesquisa";
-import { CartaoReceita } from "../componentes/CartaoReceita";
-import { CartaoCategorias } from "../componentes/CartaoCategorias";
-import { Carregamento } from "../componentes/Carregamento";
-import { EstadoVazio } from "../componentes/EstadoVazio";
-import { TopBar } from "../componentes/TopBar";
 import { BottomNav } from "../componentes/BottomNav";
+import { Carregamento } from "../componentes/Carregamento";
+import { CartaoCategorias } from "../componentes/CartaoCategorias";
+import { CartaoReceita } from "../componentes/CartaoReceita";
+import { EstadoVazio } from "../componentes/EstadoVazio";
 import { Sidebar } from "../componentes/Sidebar";
-import { buscarCategorias, buscarReceitas, listarReceitasDisponiveis, filtrarReceitasPorCategoria } from "../servicos/api";
-import { Receita, Categoria } from "../tipos/receita";
+import { TopBar } from "../componentes/TopBar";
+
+import {
+  buscarCategorias,
+  buscarReceitas,
+  filtrarReceitasPorCategoria,
+  listarReceitasDisponiveis,
+} from "../servicos/api";
+
+import { useTema } from "../contexto/TemaContext";
 import { useFavoritos } from "../hooks/useFavoritos";
-import { cores } from "../tema/cores";
+import { Cores } from "../tema/cores";
 import { espacamentos } from "../tema/espacamentos";
+import { Categoria, Receita } from "../tipos/receita";
 
 export default function Inicio() {
   const router = useRouter();
+  const { coresTema } = useTema();
+
   const { width } = useWindowDimensions();
+  const styles = criarStyles(coresTema);
+
   const isDesktop = width >= 768;
   const { isFavorito, alternarFavorito } = useFavoritos();
 
@@ -98,7 +120,7 @@ export default function Inicio() {
   const content = (
     <ScrollView
       contentContainerStyle={[styles.scroll, isDesktop && styles.scrollDesktop]}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); carregar(); }} colors={[cores.primary]} />}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); carregar(); }} colors={[coresTema.primary]} />}
       showsVerticalScrollIndicator={false}
     >
       {!isDesktop && <BarraPesquisa onBuscar={handleBuscar} />}
@@ -173,22 +195,23 @@ export default function Inicio() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: cores.background },
+const criarStyles = (coresTema: Cores) =>
+  StyleSheet.create({
+  safe: { flex: 1, backgroundColor: coresTema.background },
   body: { flex: 1, flexDirection: "row" },
   main: { flex: 1 },
   scroll: { padding: espacamentos.page, paddingBottom: 100, gap: 20 },
   scrollDesktop: { padding: 24, maxWidth: 1280, alignSelf: "center", width: "100%" },
   heroWrap: { gap: 10 },
-  hero: { height: 240, borderRadius: 16, overflow: "hidden", backgroundColor: cores.surfaceVariant },
+  hero: { height: 240, borderRadius: 16, overflow: "hidden", backgroundColor: coresTema.surfaceVariant },
   heroDesktop: { height: 360 },
   heroImage: { width: "100%", height: "100%" },
   heroGradient: { ...StyleSheet.absoluteFill, backgroundColor: "rgba(0,0,0,0.32)" },
-  heroTag: { position: "absolute", top: 14, left: 14, backgroundColor: cores.primary, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 9999 },
-  heroTagText: { color: cores.onPrimary, fontSize: 10, fontFamily: "BeVietnamPro_600SemiBold", letterSpacing: 0.4 },
+  heroTag: { position: "absolute", top: 14, left: 14, backgroundColor: coresTema.primary, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 9999 },
+  heroTagText: { color: coresTema.onPrimary, fontSize: 10, fontFamily: "BeVietnamPro_600SemiBold", letterSpacing: 0.4 },
   heroFav: { position: "absolute", top: 14, right: 14, width: 32, height: 32, borderRadius: 16, backgroundColor: "rgba(255,255,255,0.92)", alignItems: "center", justifyContent: "center" },
-  heroFavText: { fontSize: 16, color: cores.onSurfaceVariant },
-  favAtivo: { color: cores.primary },
+  heroFavText: { fontSize: 16, color: coresTema.onSurfaceVariant },
+  favAtivo: { color: coresTema.primary },
   heroBottom: { position: "absolute", bottom: 0, left: 0, right: 0, padding: 16, gap: 4 },
   heroTitulo: { color: "#fff", fontSize: 20, fontFamily: "BeVietnamPro_700Bold", lineHeight: 26 },
   heroTituloDesktop: { fontSize: 28, lineHeight: 34 },
@@ -196,12 +219,12 @@ const styles = StyleSheet.create({
   heroMetaStar: { color: "#FFD54F", fontSize: 12, fontFamily: "BeVietnamPro_700Bold" },
   heroMetaTime: { color: "#fff", fontSize: 12, fontFamily: "BeVietnamPro_400Regular", opacity: 0.9 },
   dots: { flexDirection: "row", justifyContent: "center", gap: 6 },
-  dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: cores.secondaryFixedDim },
-  dotAtivo: { backgroundColor: cores.primary, width: 16 },
+  dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: coresTema.secondaryFixedDim },
+  dotAtivo: { backgroundColor: coresTema.primary, width: 16 },
   secao: { gap: 10 },
   secaoHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingBottom: 2 },
-  secaoTitulo: { fontSize: 17, fontFamily: "BeVietnamPro_600SemiBold", color: cores.onSurface },
-  verTodas: { fontSize: 12, fontFamily: "BeVietnamPro_500Medium", color: cores.primary },
+  secaoTitulo: { fontSize: 17, fontFamily: "BeVietnamPro_600SemiBold", color: coresTema.onSurface },
+  verTodas: { fontSize: 12, fontFamily: "BeVietnamPro_500Medium", color: coresTema.primary },
   grid: { flexDirection: "row", flexWrap: "wrap", gap: 12 },
   gridDesktop: { gap: 16 },
   gridItem: { width: "48%" },
@@ -210,8 +233,8 @@ const styles = StyleSheet.create({
   rapidasGrid: { gap: 10 },
   rapidasGridDesktop: { flexDirection: "row", gap: 12 },
   rapidasItemDesktop: { flex: 1 },
-  footer: { backgroundColor: cores.surfaceContainerHighest, padding: 14, borderRadius: 12, flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 4, borderTopWidth: 1, borderTopColor: cores.outlineVariant + "30" },
-  footerTitle: { fontFamily: "BeVietnamPro_700Bold", fontSize: 13, color: cores.onSurface },
-  footerText: { fontFamily: "BeVietnamPro_400Regular", fontSize: 11, color: cores.onSurfaceVariant },
+  footer: { backgroundColor: coresTema.surfaceContainerHighest, padding: 14, borderRadius: 12, flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 4, borderTopWidth: 1, borderTopColor: coresTema.outlineVariant + "30" },
+  footerTitle: { fontFamily: "BeVietnamPro_700Bold", fontSize: 13, color: coresTema.onSurface },
+  footerText: { fontFamily: "BeVietnamPro_400Regular", fontSize: 11, color: coresTema.onSurfaceVariant },
 });
 

@@ -4,7 +4,9 @@
     "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "moduleResolution": "bundler",
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "paths": {
       "@/*": [
         "./src/*"
@@ -19,5 +21,6 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ]
+  ],
+  "extends": "expo/tsconfig.base"
 }
