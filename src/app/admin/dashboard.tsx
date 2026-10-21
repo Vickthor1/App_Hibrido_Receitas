@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator, Alert, Platform } from "react-native";
 import { MaterialCommunityIcons as Icone } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import * as SecureStore from "expo-secure-store";
 import { supabase, isSupabaseConfigured } from "../../lib/supabase";
 import { buscarCategorias, listarReceitasDisponiveis } from "../../servicos/api";
 import { cores } from "../../tema/cores";
@@ -64,6 +63,7 @@ export default function AdminDashboardMaster() {
   async function getToken() {
     if (Platform.OS === "web") return localStorage.getItem("admin_jwt");
     try {
+      const SecureStore = require("expo-secure-store");
       return await SecureStore.getItemAsync("admin_jwt");
     } catch {
       return null;
