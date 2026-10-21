@@ -11,18 +11,21 @@ export default function AdminLogin() {
   const [carregando, setCarregando] = useState(false);
 
   async function handleLoginAdmin() {
-    if (!email || token.length !== 6) {
+    console.log("[AdminLogin] Tentando entrar com:", email);
+    if (!email.trim() || token.trim().length !== 6) {
       Alert.alert("Atenção", "Insira o e-mail do admin e o código TOTP de 6 dígitos.");
       return;
     }
     setCarregando(true);
     try {
+      console.log("[AdminLogin] Fazendo fetch para Edge Function...");
       const resp = await fetch("https://cpodpuyulqfptldqgdov.supabase.co/functions/v1/admin-login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, token }),
+        body: JSON.stringify({ email: email.trim(), token: token.trim() }),
       });
       const data = await resp.json();
+      console.log("[AdminLogin] Resposta recebida:", resp.status, data);
       if (!resp.ok) throw new Error(data.error || "Falha na autenticação admin.");
 
       if (Platform.OS === "web") {
@@ -33,6 +36,7 @@ export default function AdminLogin() {
       }
       router.replace("/admin/dashboard" as never);
     } catch (e) {
+      console.error("[AdminLogin] Erro:", e);
       Alert.alert("Erro", e instanceof Error ? e.message : "Erro desconhecido.");
     } finally {
       setCarregando(false);
