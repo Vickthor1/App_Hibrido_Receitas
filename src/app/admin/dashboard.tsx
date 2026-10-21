@@ -235,7 +235,7 @@ export default function AdminDashboardMaster() {
           <View style={styles.logoIcon}><Icone name="chef-hat" size={24} color="#FFF" /></View>
           <View>
             <Text style={styles.logoTitle}>Receita Fácil</Text>
-            <Text style={styles.logoSub}>Painel Administrativo Real</Text>
+            <Text style={styles.logoSub}>Painel Administrativo</Text>
           </View>
         </View>
 
