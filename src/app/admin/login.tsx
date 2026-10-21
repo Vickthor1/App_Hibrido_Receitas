@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import * as SecureStore from "expo-secure-store";
 import { useRouter } from "expo-router";
 import { cores } from "../../tema/cores";
 
@@ -29,6 +28,7 @@ export default function AdminLogin() {
       if (Platform.OS === "web") {
         localStorage.setItem("admin_jwt", data.token);
       } else {
+        const SecureStore = await import("expo-secure-store");
         await SecureStore.setItemAsync("admin_jwt", data.token);
       }
       router.replace("/admin/dashboard" as never);

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import * as SecureStore from "expo-secure-store";
 import { useRouter } from "expo-router";
 import { supabase } from "../../lib/supabase";
 import { cores } from "../../tema/cores";
@@ -17,6 +16,7 @@ export default function AdminDashboard() {
 
   async function getToken() {
     if (Platform.OS === "web") return localStorage.getItem("admin_jwt");
+    const SecureStore = await import("expo-secure-store");
     return await SecureStore.getItemAsync("admin_jwt");
   }
 
