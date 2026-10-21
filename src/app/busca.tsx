@@ -1,18 +1,19 @@
-import { useEffect, useState, useMemo } from "react";
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, useWindowDimensions } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BarraPesquisa } from "../componentes/BarraPesquisa";
-import { CartaoReceita } from "../componentes/CartaoReceita";
+import { BottomNav } from "../componentes/BottomNav";
 import { Carregamento } from "../componentes/Carregamento";
+import { CartaoReceita } from "../componentes/CartaoReceita";
 import { EstadoVazio } from "../componentes/EstadoVazio";
 import { TopBar } from "../componentes/TopBar";
-import { BottomNav } from "../componentes/BottomNav";
-import { buscarReceitas, buscarReceitasPorIngrediente, filtrarReceitasPorCategoria } from "../servicos/api";
-import { Receita } from "../tipos/receita";
+import { useTema } from "../contexto/TemaContext";
 import { useFavoritos } from "../hooks/useFavoritos";
-import { cores } from "../tema/cores";
+import { buscarReceitas, buscarReceitasPorIngrediente, filtrarReceitasPorCategoria } from "../servicos/api";
+import { Cores } from "../tema/cores";
 import { espacamentos } from "../tema/espacamentos";
+import { Receita } from "../tipos/receita";
 
 type Filtro = "Todas" | "Receitas" | "Ingredientes" | "Categorias";
 const filtros: Filtro[] = ["Todas", "Receitas", "Ingredientes", "Categorias"];
@@ -55,6 +56,8 @@ function filtraCategoria(r: Receita, cat: string): boolean {
 
 export default function Busca() {
   const router = useRouter();
+  const { coresTema } = useTema();
+  const styles = criarStyles(coresTema);
   const { width } = useWindowDimensions();
   const isDesktop = width >= 768;
   const params = useLocalSearchParams<{ termo?: string }>();
@@ -106,19 +109,21 @@ export default function Busca() {
         } else {
           // Todas / Receitas -> busca por nome (com tradução)
           const porNome = await buscarReceitas(termoEn);
-        // se nada e termo era PT, tenta termo original também
-        if (porNome.length === 0 && termoEn !== t) {
-          const orig = await buscarReceitas(t);
-          setResultados(orig);
-        } else setResultados(porNome);
+          // se nada e termo era PT, tenta termo original também
+          if (porNome.length === 0 && termoEn !== t) {
+            const orig = await buscarReceitas(t);
+            setResultados(orig);
+          } else setResultados(porNome);
+        }
+      } catch (e: unknown) {
+        const m = (e as { mensagem?: string })?.mensagem ?? "Erro ao buscar.";
+        setErro(m);
+      } finally {
+        setCarregando(false);
       }
-    } catch (e: unknown) {
-      const m = (e as { mensagem?: string })?.mensagem ?? "Erro ao buscar.";
-      setErro(m);
-    } finally {
-      setCarregando(false);
-    }
-  }, [filtro]);
+    },
+    [filtro]
+  );
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -225,41 +230,226 @@ export default function Busca() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: cores.background },
-  header: { gap: 12, paddingBottom: 12 },
-  chipsRow: { flexDirection: "row", gap: 8, flexWrap: "wrap" },
-  chip: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 9999, backgroundColor: cores.surfaceContainerLow, borderWidth: 1, borderColor: cores.outlineVariant + "30" },
-  chipAtivo: { backgroundColor: cores.primary, borderColor: cores.primary },
-  chipText: { fontSize: 13, fontFamily: "BeVietnamPro_500Medium", color: cores.onSurface },
-  chipTextAtivo: { color: cores.onPrimary },
-  resultHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", borderBottomWidth: 1, borderBottomColor: cores.outlineVariant + "30", paddingBottom: 12, marginTop: 4 },
-  titulo: { fontSize: 20, fontFamily: "BeVietnamPro_700Bold", color: cores.onSurface },
-  count: { fontSize: 12, fontFamily: "BeVietnamPro_400Regular", color: cores.onSurfaceVariant },
-  grid: { gap: 12 },
-  gridDesktop: { flexDirection: "row", flexWrap: "wrap", gap: 16 },
-  cardMobile: {},
-  cardDesktop: { width: "31%" },
-  listaMobile: { padding: espacamentos.page, gap: 12, paddingBottom: 100 },
+const criarStyles = (coresTema: Cores) =>
+  StyleSheet.create({
+    safe: {
+      flex: 1,
+      backgroundColor: coresTema.background,
+    },
 
-  desktopBody: { flex: 1, flexDirection: "row" },
-  filterSidebar: { width: 260, backgroundColor: cores.surface, padding: espacamentos.page, gap: 16, borderRightWidth: 1, borderRightColor: cores.outlineVariant + "20" },
-  filterTitle: { fontFamily: "BeVietnamPro_700Bold", fontSize: 16, color: cores.onSurface },
-  filterGroup: { gap: 8 },
-  filterLabel: { fontFamily: "BeVietnamPro_600SemiBold", fontSize: 11, color: cores.onSurfaceVariant, letterSpacing: 0.5 },
-  checkRow: { flexDirection: "row", alignItems: "center", gap: 8 },
-  check: { width: 18, height: 18, borderRadius: 4, borderWidth: 1, borderColor: cores.outline, alignItems: "center", justifyContent: "center" },
-  checkActive: { backgroundColor: cores.primary, borderColor: cores.primary },
-  checkMark: { color: cores.onPrimary, fontSize: 10, fontFamily: "BeVietnamPro_700Bold" },
-  checkText: { fontFamily: "BeVietnamPro_400Regular", fontSize: 13, color: cores.onSurface },
-  checkTextActive: { color: cores.primary, fontFamily: "BeVietnamPro_600SemiBold" },
-  radio: { width: 18, height: 18, borderRadius: 9, borderWidth: 1, borderColor: cores.outline, alignItems: "center", justifyContent: "center" },
-  radioActive: { borderColor: cores.primary, borderWidth: 2 },
-  radioDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: cores.primary },
-  limparBtn: { borderWidth: 1, borderColor: cores.outlineVariant, borderRadius: 9999, paddingVertical: 10, alignItems: "center", marginTop: 8 },
-  limparText: { color: cores.primary, fontFamily: "BeVietnamPro_600SemiBold", fontSize: 13 },
-  desktopMain: { flex: 1 },
-  desktopMainContent: { padding: 24, gap: 16, paddingBottom: 40 },
-  carregarMais: { alignSelf: "center", borderWidth: 1, borderColor: cores.outlineVariant, borderRadius: 9999, paddingHorizontal: 24, paddingVertical: 10, marginTop: 16 },
-  carregarText: { color: cores.primary, fontFamily: "BeVietnamPro_600SemiBold" },
-});
+    header: {
+      gap: 12,
+      paddingBottom: 12,
+    },
+
+    chipsRow: {
+      flexDirection: "row",
+      gap: 8,
+      flexWrap: "wrap",
+    },
+
+    chip: {
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 9999,
+      backgroundColor: coresTema.surfaceContainerLow,
+      borderWidth: 1,
+      borderColor: coresTema.outlineVariant + "30",
+    },
+
+    chipAtivo: {
+      backgroundColor: coresTema.primary,
+      borderColor: coresTema.primary,
+    },
+
+    chipText: {
+      fontSize: 13,
+      fontFamily: "BeVietnamPro_500Medium",
+      color: coresTema.onSurface,
+    },
+
+    chipTextAtivo: {
+      color: coresTema.onPrimary,
+    },
+
+    resultHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      borderBottomWidth: 1,
+      borderBottomColor: coresTema.outlineVariant + "30",
+      paddingBottom: 12,
+      marginTop: 4,
+    },
+
+    titulo: {
+      fontSize: 20,
+      fontFamily: "BeVietnamPro_700Bold",
+      color: coresTema.onSurface,
+    },
+
+    count: {
+      fontSize: 12,
+      fontFamily: "BeVietnamPro_400Regular",
+      color: coresTema.onSurfaceVariant,
+    },
+
+    grid: {
+      gap: 12,
+    },
+
+    gridDesktop: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 16,
+    },
+
+    cardMobile: {},
+
+    cardDesktop: {
+      width: "31%",
+    },
+
+    mobileHeader: {
+      paddingHorizontal: espacamentos.page,
+      paddingTop: 12,
+      paddingBottom: 8,
+    },
+
+    listaMobile: {
+      padding: espacamentos.page,
+      gap: 12,
+      paddingBottom: 100,
+    },
+
+    desktopBody: {
+      flex: 1,
+      flexDirection: "row",
+    },
+
+    filterSidebar: {
+      width: 260,
+      backgroundColor: coresTema.surface,
+      padding: espacamentos.page,
+      gap: 16,
+      borderRightWidth: 1,
+      borderRightColor: coresTema.outlineVariant + "20",
+    },
+
+    filterTitle: {
+      fontFamily: "BeVietnamPro_700Bold",
+      fontSize: 16,
+      color: coresTema.onSurface,
+    },
+
+    filterGroup: {
+      gap: 8,
+    },
+
+    filterLabel: {
+      fontFamily: "BeVietnamPro_600SemiBold",
+      fontSize: 11,
+      color: coresTema.onSurfaceVariant,
+      letterSpacing: 0.5,
+    },
+
+    checkRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
+
+    check: {
+      width: 18,
+      height: 18,
+      borderRadius: 4,
+      borderWidth: 1,
+      borderColor: coresTema.outline,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+
+    checkActive: {
+      backgroundColor: coresTema.primary,
+      borderColor: coresTema.primary,
+    },
+
+    checkMark: {
+      color: coresTema.onPrimary,
+      fontSize: 10,
+      fontFamily: "BeVietnamPro_700Bold",
+    },
+
+    checkText: {
+      fontFamily: "BeVietnamPro_400Regular",
+      fontSize: 13,
+      color: coresTema.onSurface,
+    },
+
+    checkTextActive: {
+      color: coresTema.primary,
+      fontFamily: "BeVietnamPro_600SemiBold",
+    },
+
+    radio: {
+      width: 18,
+      height: 18,
+      borderRadius: 9,
+      borderWidth: 1,
+      borderColor: coresTema.outline,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+
+    radioActive: {
+      borderColor: coresTema.primary,
+      borderWidth: 2,
+    },
+
+    radioDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: coresTema.primary,
+    },
+
+    limparBtn: {
+      borderWidth: 1,
+      borderColor: coresTema.outlineVariant,
+      borderRadius: 9999,
+      paddingVertical: 10,
+      alignItems: "center",
+      marginTop: 8,
+    },
+
+    limparText: {
+      color: coresTema.primary,
+      fontFamily: "BeVietnamPro_600SemiBold",
+      fontSize: 13,
+    },
+
+    desktopMain: {
+      flex: 1,
+    },
+
+    desktopMainContent: {
+      padding: 24,
+      gap: 16,
+      paddingBottom: 40,
+    },
+
+    carregarMais: {
+      alignSelf: "center",
+      borderWidth: 1,
+      borderColor: coresTema.outlineVariant,
+      borderRadius: 9999,
+      paddingHorizontal: 24,
+      paddingVertical: 10,
+      marginTop: 16,
+    },
+
+    carregarText: {
+      color: coresTema.primary,
+      fontFamily: "BeVietnamPro_600SemiBold",
+    },
+  });
