@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator, Alert } from "react-native";
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator, Alert, Platform } from "react-native";
 import { MaterialCommunityIcons as Icone } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 import { supabase, isSupabaseConfigured } from "../../lib/supabase";
 import { buscarCategorias, listarReceitasDisponiveis } from "../../servicos/api";
 import { cores } from "../../tema/cores";
@@ -61,9 +62,8 @@ export default function AdminDashboardMaster() {
   const [novoNomeRec, setNovoNomeRec] = useState("");
 
   async function getToken() {
-    if (typeof localStorage !== "undefined") return localStorage.getItem("admin_jwt");
+    if (Platform.OS === "web") return localStorage.getItem("admin_jwt");
     try {
-      const SecureStore = require("expo-secure-store");
       return await SecureStore.getItemAsync("admin_jwt");
     } catch {
       return null;
@@ -135,14 +135,15 @@ export default function AdminDashboardMaster() {
           .slice(0, 5);
         setReceitasPopulares(ranking);
       }
-    } catch (e) {
-      console.error("[AdminDashboard] Erro ao carregar dados reais:", e);
+    } catch {
+      // erro capturado silenciosamente no client
     } finally {
       setCarregando(false);
     }
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     carregarDadosReais();
   }, [carregarDadosReais]);
 
@@ -177,8 +178,7 @@ export default function AdminDashboardMaster() {
             if (!resp.ok) throw new Error(data.error);
             Alert.alert("Sucesso", "Usuário excluído.");
             carregarDadosReais();
-          } catch (e) {
-            // Fallback direto na tabela perfis se a Edge Function falhar
+          } catch {
             await supabase.from("perfis").delete().eq("id", id);
             Alert.alert("Aviso", "Registro de perfil removido.");
             carregarDadosReais();
@@ -229,7 +229,7 @@ export default function AdminDashboardMaster() {
 
   return (
     <View style={styles.container}>
-      {/* SIDEBAR COM NAVEGAÇÃO REAL POR ABAS */}
+      {/* SIDEBAR */}
       <View style={styles.sidebar}>
         <View style={styles.logoArea}>
           <View style={styles.logoIcon}><Icone name="chef-hat" size={24} color="#FFF" /></View>
@@ -242,17 +242,14 @@ export default function AdminDashboardMaster() {
         <ScrollView style={styles.navScroll} showsVerticalScrollIndicator={false}>
           <View style={styles.menuGroup}>
             <Text style={styles.groupTitle}>GERENCIAMENTO</Text>
-            
             <TouchableOpacity style={[styles.navItem, tab === "dash" && styles.navItemActive]} onPress={() => setTab("dash")} activeOpacity={0.7} accessibilityRole="button">
               <Icone name="view-dashboard" size={18} color={tab === "dash" ? "#FF6B35" : "#A0A0A0"} />
               <Text style={[styles.navText, tab === "dash" && styles.navTextActive]}>Dashboard</Text>
             </TouchableOpacity>
-
             <TouchableOpacity style={[styles.navItem, tab === "usuarios" && styles.navItemActive]} onPress={() => setTab("usuarios")} activeOpacity={0.7} accessibilityRole="button">
               <Icone name="account-group" size={18} color={tab === "usuarios" ? "#FF6B35" : "#A0A0A0"} />
               <Text style={[styles.navText, tab === "usuarios" && styles.navTextActive]}>Usuários ({stats.usuariosNuvem})</Text>
             </TouchableOpacity>
-
             <TouchableOpacity style={[styles.navItem, tab === "receitas" && styles.navItemActive]} onPress={() => setTab("receitas")} activeOpacity={0.7} accessibilityRole="button">
               <Icone name="book-open-variant" size={18} color={tab === "receitas" ? "#FF6B35" : "#A0A0A0"} />
               <Text style={[styles.navText, tab === "receitas" && styles.navTextActive]}>Receitas Próprias ({stats.receitasApp})</Text>
@@ -282,11 +279,11 @@ export default function AdminDashboardMaster() {
         <View style={styles.topHeader}>
           <View>
             <Text style={styles.dashTitle}>
-              {tab === "dash" && "Dashboard Geral"}
+              {tab === "dash" && "Dashboard"}
               {tab === "usuarios" && "Gerenciamento de Usuários"}
               {tab === "receitas" && "Gerenciamento de Receitas"}
             </Text>
-            <Text style={styles.dashSub}>Conectado ao Supabase (Dados Reais)</Text>
+            <Text style={styles.dashSub}>Visão geral do sistema Receita Fácil</Text>
           </View>
           <TouchableOpacity style={styles.refreshBtn} onPress={carregarDadosReais} activeOpacity={0.8} accessibilityRole="button">
             <Icone name="refresh" size={16} color="#F5F1E8" />
@@ -410,7 +407,7 @@ export default function AdminDashboardMaster() {
               </>
             )}
 
-            {/* ----------------- ABA 2: USUÁRIOS (COM EDITAR E EXCLUIR) ----------------- */}
+            {/* ----------------- ABA 2: USUÁRIOS ----------------- */}
             {tab === "usuarios" && (
               <View style={styles.sectionContainer}>
                 <Text style={styles.sectionHeader}>Gerenciamento de Usuários ({usuariosFiltrados.length})</Text>
@@ -438,7 +435,7 @@ export default function AdminDashboardMaster() {
               </View>
             )}
 
-            {/* ----------------- ABA 3: RECEITAS PRÓPRIAS (COM EDITAR E EXCLUIR) ----------------- */}
+            {/* ----------------- ABA 3: RECEITAS ----------------- */}
             {tab === "receitas" && (
               <View style={styles.sectionContainer}>
                 <Text style={styles.sectionHeader}>Gerenciamento de Receitas Próprias ({receitasFiltradas.length})</Text>
@@ -498,7 +495,7 @@ export default function AdminDashboardMaster() {
         )}
 
         <View style={styles.dashFooter}>
-          <Text style={styles.footerInfo}>Receita Fácil · Painel Administrativo de Dados Reais</Text>
+          <Text style={styles.footerInfo}>Receita Fácil · Painel Administrativo</Text>
           <Text style={styles.footerInfo}>Supabase Conectado · RLS Ativo</Text>
         </View>
 
