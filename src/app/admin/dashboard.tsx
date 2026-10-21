@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as SecureStore from "expo-secure-store";
 import { useRouter } from "expo-router";
@@ -15,8 +15,13 @@ export default function AdminDashboard() {
     carregarDadosAdmin();
   }, []);
 
+  async function getToken() {
+    if (Platform.OS === "web") return localStorage.getItem("admin_jwt");
+    return await SecureStore.getItemAsync("admin_jwt");
+  }
+
   async function carregarDadosAdmin() {
-    const token = await SecureStore.getItemAsync("admin_jwt");
+    const token = await getToken();
     if (!token) {
       router.replace("/admin/login" as never);
       return;
@@ -29,7 +34,7 @@ export default function AdminDashboard() {
   }
 
   async function acaoAdmin(action: "DELETE_USER" | "RESET_PASSWORD", userId?: string, userEmail?: string) {
-    const token = await SecureStore.getItemAsync("admin_jwt");
+    const token = await getToken();
     try {
       const resp = await fetch("https://cpodpuyulqfptldqgdov.supabase.co/functions/v1/admin-actions", {
         method: "POST",
