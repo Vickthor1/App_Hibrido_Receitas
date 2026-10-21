@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as SecureStore from "expo-secure-store";
 import { useRouter } from "expo-router";
@@ -26,7 +26,11 @@ export default function AdminLogin() {
       const data = await resp.json();
       if (!resp.ok) throw new Error(data.error || "Falha na autenticação admin.");
 
-      await SecureStore.setItemAsync("admin_jwt", data.token);
+      if (Platform.OS === "web") {
+        localStorage.setItem("admin_jwt", data.token);
+      } else {
+        await SecureStore.setItemAsync("admin_jwt", data.token);
+      }
       router.replace("/admin/dashboard" as never);
     } catch (e) {
       Alert.alert("Erro", e instanceof Error ? e.message : "Erro desconhecido.");
