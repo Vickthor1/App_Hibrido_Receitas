@@ -1,17 +1,18 @@
 import * as React from "react";
 
-declare module "react" {
+declare global {
   namespace JSX {
-    interface Element extends React.ReactElement<unknown, string | React.JSXElementConstructor<any>> {}
+    // Usamos any para evitar o conflito estrito de tipo de elemento do React 19 no RNW
+    type Element = any;
     interface IntrinsicElements {
       [elemName: string]: any;
     }
   }
 }
 
-declare global {
+declare module "react" {
   namespace JSX {
-    interface Element extends React.ReactElement<unknown, string | React.JSXElementConstructor<any>> {}
+    type Element = any;
     interface IntrinsicElements {
       [elemName: string]: any;
     }
