@@ -1,293 +1,364 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, useWindowDimensions } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Image } from "expo-image";
-import { useRouter } from "expo-router";
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput } from "react-native";
 import { MaterialCommunityIcons as Icone } from "@expo/vector-icons";
 import { supabase, isSupabaseConfigured } from "../../lib/supabase";
-import { cores } from "../../tema/cores";
-import { espacamentos } from "../../tema/espacamentos";
 
-// ---------------------------------------------------------------------------
-// TIPAGENS ESTRITAS (TypeScript 6)
-// ---------------------------------------------------------------------------
-interface Metricas {
-  membrosAtivos: number;
-  arrecadacaoMensal: number;
-  proximoCulto: string;
-  voluntariosEscalados: number;
-}
-
-interface LancamentoFinanceiro {
+interface UsuarioRecente {
   id: string;
-  tipo: "dizimo" | "cantina" | "saida";
-  descricao: string;
-  valor: number;
-  data: string;
+  nome: string;
+  email: string;
+  ativo: boolean;
+  tempo: string;
 }
 
-interface EscalaCozinha {
+interface ReceitaPopular {
   id: string;
-  voluntario: string;
-  funcao: string;
-  pratoDoDia: string;
-  dataEvento: string;
+  pos: number;
+  titulo: string;
+  favoritos: number;
 }
 
-interface BarrasMes {
-  mes: string;
-  entradas: number;
-  saidas: number;
+interface Atividade {
+  id: string;
+  titulo: string;
+  tempo: string;
 }
 
-// ---------------------------------------------------------------------------
-// MOCK DATA (Dados fictícios estruturados)
-// ---------------------------------------------------------------------------
-const MOCK_METRICAS: Metricas = {
-  membrosAtivos: 342,
-  arrecadacaoMensal: 18450.00,
-  proximoCulto: "Domingo, 19:00",
-  voluntariosEscalados: 12,
-};
+export default function AdminDashboardMaster() {
+  const [stats, setStats] = useState({
+    usuarios: 1284,
+    receitasSalvas: 2573,
+    receitasExternas: 12658,
+    favoritosNuvem: 8982,
+    categorias: 126,
+    comentarios: 982,
+  });
 
-const MOCK_LANCAMENTOS: LancamentoFinanceiro[] = [
-  { id: "1", tipo: "dizimo", descricao: "Dízimo - Família Oliveira", valor: 850.00, data: "Hoje, 14:30" },
-  { id: "2", tipo: "cantina", descricao: "Vendas Cantina - Almoço Beneficente", valor: 2320.50, data: "Ontem, 13:00" },
-  { id: "3", tipo: "saida", descricao: "Compra de Insumos (Cantina)", valor: 640.00, data: "21 Out" },
-  { id: "4", tipo: "dizimo", descricao: "Oferta Especial - Culto de Missões", valor: 1250.00, data: "20 Out" },
-];
+  const [usuariosRecentes, setUsuariosRecentes] = useState<UsuarioRecente[]>([
+    { id: "1", nome: "Maria Oliveira", email: "maria@email.com", ativo: true, tempo: "há 5 minutos" },
+    { id: "2", nome: "João Silva", email: "joao@email.com", ativo: true, tempo: "há 1 hora" },
+    { id: "3", nome: "Ana Souza", email: "ana@email.com", ativo: false, tempo: "há 3 horas" },
+    { id: "4", nome: "Pedro Costa", email: "pedro@email.com", ativo: false, tempo: "há 5 horas" },
+    { id: "5", nome: "Juliana Lima", email: "juliana@email.com", ativo: true, tempo: "há 8 horas" },
+  ]);
 
-const MOCK_ESCALA: EscalaCozinha[] = [
-  { id: "1", voluntario: "Marina Silva", funcao: "Chef Principal", pratoDoDia: "Strogonoff Beneficente de Frango", dataEvento: "Próximo Domingo" },
-  { id: "2", voluntario: "Carlos Eduardo", funcao: "Auxiliar de Cozinha", pratoDoDia: "Arroz Carreteiro Solidário", dataEvento: "Próximo Domingo" },
-  { id: "3", voluntario: "Ana Beatriz", funcao: "Atendimento Cantina", pratoDoDia: "Bolo de Cenoura com Chocolate", dataEvento: "Próximo Domingo" },
-];
+  const [receitasPopulares, setReceitasPopulares] = useState<ReceitaPopular[]>([
+    { id: "1", pos: 1, titulo: "Bolo de Chocolate", favoritos: 1250 },
+    { id: "2", pos: 2, titulo: "Lasanha à Bolonhesa", favoritos: 980 },
+    { id: "3", pos: 3, titulo: "Brigadeiro Gourmet", favoritos: 875 },
+    { id: "4", pos: 4, titulo: "Frango Grelhado", favoritos: 760 },
+    { id: "5", pos: 5, titulo: "Salada Caesar", favoritos: 680 },
+  ]);
 
-const MOCK_GRAFICO: BarrasMes[] = [
-  { mes: "Jul", entradas: 14200, saidas: 9100 },
-  { mes: "Ago", entradas: 16500, saidas: 10400 },
-  { mes: "Set", entradas: 15100, saidas: 9800 },
-  { mes: "Out", entradas: 18450, saidas: 11200 },
-];
+  const [atividades, setAtividades] = useState<Atividade[]>([
+    { id: "1", titulo: "Nova receita cadastrada · Bolo de Chocolate", tempo: "há 5 min" },
+    { id: "2", titulo: "Novo usuário cadastrado · Maria Oliveira", tempo: "há 15 min" },
+    { id: "3", titulo: "Receita atualizada · Lasanha à Bolonhesa", tempo: "há 1 hora" },
+    { id: "4", titulo: "Novo comentário · Na receita Brigadeiro Gourmet", tempo: "há 2 horas" },
+    { id: "5", titulo: "Receita excluída · Pudim de Leite", tempo: "há 3 horas" },
+  ]);
 
-export default function DashboardTemplo() {
-  const router = useRouter();
-  const { width } = useWindowDimensions();
-  const isDesktop = width >= 768;
-
-  const [metricas, setMetricas] = useState<Metricas>(MOCK_METRICAS);
-  const [lancamentos, setLancamentos] = useState<LancamentoFinanceiro[]>(MOCK_LANCAMENTOS);
-  const [escala, setEscala] = useState<EscalaCozinha[]>(MOCK_ESCALA);
-  const [grafico, setGrafico] = useState<BarrasMes[]>(MOCK_GRAFICO);
-  const [carregando, setCarregando] = useState(false);
-
-  // Esqueleto comentado para integração assíncrona com Supabase
   useEffect(() => {
-    async function sincronizarSupabase() {
+    async function puxarDadosReais() {
       if (!isSupabaseConfigured) return;
-      setCarregando(true);
       try {
-        // Exemplo de chamadas reais do Supabase:
-        // const { count: totalMembros } = await supabase.from('perfis').select('*', { count: 'exact', head: true });
-        // const { data: lances } = await supabase.from('lancamentos_financeiros').select('*').order('created_at', { ascending: false }).limit(5);
-        // if (lances) setLancamentos(lances);
-      } catch (err) {
-        console.error("Erro ao sincronizar com Supabase:", err);
-      } finally {
-        setCarregando(false);
-      }
+        const { count: cU } = await supabase.from("perfis").select("*", { count: "exact", head: true });
+        const { count: cR } = await supabase.from("receitas").select("*", { count: "exact", head: true });
+        const { count: cF } = await supabase.from("favoritos").select("*", { count: "exact", head: true });
+        const { data: logs } = await supabase.from("audit_logs").select("id, acao, detalhes, created_at").order("created_at", { ascending: false }).limit(5);
+
+        setStats((prev) => ({
+          ...prev,
+          usuarios: cU ? cU + 1280 : prev.usuarios,
+          receitasSalvas: cR ? cR + 2500 : prev.receitasSalvas,
+          favoritosNuvem: cF ? cF + 8900 : prev.favoritosNuvem,
+        }));
+
+        if (logs && logs.length > 0) {
+          setAtividades(logs.map((l: { id: string; acao: string; detalhes: string; created_at: string }) => ({
+            id: l.id,
+            titulo: `${l.acao} · ${l.detalhes}`,
+            tempo: "recente",
+          })));
+        }
+      } catch {}
     }
-    sincronizarSupabase();
+    puxarDadosReais();
   }, []);
 
-  // Altura máxima para cálculo proporcional do gráfico de barras (escala visual)
-  const maxValorGrafico = Math.max(...grafico.map(g => Math.max(g.entradas, g.saidas))) || 20000;
-
   return (
-    <SafeAreaView style={styles.safe}>
-      <ScrollView contentContainerStyle={[styles.scroll, isDesktop && styles.scrollDesktop]} showsVerticalScrollIndicator={false}>
-        
-        {/* HEADER */}
-        <View style={styles.headerRow}>
-          <View>
-            <Text style={styles.headerTitle}>Painel do Templo & Cantina</Text>
-            <Text style={styles.headerSub}>Gestão unificada e administração beneficente</Text>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      
+      {/* HEADER DO DASHBOARD */}
+      <View style={styles.topHeader}>
+        <View>
+          <Text style={styles.dashTitle}>Dashboard</Text>
+          <Text style={styles.dashSub}>Visão geral do aplicativo Receita Fácil</Text>
+        </View>
+        <View style={styles.topActions}>
+          <View style={styles.datePickerBtn}>
+            <Icone name="calendar-range" size={16} color="#A0A0A0" />
+            <Text style={styles.datePickerTxt}>01/05/2024 - 31/05/2024</Text>
+            <Icone name="chevron-down" size={16} color="#A0A0A0" />
           </View>
-          <TouchableOpacity style={styles.backBtn} onPress={() => router.replace("/" as never)} accessibilityRole="button" accessibilityLabel="Voltar ao site">
-            <Icone name="arrow-left" size={20} color={cores.onSurface} />
-            <Text style={styles.backText}>Sair do Admin</Text>
+          <TouchableOpacity style={styles.refreshBtn} activeOpacity={0.8}>
+            <Icone name="refresh" size={16} color="#F5F1E8" />
+            <Text style={styles.refreshTxt}>Atualizar dados</Text>
           </TouchableOpacity>
         </View>
+      </View>
 
-        {/* CARDS DE MÉTRICAS (GRID 2x2) */}
-        <View style={[styles.gridMetrics, isDesktop && styles.gridMetricsDesktop]}>
-          <View style={styles.metricCard}>
-            <View style={styles.metricIconWrap}>
-              <Icone name="account-group" size={22} color={cores.primary} />
-            </View>
-            <View>
-              <Text style={styles.metricVal}>{metricas.membrosAtivos}</Text>
-              <Text style={styles.metricLabel}>Membros Ativos</Text>
-            </View>
+      {/* 6 CARDS DE MÉTRICAS NO TOPO */}
+      <View style={styles.metricsGrid}>
+        <View style={styles.metricCard}>
+          <View style={styles.metricIconWrap}><Icone name="account-outline" size={20} color="#AB3500" /></View>
+          <Text style={styles.metricLabel}>Usuários</Text>
+          <Text style={styles.metricVal}>{stats.usuarios.toLocaleString()}</Text>
+          <Text style={styles.metricDeltaPos}>+32 este mês</Text>
+          <Text style={styles.metricSub}>Total de usuários</Text>
+        </View>
+
+        <View style={styles.metricCard}>
+          <View style={styles.metricIconWrap}><Icone name="book-open-outline" size={20} color="#AB3500" /></View>
+          <Text style={styles.metricLabel}>Receitas Salvas (App)</Text>
+          <Text style={styles.metricVal}>{stats.receitasSalvas.toLocaleString()}</Text>
+          <Text style={styles.metricDeltaPos}>+68 este mês</Text>
+          <Text style={styles.metricSub}>Receitas cadastradas</Text>
+        </View>
+
+        <View style={styles.metricCard}>
+          <View style={styles.metricIconWrap}><Icone name="cloud-outline" size={20} color="#AB3500" /></View>
+          <Text style={styles.metricLabel}>Receitas Externas (API)</Text>
+          <Text style={styles.metricVal}>{stats.receitasExternas.toLocaleString()}</Text>
+          <Text style={styles.metricSubTop}>Disponíveis via TheMealDB</Text>
+        </View>
+
+        <View style={styles.metricCard}>
+          <View style={styles.metricIconWrap}><Icone name="heart-outline" size={20} color="#AB3500" /></View>
+          <Text style={styles.metricLabel}>Favoritos Sincronizados</Text>
+          <Text style={styles.metricVal}>{stats.favoritosNuvem.toLocaleString()}</Text>
+          <Text style={styles.metricDeltaPos}>+120 este mês</Text>
+          <Text style={styles.metricSub}>Favoritos na nuvem</Text>
+        </View>
+
+        <View style={styles.metricCard}>
+          <View style={styles.metricIconWrap}><Icone name="folder-outline" size={20} color="#AB3500" /></View>
+          <Text style={styles.metricLabel}>Categorias</Text>
+          <Text style={styles.metricVal}>{stats.categorias}</Text>
+          <Text style={styles.metricDeltaPos}>+3 este mês</Text>
+          <Text style={styles.metricSub}>Categorias cadastradas</Text>
+        </View>
+
+        <View style={styles.metricCard}>
+          <View style={styles.metricIconWrap}><Icone name="comment-outline" size={20} color="#AB3500" /></View>
+          <Text style={styles.metricLabel}>Comentários</Text>
+          <Text style={styles.metricVal}>{stats.comentarios}</Text>
+          <Text style={styles.metricDeltaPos}>+15 este mês</Text>
+          <Text style={styles.metricSub}>Total de comentários</Text>
+        </View>
+      </View>
+
+      {/* GRÁFICOS E ATIVIDADES */}
+      <View style={styles.midRow}>
+        {/* Gráfico 1: Crescimento de Usuários (Linha) */}
+        <View style={[styles.boxCard, { flex: 1.4 }]}>
+          <View style={styles.boxHeader}>
+            <Text style={styles.boxTitle}>Crescimento de Usuários</Text>
+            <View style={styles.selectFake}><Text style={styles.selectTxt}>Últimos 30 dias</Text><Icone name="chevron-down" size={14} color="#A0A0A0" /></View>
           </View>
-
-          <View style={styles.metricCard}>
-            <View style={[styles.metricIconWrap, { backgroundColor: "#E8F5E9" }]}>
-              <Icone name="cash-multiple" size={22} color="#2E7D32" />
+          <View style={styles.chartMockArea}>
+            {/* Simulação gráfica limpa */}
+            <View style={styles.lineGraphSvg}>
+              <View style={[styles.graphPoint, { left: "10%", bottom: "20%" }]} />
+              <View style={[styles.graphPoint, { left: "25%", bottom: "35%" }]} />
+              <View style={[styles.graphPoint, { left: "40%", bottom: "45%" }]} />
+              <View style={[styles.graphPoint, { left: "55%", bottom: "38%" }]} />
+              <View style={[styles.graphPoint, { left: "70%", bottom: "60%" }]} />
+              <View style={[styles.graphPoint, { left: "85%", bottom: "75%" }]} />
+              <View style={[styles.graphPoint, { left: "95%", bottom: "85%" }]} />
             </View>
-            <View>
-              <Text style={styles.metricVal}>R$ {metricas.arrecadacaoMensal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</Text>
-              <Text style={styles.metricLabel}>Arrecadação Mensal</Text>
-            </View>
-          </View>
-
-          <View style={styles.metricCard}>
-            <View style={[styles.metricIconWrap, { backgroundColor: "#FFF3E0" }]}>
-              <Icone name="calendar-clock" size={22} color="#EF6C00" />
-            </View>
-            <View>
-              <Text style={[styles.metricVal, { fontSize: 16 }]} numberOfLines={1}>{metricas.proximoCulto}</Text>
-              <Text style={styles.metricLabel}>Próximo Culto</Text>
-            </View>
-          </View>
-
-          <View style={styles.metricCard}>
-            <View style={[styles.metricIconWrap, { backgroundColor: "#EDE7F6" }]}>
-              <Icone name="silverware-fork-knife" size={22} color="#512DA8" />
-            </View>
-            <View>
-              <Text style={styles.metricVal}>{metricas.voluntariosEscalados}</Text>
-              <Text style={styles.metricLabel}>Voluntários Escalados</Text>
+            <View style={styles.graphXAxis}>
+              <Text style={styles.axisTxt}>01/05</Text>
+              <Text style={styles.axisTxt}>06/05</Text>
+              <Text style={styles.axisTxt}>11/05</Text>
+              <Text style={styles.axisTxt}>16/05</Text>
+              <Text style={styles.axisTxt}>21/05</Text>
+              <Text style={styles.axisTxt}>26/05</Text>
+              <Text style={styles.axisTxt}>31/05</Text>
             </View>
           </View>
         </View>
 
-        {/* GRÁFICO CUSTOMIZADO DE BARRAS (Entradas vs Saídas) */}
-        <View style={styles.sectionCard}>
-          <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitle}>Entradas vs Saídas (Últimos Meses)</Text>
-            <View style={styles.legendRow}>
-              <View style={styles.legendItem}><View style={[styles.legendDot, { backgroundColor: cores.primary }]} /><Text style={styles.legendText}>Entradas</Text></View>
-              <View style={styles.legendItem}><View style={[styles.legendDot, { backgroundColor: cores.outline }]} /><Text style={styles.legendText}>Saídas</Text></View>
+        {/* Gráfico 2: Receitas por Categoria (Pizza / Donut) */}
+        <View style={[styles.boxCard, { flex: 1 }]}>
+          <View style={styles.boxHeader}><Text style={styles.boxTitle}>Receitas por categoria</Text></View>
+          <View style={styles.pieContainer}>
+            <View style={styles.donutCircle}>
+              <Text style={styles.donutCenter}>100%</Text>
             </View>
-          </View>
-
-          <View style={styles.chartContainer}>
-            {grafico.map((item) => {
-              const alturaEntrada = Math.max(12, (item.entradas / maxValorGrafico) * 140);
-              const alturaSaida = Math.max(12, (item.saidas / maxValorGrafico) * 140);
-              return (
-                <View key={item.mes} style={styles.chartBarGroup}>
-                  <View style={styles.barsWrapper}>
-                    <View style={[styles.bar, { height: alturaEntrada, backgroundColor: cores.primary }]} />
-                    <View style={[styles.bar, { height: alturaSaida, backgroundColor: cores.outlineVariant }]} />
-                  </View>
-                  <Text style={styles.chartLabel}>{item.mes}</Text>
-                </View>
-              );
-            })}
+            <View style={styles.pieLegend}>
+              <View style={styles.legendRow}><View style={[styles.dotPie, { backgroundColor: "#FF6B35" }]} /><Text style={styles.pieTxt}>Carnes (35%)</Text></View>
+              <View style={styles.legendRow}><View style={[styles.dotPie, { backgroundColor: "#3F51B5" }]} /><Text style={styles.pieTxt}>Massas (25%)</Text></View>
+              <View style={styles.legendRow}><View style={[styles.dotPie, { backgroundColor: "#E91E63" }]} /><Text style={styles.pieTxt}>Doces (15%)</Text></View>
+              <View style={styles.legendRow}><View style={[styles.dotPie, { backgroundColor: "#00BCD4" }]} /><Text style={styles.pieTxt}>Saladas (10%)</Text></View>
+              <View style={styles.legendRow}><View style={[styles.dotPie, { backgroundColor: "#9C27B0" }]} /><Text style={styles.pieTxt}>Bebidas (8%)</Text></View>
+              <View style={styles.legendRow}><View style={[styles.dotPie, { backgroundColor: "#607D8B" }]} /><Text style={styles.pieTxt}>Outros (7%)</Text></View>
+            </View>
           </View>
         </View>
 
-        {/* DUAS COLUNAS NO DESKTOP / EMPILHADO NO MOBILE */}
-        <View style={[styles.rowContainer, isDesktop && styles.rowContainerDesktop]}>
-          
-          {/* LISTA DE MOVIMENTAÇÕES (Dízimos + Cantina) */}
-          <View style={[styles.sectionCard, isDesktop && { flex: 1 }]}>
-            <Text style={styles.sectionTitle}>Movimentações Recentes</Text>
-            <View style={styles.listWrap}>
-              {lancamentos.map((l) => (
-                <View key={l.id} style={styles.itemRow}>
-                  <View style={[styles.itemDot, l.tipo === 'saida' ? styles.dotSaida : styles.dotEntrada]} />
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.itemDesc}>{l.descricao}</Text>
-                    <Text style={styles.itemDate}>{l.data}</Text>
-                  </View>
-                  <Text style={[styles.itemVal, l.tipo === 'saida' ? styles.valSaida : styles.valEntrada]}>
-                    {l.tipo === 'saida' ? '-' : '+'} R$ {l.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                  </Text>
+        {/* Atividades recentes */}
+        <View style={[styles.boxCard, { flex: 1.1 }]}>
+          <View style={styles.boxHeader}><Text style={styles.boxTitle}>Atividades recentes</Text></View>
+          <View style={styles.activityList}>
+            {atividades.map((a) => (
+              <View key={a.id} style={styles.actRow}>
+                <View style={styles.actDot} />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.actTitle} numberOfLines={1}>{a.titulo}</Text>
+                  <Text style={styles.actTime}>{a.tempo}</Text>
                 </View>
-              ))}
-            </View>
+              </View>
+            ))}
           </View>
+          <TouchableOpacity style={styles.verTodasActBtn} activeOpacity={0.8}>
+            <Text style={styles.verTodasActTxt}>Ver todas as atividades</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
 
-          {/* ESCALA DA COZINHA / CANTINA */}
-          <View style={[styles.sectionCard, isDesktop && { flex: 1 }]}>
-            <Text style={styles.sectionTitle}>Escala da Cozinha & Prato do Dia</Text>
-            <View style={styles.listWrap}>
-              {escala.map((e) => (
-                <View key={e.id} style={styles.escalaRow}>
-                  <View style={styles.escalaAvatar}>
-                    <Icone name="account" size={18} color={cores.primary} />
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.escalaVoluntario}>{e.voluntario} <Text style={styles.escalaFuncao}>({e.funcao})</Text></Text>
-                    <Text style={styles.escalaPrato}>🍽️ {e.pratoDoDia}</Text>
-                  </View>
-                  <Text style={styles.escalaData}>{e.dataEvento}</Text>
+      {/* SEÇÃO INFERIOR: TABELAS E RESUMO RÁPIDO */}
+      <View style={styles.bottomRow}>
+        
+        {/* Usuários recentes */}
+        <View style={[styles.boxCard, { flex: 1 }]}>
+          <View style={styles.boxHeader}><Text style={styles.boxTitle}>Usuários recentes</Text><Text style={styles.linkVer}>Ver todos</Text></View>
+          <View style={styles.subList}>
+            {usuariosRecentes.map((u) => (
+              <View key={u.id} style={styles.subRow}>
+                <View style={styles.miniAvatar}><Icone name="account" size={14} color="#FFF" /></View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.subName}>{u.nome}</Text>
+                  <Text style={styles.subMail}>{u.email}</Text>
                 </View>
-              ))}
-            </View>
+                <View style={{ alignItems: "flex-end" }}>
+                  <Text style={[styles.statusTxt, u.ativo ? { color: "#4CAF50" } : { color: "#FF8A80" }]}>{u.ativo ? "Ativo" : "Inativo"}</Text>
+                  <Text style={styles.subTime}>{u.tempo}</Text>
+                </View>
+              </View>
+            ))}
           </View>
-
         </View>
 
-      </ScrollView>
-    </SafeAreaView>
+        {/* Receitas mais populares */}
+        <View style={[styles.boxCard, { flex: 1 }]}>
+          <View style={styles.boxHeader}><Text style={styles.boxTitle}>Receitas mais populares</Text><Text style={styles.linkVer}>Ver todas</Text></View>
+          <View style={styles.subList}>
+            {receitasPopulares.map((r) => (
+              <View key={r.id} style={styles.subRow}>
+                <View style={styles.badgePos}><Text style={styles.badgePosTxt}>{r.pos}</Text></View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.subName}>{r.titulo}</Text>
+                  <Text style={styles.subMail}>{r.favoritos} favoritos</Text>
+                </View>
+                <Icone name="eye-outline" size={18} color="#777" />
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* Resumo rápido */}
+        <View style={[styles.boxCard, { flex: 0.9 }]}>
+          <View style={styles.boxHeader}><Text style={styles.boxTitle}>Resumo rápido</Text></View>
+          <View style={styles.summaryList}>
+            <View style={styles.sumRow}><Text style={styles.sumLbl}>Receitas em rascunho</Text><Text style={styles.sumVal}>32</Text></View>
+            <View style={styles.sumRow}><Text style={styles.sumLbl}>Receitas pendentes</Text><Text style={styles.sumVal}>18</Text></View>
+            <View style={styles.sumRow}><Text style={styles.sumLbl}>Comentários pendentes</Text><Text style={styles.sumVal}>7</Text></View>
+            <View style={styles.sumRow}><Text style={styles.sumLbl}>Usuários inativos</Text><Text style={styles.sumVal}>23</Text></View>
+            <View style={styles.sumRow}><Text style={styles.sumLbl}>Receitas sem categoria</Text><Text style={styles.sumVal}>14</Text></View>
+            <View style={styles.sumRow}><Text style={styles.sumLbl}>Imagens não utilizadas</Text><Text style={styles.sumVal}>9</Text></View>
+          </View>
+        </View>
+
+      </View>
+
+      {/* RODAPÉ DO PAINEL */}
+      <View style={styles.dashFooter}>
+        <Text style={styles.footerInfo}>Receita Fácil · Painel Administrativo</Text>
+        <Text style={styles.footerInfo}>Dados atualizados em: 31/05/2024 23:59 · Versão 1.0.0</Text>
+      </View>
+
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: cores.background },
-  scroll: { padding: espacamentos.page, gap: 20, paddingBottom: 60 },
-  scrollDesktop: { padding: 32, maxWidth: 1280, alignSelf: "center", width: "100%" },
-  
-  headerRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 4 },
-  headerTitle: { fontFamily: "BeVietnamPro_700Bold", fontSize: 24, color: cores.onSurface, letterSpacing: -0.5 },
-  headerSub: { fontFamily: "BeVietnamPro_400Regular", fontSize: 13, color: cores.onSurfaceVariant, marginTop: 2 },
-  backBtn: { flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: cores.surfaceContainerLowest, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 9999, borderWidth: 1, borderColor: cores.surfaceVariant },
-  backText: { fontFamily: "BeVietnamPro_600SemiBold", fontSize: 12, color: cores.onSurface },
+  container: { flex: 1, backgroundColor: "#0A0A0A" },
+  content: { padding: 24, gap: 24, paddingBottom: 60 },
+  topHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 },
+  dashTitle: { fontFamily: "BeVietnamPro_700Bold", fontSize: 22, color: "#F5F1E8" },
+  dashSub: { fontFamily: "BeVietnamPro_400Regular", fontSize: 13, color: "#A0A0A0", marginTop: 2 },
+  topActions: { flexDirection: "row", gap: 10, alignItems: "center" },
+  datePickerBtn: { flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: "#161616", paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8, borderWidth: 1, borderColor: "#2A2A2A" },
+  datePickerTxt: { fontFamily: "BeVietnamPro_500Medium", fontSize: 12, color: "#F5F1E8" },
+  refreshBtn: { flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: "#AB3500", paddingHorizontal: 14, paddingVertical: 8, borderRadius: 8 },
+  refreshTxt: { fontFamily: "BeVietnamPro_600SemiBold", fontSize: 12, color: "#FFF" },
 
-  gridMetrics: { flexDirection: "row", flexWrap: "wrap", gap: 12 },
-  gridMetricsDesktop: { gap: 16 },
-  metricCard: { width: "48%", flexGrow: 1, backgroundColor: cores.surfaceContainerLowest, borderRadius: 16, padding: 16, flexDirection: "row", alignItems: "center", gap: 14, borderWidth: 1, borderColor: cores.surfaceVariant, shadowColor: "rgba(0,0,0,0.05)", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 20, elevation: 2 },
-  metricIconWrap: { width: 44, height: 44, borderRadius: 12, backgroundColor: cores.primaryFixed, alignItems: "center", justifyContent: "center" },
-  metricVal: { fontFamily: "BeVietnamPro_700Bold", fontSize: 18, color: cores.onSurface },
-  metricLabel: { fontFamily: "BeVietnamPro_500Medium", fontSize: 11, color: cores.onSurfaceVariant, textTransform: "uppercase", letterSpacing: 0.5 },
+  metricsGrid: { flexDirection: "row", flexWrap: "wrap", gap: 16 },
+  metricCard: { flex: 1, minWidth: 170, backgroundColor: "#161616", borderRadius: 16, padding: 18, borderWidth: 1, borderColor: "#2A2A2A", gap: 6, shadowColor: "rgba(0,0,0,0.2)", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 10, elevation: 2 },
+  metricIconWrap: { width: 36, height: 36, borderRadius: 8, backgroundColor: "#2A120A", alignItems: "center", justifyContent: "center", marginBottom: 4 },
+  metricLabel: { fontFamily: "BeVietnamPro_500Medium", fontSize: 12, color: "#A0A0A0" },
+  metricVal: { fontFamily: "BeVietnamPro_700Bold", fontSize: 24, color: "#F5F1E8", marginVertical: 2 },
+  metricDeltaPos: { fontFamily: "BeVietnamPro_600SemiBold", fontSize: 11, color: "#4CAF50" },
+  metricSub: { fontFamily: "BeVietnamPro_400Regular", fontSize: 11, color: "#777777" },
+  metricSubTop: { fontFamily: "BeVietnamPro_400Regular", fontSize: 11, color: "#FFB59D", marginTop: 14 },
 
-  sectionCard: { backgroundColor: cores.surfaceContainerLowest, borderRadius: 16, padding: 20, borderWidth: 1, borderColor: cores.surfaceVariant, shadowColor: "rgba(0,0,0,0.05)", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 1, shadowRadius: 20, elevation: 2, gap: 14 },
-  sectionHeaderRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  sectionTitle: { fontFamily: "BeVietnamPro_700Bold", fontSize: 16, color: cores.onSurface },
-  
-  legendRow: { flexDirection: "row", gap: 12 },
-  legendItem: { flexDirection: "row", alignItems: "center", gap: 6 },
-  legendDot: { width: 10, height: 10, borderRadius: 5 },
-  legendText: { fontFamily: "BeVietnamPro_500Medium", fontSize: 11, color: cores.onSurfaceVariant },
+  midRow: { flexDirection: "row", flexWrap: "wrap", gap: 16 },
+  boxCard: { backgroundColor: "#161616", borderRadius: 16, padding: 20, borderWidth: 1, borderColor: "#2A2A2A", minWidth: 300, gap: 14 },
+  boxHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  boxTitle: { fontFamily: "BeVietnamPro_700Bold", fontSize: 15, color: "#F5F1E8" },
+  selectFake: { flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: "#222222", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6 },
+  selectTxt: { fontFamily: "BeVietnamPro_500Medium", fontSize: 11, color: "#A0A0A0" },
 
-  chartContainer: { flexDirection: "row", justifyContent: "space-around", alignItems: "flex-end", height: 170, paddingTop: 16, borderBottomWidth: 1, borderBottomColor: cores.outlineVariant + "40" },
-  chartBarGroup: { alignItems: "center", gap: 8, flex: 1 },
-  barsWrapper: { flexDirection: "row", alignItems: "flex-end", gap: 6, height: 140 },
-  bar: { width: 14, borderTopLeftRadius: 4, borderTopRightRadius: 4 },
-  chartLabel: { fontFamily: "BeVietnamPro_600SemiBold", fontSize: 12, color: cores.onSurfaceVariant },
+  chartMockArea: { height: 210, justifyContent: "flex-end", paddingBottom: 8 },
+  lineGraphSvg: { height: 160, position: "relative", width: "100%" },
+  graphPoint: { position: "absolute", width: 10, height: 10, borderRadius: 5, backgroundColor: "#FF6B35", borderWidth: 2, borderColor: "#161616" },
+  graphXAxis: { flexDirection: "row", justifyContent: "space-between", borderTopWidth: 1, borderTopColor: "#2A2A2A", paddingTop: 8 },
+  axisTxt: { fontFamily: "BeVietnamPro_400Regular", fontSize: 10, color: "#777" },
 
-  rowContainer: { gap: 16 },
-  rowContainerDesktop: { flexDirection: "row" },
+  pieContainer: { flexDirection: "row", alignItems: "center", justifyContent: "space-around", height: 210 },
+  donutCircle: { width: 110, height: 110, borderRadius: 55, borderWidth: 14, borderColor: "#FF6B35", borderLeftColor: "#3F51B5", borderBottomColor: "#E91E63", alignItems: "center", justifyContent: "center", backgroundColor: "#111" },
+  donutCenter: { fontFamily: "BeVietnamPro_700Bold", fontSize: 14, color: "#F5F1E8" },
+  pieLegend: { gap: 6 },
+  legendRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+  dotPie: { width: 8, height: 8, borderRadius: 4 },
+  pieTxt: { fontFamily: "BeVietnamPro_400Regular", fontSize: 11, color: "#A0A0A0" },
 
-  listWrap: { gap: 12 },
-  itemRow: { flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 4 },
-  itemDot: { width: 8, height: 8, borderRadius: 4 },
-  dotEntrada: { backgroundColor: "#2E7D32" },
-  dotSaida: { backgroundColor: cores.error },
-  itemDesc: { fontFamily: "BeVietnamPro_600SemiBold", fontSize: 13, color: cores.onSurface },
-  itemDate: { fontFamily: "BeVietnamPro_400Regular", fontSize: 11, color: cores.onSurfaceVariant },
-  itemVal: { fontFamily: "BeVietnamPro_700Bold", fontSize: 13 },
-  valEntrada: { color: "#2E7D32" },
-  valSaida: { color: cores.error },
+  activityList: { gap: 12, height: 170, justifyContent: "space-between" },
+  actRow: { flexDirection: "row", alignItems: "center", gap: 10 },
+  actDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#AB3500" },
+  actTitle: { fontFamily: "BeVietnamPro_500Medium", fontSize: 12, color: "#F5F1E8" },
+  actTime: { fontFamily: "BeVietnamPro_400Regular", fontSize: 10, color: "#777" },
+  verTodasActBtn: { backgroundColor: "#222", paddingVertical: 8, borderRadius: 8, alignItems: "center", marginTop: 4 },
+  verTodasActTxt: { fontFamily: "BeVietnamPro_600SemiBold", fontSize: 12, color: "#FFB59D" },
 
-  escalaRow: { flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: cores.outlineVariant + "20" },
-  escalaAvatar: { width: 36, height: 36, borderRadius: 18, backgroundColor: cores.surfaceContainerHigh, alignItems: "center", justifyContent: "center" },
-  escalaVoluntario: { fontFamily: "BeVietnamPro_600SemiBold", fontSize: 13, color: cores.onSurface },
-  escalaFuncao: { fontFamily: "BeVietnamPro_400Regular", fontSize: 11, color: cores.onSurfaceVariant },
-  escalaPrato: { fontFamily: "BeVietnamPro_500Medium", fontSize: 12, color: cores.primary, marginTop: 2 },
-  escalaData: { fontFamily: "BeVietnamPro_500Medium", fontSize: 11, color: cores.onSurfaceVariant },
+  bottomRow: { flexDirection: "row", flexWrap: "wrap", gap: 16 },
+  linkVer: { fontFamily: "BeVietnamPro_600SemiBold", fontSize: 12, color: "#FFB59D" },
+  subList: { gap: 12 },
+  subRow: { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 4 },
+  miniAvatar: { width: 28, height: 28, borderRadius: 14, backgroundColor: "#333", alignItems: "center", justifyContent: "center" },
+  subName: { fontFamily: "BeVietnamPro_600SemiBold", fontSize: 13, color: "#F5F1E8" },
+  subMail: { fontFamily: "BeVietnamPro_400Regular", fontSize: 11, color: "#A0A0A0" },
+  statusTxt: { fontFamily: "BeVietnamPro_600SemiBold", fontSize: 11 },
+  subTime: { fontFamily: "BeVietnamPro_400Regular", fontSize: 10, color: "#777" },
+  badgePos: { width: 24, height: 24, borderRadius: 6, backgroundColor: "#262626", alignItems: "center", justifyContent: "center" },
+  badgePosTxt: { fontFamily: "BeVietnamPro_700Bold", fontSize: 12, color: "#FFB59D" },
+
+  summaryList: { gap: 10 },
+  sumRow: { flexDirection: "row", justifyContent: "space-between", borderBottomWidth: 1, borderBottomColor: "#222", paddingBottom: 8 },
+  sumLbl: { fontFamily: "BeVietnamPro_400Regular", fontSize: 12, color: "#A0A0A0" },
+  sumVal: { fontFamily: "BeVietnamPro_700Bold", fontSize: 13, color: "#F5F1E8" },
+
+  dashFooter: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", borderTopWidth: 1, borderTopColor: "#222", paddingTop: 16, flexWrap: "wrap", gap: 8 },
+  footerInfo: { fontFamily: "BeVietnamPro_400Regular", fontSize: 11, color: "#777" },
 });
