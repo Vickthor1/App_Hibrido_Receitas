@@ -59,4 +59,68 @@ export const cores = {
   warmSurface: "#F8F9FF",
 } as const;
 
-export type Cores = typeof cores;
+export type Cores = {
+  [K in keyof typeof cores]: string;
+};
+
+export const coresEscuras: Cores = {
+
+  primary: "#FF6B35",
+  primaryHover: "#FF8559",
+  onPrimary: "#2A1008",
+  primaryContainer: "#832600",
+  onPrimaryContainer: "#FFDAD0",
+  primaryFixed: "#FFDBD0",
+  primaryFixedDim: "#FFB59D",
+  onPrimaryFixed: "#390C00",
+  onPrimaryFixedVariant: "#832600",
+
+  background: "#121212",
+  onBackground: "#F1F1F1",
+  surface: "#121212",
+  onSurface: "#F1F1F1",
+  onSurfaceVariant: "#D6BEB6",
+  surfaceVariant: "#3A3432",
+  surfaceDim: "#121212",
+  surfaceBright: "#2A2A2A",
+  surfaceContainer: "#1E1E1E",
+  surfaceContainerLow: "#191919",
+  surfaceContainerLowest: "#0D0D0D",
+  surfaceContainerHigh: "#292929",
+  surfaceContainerHighest: "#333333",
+  surfaceTint: "#FF6B35",
+
+  secondary: "#C6C6C9",
+  onSecondary: "#1A1C1E",
+  secondaryContainer: "#45474A",
+  onSecondaryContainer: "#E2E2E5",
+  secondaryFixed: "#E2E2E5",
+  secondaryFixedDim: "#C6C6C9",
+  onSecondaryFixed: "#1A1C1E",
+  onSecondaryFixedVariant: "#45474A",
+
+  tertiary: "#C5C7C8",
+  onTertiary: "#191C1D",
+  tertiaryContainer: "#444748",
+  onTertiaryContainer: "#E1E3E4",
+  tertiaryFixed: "#E1E3E4",
+  tertiaryFixedDim: "#C5C7C8",
+  onTertiaryFixed: "#191C1D",
+  onTertiaryFixedVariant: "#444748",
+
+  outline: "#B9A099",
+  outlineVariant: "#594139",
+  outlineWarm: "#B9A099",
+
+  error: "#FFB4AB",
+  onError: "#690005",
+  errorContainer: "#93000A",
+  onErrorContainer: "#FFDAD6",
+
+  inverseSurface: "#E6E1E0",
+  inverseOnSurface: "#31302F",
+  inversePrimary: "#AB3500",
+
+  star: "#FFB02E",
+  warmSurface: "#211A18",
+};
