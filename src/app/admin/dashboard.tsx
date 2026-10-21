@@ -16,8 +16,12 @@ export default function AdminDashboard() {
 
   async function getToken() {
     if (Platform.OS === "web") return localStorage.getItem("admin_jwt");
-    const SecureStore = await import("expo-secure-store");
-    return await SecureStore.getItemAsync("admin_jwt");
+    try {
+      const SecureStore = require("expo-secure-store");
+      return await SecureStore.getItemAsync("admin_jwt");
+    } catch {
+      return null;
+    }
   }
 
   async function carregarDadosAdmin() {
