@@ -53,6 +53,8 @@ export default function RootLayout() {
           <Stack.Screen name="minhas-receitas" />
           <Stack.Screen name="avaliacoes" />
           <Stack.Screen name="configuracoes" />
+          <Stack.Screen name="admin/login" />
+          <Stack.Screen name="admin/dashboard" />
           <Stack.Screen name="receita/[id]" />
         </Stack>
       </AuthProvider>
