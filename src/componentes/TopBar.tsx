@@ -2,10 +2,11 @@ import { MaterialCommunityIcons as Icone } from "@expo/vector-icons";
 import { usePathname, useRouter } from "expo-router";
 import { useState } from "react";
 import {
+  Platform,
+  Pressable,
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   useWindowDimensions,
   View,
 } from "react-native";
@@ -46,9 +47,7 @@ export function TopBar({
 
   function handleSearch() {
     const t = q.trim();
-
     if (!t) return;
-
     go(`/busca?termo=${encodeURIComponent(t)}`);
   }
 
@@ -60,27 +59,30 @@ export function TopBar({
         <View style={styles.desktopInner}>
           <View style={styles.left}>
             {mostrarVoltar ? (
-              <TouchableOpacity
+              <Pressable
                 onPress={onVoltar ?? (() => router.back())}
                 accessibilityRole="button"
                 accessibilityLabel="Voltar"
-                style={styles.backDesktopBtn}
+                style={({ hovered }: { hovered?: boolean }) => [
+                  styles.backDesktopBtn,
+                  hovered && styles.hoveredBg,
+                ]}
               >
                 <Icone
                   name="arrow-left"
                   size={18}
                   color={coresTema.onSurface}
                 />
-              </TouchableOpacity>
+              </Pressable>
             ) : null}
 
-            <TouchableOpacity
+            <Pressable
               onPress={() => go("/")}
               accessibilityRole="button"
               accessibilityLabel="Início"
             >
               <Text style={styles.logo}>Receita Fácil</Text>
-            </TouchableOpacity>
+            </Pressable>
 
             <View style={styles.searchPill}>
               <Icone
@@ -103,16 +105,16 @@ export function TopBar({
           </View>
 
           <View style={styles.centerNav} accessibilityRole="toolbar">
-            <TouchableOpacity
+            {/* Explorar */}
+            <Pressable
               onPress={() => go("/")}
-              style={[
+              style={({ hovered }: { hovered?: boolean }) => [
                 styles.navItem,
                 pathname === "/" && styles.navActive,
+                hovered && styles.navHovered,
               ]}
               accessibilityRole="link"
-              accessibilityState={{
-                selected: pathname === "/",
-              }}
+              accessibilityState={{ selected: pathname === "/" }}
             >
               <Text
                 style={[
@@ -122,26 +124,55 @@ export function TopBar({
               >
                 Explorar
               </Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
-              onPress={() => go("/categorias")}
+            {/* Populares (redireciona para favoritos ordenados ou busca inicial rica) */}
+            <Pressable
+              onPress={() => go("/busca?termo=chicken")}
+              style={({ hovered }: { hovered?: boolean }) => [
+                styles.navItem,
+                pathname.includes("termo=chicken") && styles.navActive,
+                hovered && styles.navHovered,
+              ]}
               accessibilityRole="link"
             >
-              <Text style={styles.navText}>Populares</Text>
-            </TouchableOpacity>
+              <Text
+                style={[
+                  styles.navText,
+                  pathname.includes("termo=chicken") && styles.navTextActive,
+                ]}
+              >
+                Populares
+              </Text>
+            </Pressable>
 
-            <TouchableOpacity
+            {/* Sazonais (redireciona para categorias/pesquisa sazonal) */}
+            <Pressable
               onPress={() => go("/categorias")}
+              style={({ hovered }: { hovered?: boolean }) => [
+                styles.navItem,
+                pathname === "/categorias" && styles.navActive,
+                hovered && styles.navHovered,
+              ]}
               accessibilityRole="link"
             >
-              <Text style={styles.navText}>Sazonais</Text>
-            </TouchableOpacity>
+              <Text
+                style={[
+                  styles.navText,
+                  pathname === "/categorias" && styles.navTextActive,
+                ]}
+              >
+                Sazonais
+              </Text>
+            </Pressable>
           </View>
 
           <View style={styles.right}>
-            <TouchableOpacity
-              style={styles.addBtn}
+            <Pressable
+              style={({ hovered }: { hovered?: boolean }) => [
+                styles.addBtn,
+                hovered && styles.addBtnHovered,
+              ]}
               onPress={() =>
                 go(isAutenticado ? "/adicionar" : "/login")
               }
@@ -153,15 +184,15 @@ export function TopBar({
                 size={16}
                 color={coresTema.onPrimary}
               />
+              <Text style={styles.addText}>Adicionar Receita</Text>
+            </Pressable>
 
-              <Text style={styles.addText}>
-                Adicionar Receita
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
+            <Pressable
               onPress={() => go("/favoritos")}
-              style={styles.iconBtn}
+              style={({ hovered }: { hovered?: boolean }) => [
+                styles.iconBtn,
+                hovered && styles.hoveredBg,
+              ]}
               accessibilityRole="button"
               accessibilityLabel="Favoritos"
             >
@@ -170,22 +201,22 @@ export function TopBar({
                 size={16}
                 color={coresTema.onSurfaceVariant}
               />
+              <Text style={styles.iconLabel}>Favoritos</Text>
+            </Pressable>
 
-              <Text style={styles.iconLabel}>
-                Favoritos
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
+            <Pressable
               onPress={() =>
                 go(isAutenticado ? "/perfil" : "/login")
               }
-              style={styles.avatarBtn}
+              style={({ hovered }: { hovered?: boolean }) => [
+                styles.avatarBtn,
+                hovered && styles.hoveredScale,
+              ]}
               accessibilityRole="button"
               accessibilityLabel="Perfil"
             >
               <AvatarUsuario tamanho={32} />
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
       </View>
@@ -198,7 +229,7 @@ export function TopBar({
     <View style={styles.mobile} accessibilityRole="header">
       <View style={styles.mobileRow}>
         {mostrarVoltar ? (
-          <TouchableOpacity
+          <Pressable
             style={styles.mIconBtn}
             accessibilityRole="button"
             accessibilityLabel="Voltar"
@@ -209,9 +240,9 @@ export function TopBar({
               size={20}
               color={coresTema.onSurface}
             />
-          </TouchableOpacity>
+          </Pressable>
         ) : (
-          <TouchableOpacity
+          <Pressable
             style={styles.mIconBtn}
             accessibilityRole="button"
             accessibilityLabel="Abrir menu"
@@ -222,19 +253,19 @@ export function TopBar({
               size={22}
               color={coresTema.onSurface}
             />
-          </TouchableOpacity>
+          </Pressable>
         )}
 
-        <TouchableOpacity
+        <Pressable
           onPress={() => go("/")}
           accessibilityRole="button"
         >
           <Text style={styles.mTitle}>
             {titulo ?? "Receita Fácil"}
           </Text>
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity
+        <Pressable
           style={styles.mIconBtn}
           accessibilityRole="button"
           accessibilityLabel="Notificações"
@@ -247,7 +278,7 @@ export function TopBar({
             size={20}
             color={coresTema.onSurface}
           />
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       <MenuLateral
@@ -317,14 +348,20 @@ const criarStyles = (coresTema: Cores) =>
 
     centerNav: {
       flexDirection: "row",
-      gap: 20,
+      gap: 24,
       alignItems: "center",
     },
 
     navItem: {
       paddingBottom: 4,
-      borderBottomWidth: 1,
+      borderBottomWidth: 2,
       borderBottomColor: "transparent",
+      transitionDuration: "150ms",
+    },
+
+    navHovered: {
+      borderBottomColor: coresTema.primaryVariant || coresTema.primary,
+      opacity: 0.85,
     },
 
     navActive: {
@@ -351,6 +388,15 @@ const criarStyles = (coresTema: Cores) =>
       backgroundColor: coresTema.surfaceContainerLow,
     },
 
+    hoveredBg: {
+      backgroundColor: coresTema.surfaceContainerHigh,
+      borderRadius: 6,
+    },
+
+    hoveredScale: {
+      opacity: 0.9,
+    },
+
     right: {
       flexDirection: "row",
       alignItems: "center",
@@ -365,6 +411,16 @@ const criarStyles = (coresTema: Cores) =>
       paddingHorizontal: 16,
       paddingVertical: 8,
       borderRadius: 9999,
+      transitionDuration: "150ms",
+    },
+
+    addBtnHovered: {
+      backgroundColor: coresTema.primaryHover || "#832600",
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.15,
+      shadowRadius: 4,
+      elevation: 2,
     },
 
     addText: {
@@ -379,6 +435,8 @@ const criarStyles = (coresTema: Cores) =>
       alignItems: "center",
       gap: 4,
       padding: 6,
+      borderRadius: 6,
+      transitionDuration: "150ms",
     },
 
     iconLabel: {
