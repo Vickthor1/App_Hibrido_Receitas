@@ -15,7 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
   CabecalhoSecao,
-  styles as s,
+  criarStyles as criarEstilosCompartilhados,
 } from "../componentes/CabecalhoSecao";
 import { Carregamento } from "../componentes/Carregamento";
 import { useAuth } from "../contexto/AuthContext";
@@ -37,6 +37,7 @@ export default function MinhasReceitas() {
   const { coresTema } = useTema();
   const styles = criarStyles(coresTema);
   const { user } = useAuth();
+  const s = criarEstilosCompartilhados(coresTema);
 
   const [receitas, setReceitas] = useState<ReceitaCriada[]>([]);
   const [carregando, setCarregando] = useState(true);

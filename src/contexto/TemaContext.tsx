@@ -42,12 +42,18 @@ export function TemaProvider({ children }: TemaProviderProps) {
     </TemaContext.Provider>
   );
 }
-
 export function useTema() {
   const contexto = useContext(TemaContext);
 
   if (!contexto) {
-    throw new Error("useTema deve ser usado dentro de um TemaProvider");
+    console.error(
+      "ERRO: useTema chamado fora do TemaProvider",
+      new Error().stack
+    );
+
+    throw new Error(
+      "useTema deve ser usado dentro de um TemaProvider"
+    );
   }
 
   return contexto;
