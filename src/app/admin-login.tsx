@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { cores } from "../../tema/cores";
+import { cores } from "../tema/cores";
 
 export default function AdminLogin() {
   const router = useRouter();
