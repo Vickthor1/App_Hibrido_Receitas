@@ -8,6 +8,7 @@ import { useFavoritos } from "../../hooks/useFavoritos";
 import { Carregamento } from "../../componentes/Carregamento";
 import { EstadoVazio } from "../../componentes/EstadoVazio";
 import { YouTubePlayer } from "../../componentes/YouTubePlayer";
+import { TopBar } from "../../componentes/TopBar";
 import { cores } from "../../tema/cores";
 import { espacamentos, arredondamento } from "../../tema/espacamentos";
 
