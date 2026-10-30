@@ -140,34 +140,34 @@ export function MenuLateral({
                     accessibilityRole="button"
                     accessibilityState={{ selected: ativo }}
                   >
-                  <Icone
-                    name={it.icon}
-                    size={20}
-                    color={
-                      ativo
-                        ? coresTema.primary
-                        : coresTema.onSurfaceVariant
-                    }
-                  />
-
-                  <Text
-                    style={[
-                      styles.itemText,
-                      ativo && styles.itemTextAtivo,
-                    ]}
-                  >
-                    {it.label}
-                  </Text>
-
-                  {it.protegido && !isAutenticado && (
                     <Icone
-                      name="lock-outline"
-                      size={14}
-                      color={coresTema.onSurfaceVariant}
-                      style={{ marginLeft: "auto" }}
+                      name={it.icon}
+                      size={20}
+                      color={
+                        ativo
+                          ? coresTema.primary
+                          : coresTema.onSurfaceVariant
+                      }
                     />
-                  )}
-                </TouchableOpacity>
+
+                    <Text
+                      style={[
+                        styles.itemText,
+                        ativo && styles.itemTextAtivo,
+                      ]}
+                    >
+                      {it.label}
+                    </Text>
+
+                    {it.protegido && !isAutenticado && (
+                      <Icone
+                        name="lock-outline"
+                        size={14}
+                        color={coresTema.onSurfaceVariant}
+                        style={{ marginLeft: "auto" }}
+                      />
+                    )}
+                  </Pressable>
               );
             })}
           </View>
