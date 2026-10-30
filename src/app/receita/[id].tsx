@@ -7,7 +7,7 @@ import { Receita, Ingrediente } from "../../tipos/receita";
 import { useFavoritos } from "../../hooks/useFavoritos";
 import { Carregamento } from "../../componentes/Carregamento";
 import { EstadoVazio } from "../../componentes/EstadoVazio";
-import { TopBar } from "../../componentes/TopBar";
+import { YouTubePlayer } from "../../componentes/YouTubePlayer";
 import { cores } from "../../tema/cores";
 import { espacamentos, arredondamento } from "../../tema/espacamentos";
 
@@ -100,6 +100,9 @@ export default function ReceitaDetalhes() {
               <Text style={styles.btnIconText}>↗</Text>
             </TouchableOpacity>
           </View>
+
+          {/* PLAYER DO YOUTUBE INCORPORADO */}
+          <YouTubePlayer urlYoutube={receita.strYoutube} tituloReceita={receita.strMeal} />
           </View>
         </View>
 
