@@ -129,16 +129,17 @@ export function MenuLateral({
               const ativo = pathname === it.href;
 
               return (
-                <TouchableOpacity
-                  key={it.label}
-                  style={[
-                    styles.item,
-                    ativo && styles.itemAtivo,
-                  ]}
-                  onPress={() => lidarNavegacao(it)}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: ativo }}
-                >
+                  <Pressable
+                    key={it.label}
+                    style={({ hovered }: { hovered?: boolean }) => [
+                      styles.item,
+                      ativo && styles.itemAtivo,
+                      hovered && !ativo && styles.itemHovered,
+                    ]}
+                    onPress={() => lidarNavegacao(it)}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: ativo }}
+                  >
                   <Icone
                     name={it.icon}
                     size={20}
@@ -273,6 +274,10 @@ const criarStyles = (coresTema: Cores) =>
       paddingHorizontal: 12,
       paddingVertical: 11,
       borderRadius: 8,
+    },
+
+    itemHovered: {
+      backgroundColor: coresTema.surfaceContainerHigh,
     },
 
     itemAtivo: {
