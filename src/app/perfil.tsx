@@ -322,16 +322,16 @@ export default function Perfil() {
       <TouchableOpacity
         style={styles.settingsRow}
         onPress={() =>
-          router.push("/privacidade" as never)
+          router.push("/biometria-config" as never)
         }
         accessibilityRole="button"
       >
         <Text style={styles.settingsIcon}>
-          🔒
+          🔓
         </Text>
 
         <Text style={styles.settingsText}>
-          Privacidade e Segurança
+          Login Biométrico
         </Text>
       </TouchableOpacity>
     </View>
@@ -566,6 +566,21 @@ export default function Perfil() {
             >
               <Text style={styles.mobileRowText}>
                 🔒 Privacidade e Segurança
+              </Text>
+
+              <Text style={styles.mobileArrow}>
+                ›
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.mobileRow}
+              onPress={() =>
+                router.push("/biometria-config" as never)
+              }
+            >
+              <Text style={styles.mobileRowText}>
+                🔓 Login Biométrico
               </Text>
 
               <Text style={styles.mobileArrow}>
