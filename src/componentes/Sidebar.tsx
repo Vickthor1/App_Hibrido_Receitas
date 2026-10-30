@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons as Icone } from "@expo/vector-icons";
 import { usePathname, useRouter } from "expo-router";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { useAuth } from "../contexto/AuthContext";
 import { useTema } from "../contexto/TemaContext";
@@ -8,7 +8,9 @@ import { Cores } from "../tema/cores";
 
 const items = [
   { label: "Início", icon: "home", href: "/" },
-  { label: "Categorias", icon: "grid", href: "/categorias" },
+  { label: "Explorar", icon: "magnify", href: "/busca" },
+  { label: "Populares", icon: "fire", href: "/busca?termo=chicken" },
+  { label: "Sazonais", icon: "flower-outline", href: "/categorias" },
   {
     label: "Favoritos",
     icon: "heart-outline",
@@ -65,11 +67,14 @@ export function Sidebar() {
           const ativo = pathname === it.href;
 
           return (
-            <TouchableOpacity
+            <Pressable
               key={it.label}
               onPress={() => abrir(it)}
-              style={[styles.item, ativo && styles.itemAtivo]}
-              activeOpacity={0.7}
+              style={({ hovered }: { hovered?: boolean }) => [
+                styles.item,
+                ativo && styles.itemAtivo,
+                hovered && !ativo && styles.itemHovered,
+              ]}
               accessibilityRole="link"
               accessibilityState={{ selected: ativo }}
             >
@@ -95,15 +100,17 @@ export function Sidebar() {
                   style={{ marginLeft: "auto" }}
                 />
               )}
-            </TouchableOpacity>
+            </Pressable>
           );
         })}
       </View>
 
       <View style={styles.bottom}>
-        <TouchableOpacity
-          style={styles.createBtn}
-          activeOpacity={0.85}
+        <Pressable
+          style={({ hovered }: { hovered?: boolean }) => [
+            styles.createBtn,
+            hovered && styles.createBtnHovered,
+          ]}
           onPress={() =>
             router.push(
               isAutenticado
@@ -114,11 +121,14 @@ export function Sidebar() {
           accessibilityRole="button"
         >
           <Text style={styles.createText}>Criar Novo Plano</Text>
-        </TouchableOpacity>
+        </Pressable>
 
         {isAutenticado ? (
-          <TouchableOpacity
-            style={styles.link}
+          <Pressable
+            style={({ hovered }: { hovered?: boolean }) => [
+              styles.link,
+              hovered && styles.linkHovered,
+            ]}
             onPress={logout}
             accessibilityRole="button"
           >
@@ -136,10 +146,13 @@ export function Sidebar() {
             >
               Sair
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         ) : (
-          <TouchableOpacity
-            style={styles.link}
+          <Pressable
+            style={({ hovered }: { hovered?: boolean }) => [
+              styles.link,
+              hovered && styles.linkHovered,
+            ]}
             onPress={() => router.push("/login" as never)}
             accessibilityRole="button"
           >
@@ -157,7 +170,7 @@ export function Sidebar() {
             >
               Entrar
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         )}
       </View>
     </View>
@@ -190,6 +203,12 @@ const criarStyles = (coresTema: Cores) =>
       borderRadius: 8,
       borderWidth: 1,
       borderColor: "transparent",
+      transitionDuration: "150ms",
+    },
+
+    itemHovered: {
+      backgroundColor: coresTema.surfaceContainerHigh,
+      borderColor: coresTema.outline,
     },
 
     itemAtivo: {
@@ -222,6 +241,12 @@ const criarStyles = (coresTema: Cores) =>
       borderRadius: 8,
       paddingVertical: 11,
       alignItems: "center",
+      transitionDuration: "150ms",
+    },
+
+    createBtnHovered: {
+      backgroundColor: coresTema.primaryHover || "#832600",
+      opacity: 0.9,
     },
 
     createText: {
@@ -237,6 +262,12 @@ const criarStyles = (coresTema: Cores) =>
       gap: 8,
       paddingHorizontal: 12,
       paddingVertical: 8,
+      borderRadius: 6,
+      transitionDuration: "150ms",
+    },
+
+    linkHovered: {
+      backgroundColor: coresTema.surfaceContainerHigh,
     },
 
     linkText: {
