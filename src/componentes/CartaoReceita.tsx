@@ -1,6 +1,7 @@
 import { Image } from "expo-image";
 import { memo } from "react";
 import {
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -40,116 +41,134 @@ export const CartaoReceita = memo(function CartaoReceita({
 
   if (variante === "horizontal") {
     return (
-      <TouchableOpacity
-        style={styles.horizontal}
+      <Pressable
+        style={({ hovered }: { hovered?: boolean }) => [
+          styles.horizontal,
+          hovered && styles.cardHovered,
+        ]}
         onPress={onPress}
-        activeOpacity={0.8}
+        accessibilityRole="button"
+        accessibilityLabel={`Receita ${titulo}`}
       >
-        <Image
-          source={{ uri: imagem }}
-          style={styles.hImage}
-          contentFit="cover"
-          transition={200}
-          cachePolicy="memory-disk"
-        />
+        {({ hovered }: { hovered?: boolean }) => (
+          <>
+            <View style={styles.hImageWrap}>
+              <Image
+                source={{ uri: imagem }}
+                style={[
+                  styles.hImage,
+                  hovered && styles.imageZoom,
+                ]}
+                contentFit="cover"
+                transition={250}
+                cachePolicy="memory-disk"
+              />
+            </View>
 
-        <View style={styles.hConteudo}>
-          <Text
-            style={styles.hTitulo}
-            numberOfLines={1}
-          >
-            {titulo}
-          </Text>
+            <View style={styles.hConteudo}>
+              <Text
+                style={[
+                  styles.hTitulo,
+                  hovered && styles.titleHovered,
+                ]}
+                numberOfLines={1}
+              >
+                {titulo}
+              </Text>
 
-          <View style={styles.meta}>
-            <Text style={styles.metaStar}>
-              ★ {nota}
-            </Text>
+              <View style={styles.meta}>
+                <Text style={styles.metaStar}>★ {nota}</Text>
+                <Text style={styles.metaSep}>•</Text>
+                <Text style={styles.metaTime}>◷ {tempo}</Text>
+              </View>
+            </View>
 
-            <Text style={styles.metaSep}>
-              •
-            </Text>
-
-            <Text style={styles.metaTime}>
-              ◷ {tempo}
-            </Text>
-          </View>
-        </View>
-
-        <TouchableOpacity
-          style={styles.hFav}
-          onPress={onFavoritar}
-          activeOpacity={0.7}
-          hitSlop={8}
-        >
-          <Text
-            style={[
-              styles.favIcon,
-              favoritado && styles.favActive,
-            ]}
-          >
-            {favoritado ? "♥" : "♡"}
-          </Text>
-        </TouchableOpacity>
-      </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.hFav}
+              onPress={onFavoritar}
+              activeOpacity={0.7}
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel={favoritado ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+            >
+              <Text
+                style={[
+                  styles.favIcon,
+                  favoritado && styles.favActive,
+                ]}
+              >
+                {favoritado ? "♥" : "♡"}
+              </Text>
+            </TouchableOpacity>
+          </>
+        )}
+      </Pressable>
     );
   }
 
   return (
-    <TouchableOpacity
-      style={styles.vertical}
+    <Pressable
+      style={({ hovered }: { hovered?: boolean }) => [
+        styles.vertical,
+        hovered && styles.cardHovered,
+      ]}
       onPress={onPress}
-      activeOpacity={0.85}
+      accessibilityRole="button"
+      accessibilityLabel={`Receita ${titulo}`}
     >
-      <View style={styles.vImageWrap}>
-        <Image
-          source={{ uri: imagem }}
-          style={styles.vImage}
-          contentFit="cover"
-          transition={200}
-          cachePolicy="memory-disk"
-        />
+      {({ hovered }: { hovered?: boolean }) => (
+        <>
+          <View style={styles.vImageWrap}>
+            <Image
+              source={{ uri: imagem }}
+              style={[
+                styles.vImage,
+                hovered && styles.imageZoom,
+              ]}
+              contentFit="cover"
+              transition={250}
+              cachePolicy="memory-disk"
+            />
 
-        <TouchableOpacity
-          style={styles.vFav}
-          onPress={onFavoritar}
-          activeOpacity={0.7}
-          hitSlop={8}
-        >
-          <Text
-            style={[
-              styles.favIconSmall,
-              favoritado && styles.favActive,
-            ]}
-          >
-            {favoritado ? "♥" : "♡"}
-          </Text>
-        </TouchableOpacity>
-      </View>
+            <TouchableOpacity
+              style={styles.vFav}
+              onPress={onFavoritar}
+              activeOpacity={0.7}
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel={favoritado ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+            >
+              <Text
+                style={[
+                  styles.favIconSmall,
+                  favoritado && styles.favActive,
+                ]}
+              >
+                {favoritado ? "♥" : "♡"}
+              </Text>
+            </TouchableOpacity>
+          </View>
 
-      <View style={styles.vConteudo}>
-        <Text
-          style={styles.vTitulo}
-          numberOfLines={2}
-        >
-          {titulo}
-        </Text>
+          <View style={styles.vConteudo}>
+            <Text
+              style={[
+                styles.vTitulo,
+                hovered && styles.titleHovered,
+              ]}
+              numberOfLines={2}
+            >
+              {titulo}
+            </Text>
 
-        <View style={styles.meta}>
-          <Text style={styles.metaStarSmall}>
-            ★ {nota}
-          </Text>
-
-          <Text style={styles.metaSep}>
-            •
-          </Text>
-
-          <Text style={styles.metaTimeSmall}>
-            ◷ {tempo}
-          </Text>
-        </View>
-      </View>
-    </TouchableOpacity>
+            <View style={styles.meta}>
+              <Text style={styles.metaStarSmall}>★ {nota}</Text>
+              <Text style={styles.metaSep}>•</Text>
+              <Text style={styles.metaTimeSmall}>◷ {tempo}</Text>
+            </View>
+          </View>
+        </>
+      )}
+    </Pressable>
   );
 });
 
@@ -167,40 +186,54 @@ const criarStyles = (coresTema: Cores) =>
       borderColor: coresTema.surfaceVariant,
 
       shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 4,
-      },
+      shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.05,
       shadowRadius: 20,
-
       elevation: 2,
+
+      transitionDuration: "250ms",
+      transitionProperty: "transform, box-shadow",
+    },
+
+    cardHovered: {
+      transform: [{ translateY: -4 }, { scale: 1.02 }],
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 12 },
+      shadowOpacity: 0.12,
+      shadowRadius: 28,
+      elevation: 6,
+      borderColor: coresTema.primary + "50",
     },
 
     vImageWrap: {
       position: "relative",
       aspectRatio: 1,
       overflow: "hidden",
+      backgroundColor: coresTema.surfaceVariant,
     },
 
     vImage: {
       width: "100%",
       height: "100%",
+      transitionDuration: "300ms",
+      transitionProperty: "transform",
+    },
+
+    imageZoom: {
+      transform: [{ scale: 1.06 }],
     },
 
     vFav: {
       position: "absolute",
       top: 8,
       right: 8,
-
-      backgroundColor: "rgba(255,255,255,0.85)",
-
+      backgroundColor: "rgba(255,255,255,0.9)",
       borderRadius: 20,
       width: 28,
       height: 28,
-
       alignItems: "center",
       justifyContent: "center",
+      zIndex: 2,
     },
 
     favIconSmall: {
@@ -213,14 +246,19 @@ const criarStyles = (coresTema: Cores) =>
     },
 
     vConteudo: {
-      padding: 10,
+      padding: 12,
     },
 
     vTitulo: {
       fontSize: 14,
-      fontWeight: "600",
+      fontFamily: "BeVietnamPro_600SemiBold",
       color: coresTema.onSurface,
       lineHeight: 18,
+      transitionDuration: "150ms",
+    },
+
+    titleHovered: {
+      color: coresTema.primary,
     },
 
     // =====================================================
@@ -237,13 +275,13 @@ const criarStyles = (coresTema: Cores) =>
     metaStar: {
       color: coresTema.primary,
       fontSize: 12,
-      fontWeight: "600",
+      fontFamily: "BeVietnamPro_600SemiBold",
     },
 
     metaStarSmall: {
       color: coresTema.primary,
       fontSize: 11,
-      fontWeight: "600",
+      fontFamily: "BeVietnamPro_600SemiBold",
     },
 
     metaSep: {
@@ -254,11 +292,13 @@ const criarStyles = (coresTema: Cores) =>
     metaTime: {
       color: coresTema.onSurfaceVariant,
       fontSize: 12,
+      fontFamily: "BeVietnamPro_400Regular",
     },
 
     metaTimeSmall: {
       color: coresTema.onSurfaceVariant,
       fontSize: 11,
+      fontFamily: "BeVietnamPro_400Regular",
     },
 
     // =====================================================
@@ -268,32 +308,36 @@ const criarStyles = (coresTema: Cores) =>
     horizontal: {
       flexDirection: "row",
       alignItems: "center",
-
       backgroundColor: coresTema.surfaceContainerLowest,
-
       borderRadius: arredondamento.lg,
       padding: 8,
       gap: 12,
-
       borderWidth: 1,
       borderColor: coresTema.surfaceVariant,
 
       shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 4,
-      },
+      shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.05,
       shadowRadius: 20,
-
       elevation: 2,
+
+      transitionDuration: "250ms",
+      transitionProperty: "transform, box-shadow",
     },
 
-    hImage: {
+    hImageWrap: {
       width: 80,
       height: 80,
       borderRadius: 12,
+      overflow: "hidden",
       backgroundColor: coresTema.surfaceVariant,
+    },
+
+    hImage: {
+      width: "100%",
+      height: "100%",
+      transitionDuration: "300ms",
+      transitionProperty: "transform",
     },
 
     hConteudo: {
@@ -302,9 +346,10 @@ const criarStyles = (coresTema: Cores) =>
     },
 
     hTitulo: {
-      fontSize: 16,
-      fontWeight: "600",
+      fontSize: 15,
+      fontFamily: "BeVietnamPro_600SemiBold",
       color: coresTema.onSurface,
+      transitionDuration: "150ms",
     },
 
     hFav: {
