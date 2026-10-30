@@ -14,10 +14,9 @@ import {
   validarSenha,
 } from "../utils/seguranca";
 import {
-  getItemSeguro,
-  removeItemSeguro,
-  setItemSeguro,
-} from "../utils/storageSeguro";
+  salvarCredencialBiometrica,
+  removerCredencialBiometrica,
+} from "../servicos/biometria";
 
 type User = {
   id: string;
@@ -260,6 +259,9 @@ export function AuthProvider({
 
           const perfil = await carregarPerfilUsuario(data.user);
           setUser(perfil);
+          if (data.session?.refresh_token) {
+            await salvarCredencialBiometrica(data.session.refresh_token);
+          }
 
           return { ok: true };
         }
@@ -490,6 +492,7 @@ export function AuthProvider({
       } else {
         await removeItemSeguro(KEY_USER);
       }
+      await removerCredencialBiometrica();
 
       setUser(null);
     } catch (error) {
