@@ -54,7 +54,6 @@ export default function AdminDashboardMaster() {
   const [buscaRec, setBuscaRec] = useState("");
   const [tab, setTab] = useState<TabAdmin>("dash");
 
-  // Modal / Edição
   const [editandoUser, setEditandoUser] = useState<UsuarioReal | null>(null);
   const [novoNomeUser, setNovoNomeUser] = useState("");
   const [editandoRec, setEditandoRec] = useState<ReceitaReal | null>(null);
@@ -78,7 +77,6 @@ export default function AdminDashboardMaster() {
         return;
       }
 
-      // 1) Contagens reais do Supabase
       const { count: cU } = await supabase.from("perfis").select("*", { count: "exact", head: true });
       const { count: cR } = await supabase.from("receitas").select("*", { count: "exact", head: true });
       const { count: cF } = await supabase.from("favoritos").select("*", { count: "exact", head: true });
@@ -96,7 +94,6 @@ export default function AdminDashboardMaster() {
         avaliacoesNuvem: cA ?? 0,
       });
 
-      // 2) Usuários
       const { data: perfis } = await supabase
         .from("perfis")
         .select("id, nome, created_at, avatar_url")
@@ -106,14 +103,12 @@ export default function AdminDashboardMaster() {
       setTodosUsuarios(listaU);
       setUsuariosRecentes(listaU.slice(0, 10));
 
-      // 3) Receitas Próprias
       const { data: recs } = await supabase
         .from("receitas")
         .select("id, nome, categoria, tempo, ingredientes, modo, created_at")
         .order("created_at", { ascending: false });
       setTodasReceitas((recs ?? []) as ReceitaReal[]);
 
-      // 4) Auditoria
       const { data: logs } = await supabase
         .from("audit_logs")
         .select("id, acao, detalhes, created_at")
@@ -121,7 +116,6 @@ export default function AdminDashboardMaster() {
         .limit(10);
       setAtividades((logs ?? []) as LogReal[]);
 
-      // 5) Favoritos populares
       const { data: favs } = await supabase.from("favoritos").select("id_meal, str_meal");
       if (favs && favs.length > 0) {
         const contagem: Record<string, { strMeal: string; total: number }> = {};
@@ -136,7 +130,7 @@ export default function AdminDashboardMaster() {
         setReceitasPopulares(ranking);
       }
     } catch {
-      // erro capturado silenciosamente no client
+      // silencioso
     } finally {
       setCarregando(false);
     }
@@ -235,7 +229,7 @@ export default function AdminDashboardMaster() {
           <View style={styles.logoIcon}><Icone name="chef-hat" size={24} color="#FFF" /></View>
           <View>
             <Text style={styles.logoTitle}>Receita Fácil</Text>
-            <Text style={styles.logoSub}>Painel Administrativo</Text>
+            <Text style={styles.logoSub}>Painel Administrativo Real</Text>
           </View>
         </View>
 
