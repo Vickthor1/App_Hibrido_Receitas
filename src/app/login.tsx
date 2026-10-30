@@ -12,6 +12,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "../contexto/AuthContext";
+import { verificarSuporteBiometria, restaurarSessaoBiometria } from "../servicos/biometria";
+import { useEffect } from "react";
 import { cores } from "../tema/cores";
 import { espacamentos } from "../tema/espacamentos";
 
@@ -28,6 +30,34 @@ export default function Login() {
   const [lembrar, setLembrar] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [carregando, setCarregando] = useState(false);
+  const [biometriaDisponivel, setBiometriaDisponivel] = useState(false);
+  const [tipoBio, setTipoBio] = useState("Biometria");
+
+  useEffect(() => {
+    if (!isAutenticado) {
+      verificarSuporteBiometria().then((res) => {
+        setBiometriaDisponivel(res.disponivel);
+        setTipoBio(res.tipo);
+      });
+    }
+  }, [isAutenticado]);
+
+  async function handleLoginBiometrico() {
+    setCarregando(true);
+    setErro(null);
+    try {
+      const ok = await restaurarSessaoBiometria();
+      if (ok) {
+        router.replace("/" as never);
+      } else {
+        setErro("Autenticação biométrica cancelada ou sem credencial salva.");
+      }
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : "Erro na biometria.");
+    } finally {
+      setCarregando(false);
+    }
+  }
 
   async function handleSubmit() {
     if (carregando) return;
@@ -496,6 +526,20 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
 
+  bioBtn: {
+    backgroundColor: cores.surfaceContainerHigh,
+    paddingVertical: 12,
+    borderRadius: 20,
+    alignItems: "center",
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: cores.outlineVariant,
+  },
+  bioBtnText: {
+    color: cores.onSurface,
+    fontFamily: "BeVietnamPro_600SemiBold",
+    fontSize: 14,
+  },
   btnText: {
     color: "#fff",
     fontFamily: "BeVietnamPro_700Bold",

@@ -1,0 +1,98 @@
+import { useEffect, useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Switch, Alert, Platform } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { MaterialCommunityIcons as Icone } from "@expo/vector-icons";
+import { CabecalhoSecao } from "../componentes/CabecalhoSecao";
+import { useTema } from "../contexto/TemaContext";
+import {
+  verificarSuporteBiometria,
+  restaurarSessaoBiometria,
+  salvarCredencialBiometrica,
+  removerCredencialBiometrica,
+  temCredencialBiometricaSalva,
+} from "../servicos/biometria";
+
+export default function LoginBiometricoConfig() {
+  const { coresTema } = useTema();
+  const [suporte, setSuporte] = useState<{ disponivel: boolean; tipo: string }>({ disponivel: false, tipo: "Verificando..." });
+  const [ativo, setAtivo] = useState(false);
+  const [carregando, setCarregando] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      const sup = await verificarSuporteBiometria();
+      setSuporte(sup);
+      const salva = await temCredencialBiometricaSalva();
+      setAtivo(salva);
+      setCarregando(false);
+    })();
+  }, []);
+
+  async function toggleBiometria(valor: boolean) {
+    if (Platform.OS === "web") {
+      Alert.alert("Indisponível", "A autenticação biométrica não é suportada em navegadores web.");
+      return;
+    }
+
+    if (valor) {
+      // Ativar
+      try {
+        const ok = await restaurarSessaoBiometria();
+        if (ok) {
+          setAtivo(true);
+          Alert.alert("Sucesso", "Login biométrico ativado com sucesso.");
+        } else {
+          Alert.alert("Falha", "Não foi possível confirmar sua biometria ou nenhuma sessão ativa foi encontrada.");
+        }
+      } catch (e) {
+        Alert.alert("Erro", e instanceof Error ? e.message : "Erro ao ativar biometria.");
+      }
+    } else {
+      // Desativar
+      Alert.alert("Desativar biometria", "Tem certeza que deseja desativar o login biométrico?", [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Desativar",
+          style: "destructive",
+          onPress: async () => {
+            await removerCredencialBiometrica();
+            setAtivo(false);
+            Alert.alert("Sucesso", "Login biométrico desativado.");
+          },
+        },
+      ]);
+    }
+  }
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: coresTema.background }}>
+      <CabecalhoSecao titulo="Login Biométrico" />
+      <View style={{ padding: 16, gap: 16 }}>
+        <View style={{ backgroundColor: coresTema.surfaceContainerLowest, borderRadius: 12, padding: 16, borderWidth: 1, borderColor: coresTema.surfaceVariant, gap: 12 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+            <Icone name="fingerprint" size={28} color={coresTema.primary} />
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontFamily: "BeVietnamPro_700Bold", fontSize: 16, color: coresTema.onSurface }}>Autenticação por Biometria</Text>
+              <Text style={{ fontFamily: "BeVietnamPro_400Regular", fontSize: 12, color: coresTema.onSurfaceVariant }}>{suporte.tipo}</Text>
+            </View>
+          </View>
+
+          <Text style={{ fontFamily: "BeVietnamPro_400Regular", fontSize: 13, color: coresTema.onSurfaceVariant, lineHeight: 18 }}>
+            Use sua impressão digital, Face ID ou Touch ID para acessar sua conta rapidamente sem precisar digitar a senha toda vez. Seus dados biométricos ficam estritamente protegidos no hardware do seu dispositivo.
+          </Text>
+
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingTop: 8, borderTopWidth: 1, borderTopColor: coresTema.outlineVariant + "30" }}>
+            <Text style={{ fontFamily: "BeVietnamPro_600SemiBold", fontSize: 14, color: coresTema.onSurface }}>Habilitar Biometria</Text>
+            <Switch
+              value={ativo}
+              onValueChange={toggleBiometria}
+              disabled={!suporte.disponivel || carregando}
+              trackColor={{ false: "#767577", true: coresTema.primaryContainer }}
+              thumbColor={ativo ? coresTema.primary : "#f4f3f4"}
+            />
+          </View>
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+}

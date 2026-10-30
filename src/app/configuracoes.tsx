@@ -248,6 +248,21 @@ export default function Configuracoes() {
             />
           </TouchableOpacity>
 
+          {/* LOGIN BIOMÉTRICO */}
+          <TouchableOpacity
+            style={s.row}
+            onPress={() => router.push("/biometria-config" as never)}
+            accessibilityRole="button"
+          >
+            <View style={{ flex: 1 }}>
+              <Text style={s.rowLabel}>Login biométrico</Text>
+              <Text style={{ color: coresTema.onSurfaceVariant, fontSize: 13, marginTop: 4 }}>
+                Impressão digital ou Face ID
+              </Text>
+            </View>
+            <Icone name="fingerprint" size={22} color={coresTema.primary} />
+          </TouchableOpacity>
+
           {/* PRIVACIDADE */}
           <TouchableOpacity
             style={s.row}
