@@ -1,6 +1,8 @@
+
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import {
@@ -11,10 +13,13 @@ import {
   useFonts,
 } from "@expo-google-fonts/be-vietnam-pro";
 
-import { useEffect } from "react";
+import {
+  TemaProvider,
+  useTema,
+} from "../contexto/TemaContext";
 
+import VLibras from "../componentes/VLibras";
 import { AuthProvider } from "../contexto/AuthContext";
-import { TemaProvider, useTema } from "../contexto/TemaContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -23,16 +28,20 @@ function AppLayout() {
 
   return (
     <>
-      <StatusBar style={tema === "escuro" ? "light" : "dark"} />
+      <StatusBar
+        style={tema === "escuro" ? "light" : "dark"}
+      />
 
+      {/* VLibras para acessibilidade */}
+      <VLibras />
+
+      {/* Navegação principal do aplicativo */}
       <Stack
         screenOptions={{
           headerShown: false,
-
           contentStyle: {
             backgroundColor: coresTema.background,
           },
-
           animation: "slide_from_right",
         }}
       >
@@ -44,12 +53,16 @@ function AppLayout() {
 
         <Stack.Screen
           name="login"
-          options={{ animation: "slide_from_bottom" }}
+          options={{
+            animation: "slide_from_bottom",
+          }}
         />
 
         <Stack.Screen
           name="adicionar"
-          options={{ animation: "slide_from_bottom" }}
+          options={{
+            animation: "slide_from_bottom",
+          }}
         />
 
         <Stack.Screen name="ajuda" />
@@ -58,9 +71,11 @@ function AppLayout() {
         <Stack.Screen name="minhas-receitas" />
         <Stack.Screen name="avaliacoes" />
         <Stack.Screen name="configuracoes" />
+
         <Stack.Screen name="admin/login" />
         <Stack.Screen name="admin/dashboard" />
         <Stack.Screen name="(admin)/dashboard" />
+
         <Stack.Screen name="receita/[id]" />
       </Stack>
     </>
@@ -81,15 +96,17 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
-  if (!loaded) return null;
+  if (!loaded) {
+    return null;
+  }
 
   return (
     <SafeAreaProvider>
-      <AuthProvider>
-        <TemaProvider>
+      <TemaProvider>
+        <AuthProvider>
           <AppLayout />
-        </TemaProvider>
-      </AuthProvider>
+        </AuthProvider>
+      </TemaProvider>
     </SafeAreaProvider>
   );
 }

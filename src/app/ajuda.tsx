@@ -1,7 +1,12 @@
-import { View, Text, ScrollView } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { CabecalhoSecao, styles as s } from "../componentes/CabecalhoSecao";
-import { cores } from "../tema/cores";
+import {
+  CabecalhoSecao,
+  criarStyles as criarEstilosCompartilhados,
+} from "../componentes/CabecalhoSecao";
+import { useTema } from "../contexto/TemaContext";
+
+
 
 const faqs = [
   { p: "Como encontrar uma receita?", r: "Use a busca na Home digitando o nome ou ingrediente (ex: 'frango', 'pizza'). Você também pode navegar pelas Categorias." },
@@ -12,11 +17,14 @@ const faqs = [
 ];
 
 export default function Ajuda() {
+  const { coresTema } = useTema();
+  const s = criarEstilosCompartilhados(coresTema);
+
   return (
     <SafeAreaView style={s.safe}>
       <CabecalhoSecao titulo="Ajuda" />
       <ScrollView contentContainerStyle={s.conteudo}>
-        <Text style={{ fontFamily: "BeVietnamPro_700Bold", fontSize: 20, color: cores.onSurface }}>Guia do aplicativo</Text>
+        <Text style={{ fontFamily: "BeVietnamPro_700Bold", fontSize: 20, color: coresTema.onSurface }}>Guia do aplicativo</Text>
         <Text style={s.cardText}>Guia rápido para usar o Receita Fácil.</Text>
         {faqs.map((f, i) => (
           <View key={i} style={s.card}>
