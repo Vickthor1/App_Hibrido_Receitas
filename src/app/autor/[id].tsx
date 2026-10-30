@@ -3,17 +3,17 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-nati
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { supabase } from "../lib/supabase";
-import { contarSeguidores, contarSeguindo } from "../servicos/seguidores";
-import { useSeguidor } from "../hooks/useSeguidor";
-import { useAuth } from "../contexto/AuthContext";
-import { TopBar } from "../componentes/TopBar";
-import { BottomNav } from "../componentes/BottomNav";
-import { AvatarUsuario } from "../componentes/AvatarUsuario";
-import { CartaoReceita } from "../componentes/CartaoReceita";
-import { Receita } from "../tipos/receita";
-import { cores } from "../tema/cores";
-import { espacamentos } from "../tema/espacamentos";
+import { supabase } from "../../lib/supabase";
+import { contarSeguidores, contarSeguindo } from "../../servicos/seguidores";
+import { useSeguidor } from "../../hooks/useSeguidor";
+import { useAuth } from "../../contexto/AuthContext";
+import { TopBar } from "../../componentes/TopBar";
+import { BottomNav } from "../../componentes/BottomNav";
+import { AvatarUsuario } from "../../componentes/AvatarUsuario";
+import { CartaoReceita } from "../../componentes/CartaoReceita";
+import { Receita } from "../../tipos/receita";
+import { cores } from "../../tema/cores";
+import { espacamentos } from "../../tema/espacamentos";
 
 interface PerfilAutor {
   id: string;
