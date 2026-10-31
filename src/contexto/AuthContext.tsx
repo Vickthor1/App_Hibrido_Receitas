@@ -168,7 +168,7 @@ export function AuthProvider({
 
     if (isSupabaseConfigured) {
       const { data: sub } = supabase.auth.onAuthStateChange(
-        (_event, session) => {
+        async (_event, session) => {
           if (!ativo) return;
 
           const usuario = session?.user;
@@ -178,20 +178,9 @@ export function AuthProvider({
             return;
           }
 
-          // Evita executar consultas adicionais dentro
-          // do callback de autenticação do Supabase.
-          setUser({
-            id: usuario.id,
-            email: usuario.email ?? "",
-            nome:
-              typeof usuario.user_metadata?.nome === "string"
-                ? usuario.user_metadata.nome
-                : usuario.email?.split("@")[0] ?? "",
-            avatarUrl:
-              typeof usuario.user_metadata?.avatar_url === "string"
-                ? usuario.user_metadata.avatar_url
-                : null,
-          });
+          // Busca perfil real atualizado (incluindo avatar_url do banco) para evitar perder a foto ao focar/mudar de aba
+          const perfil = await carregarPerfilUsuario(usuario);
+          if (ativo) setUser(perfil);
         }
       );
 
