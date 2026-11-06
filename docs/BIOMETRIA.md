@@ -72,7 +72,7 @@ O login biométrico não funcionava em nenhum aparelho. Ele foi corrigido e pass
 | `npx expo lint` | 21 erros | 21 erros, nenhum novo |
 | `npm run test:security` | Passou | Passou |
 | Bundles web e Android | Passaram | Passaram |
-| Bundle iOS | Não testado | Passou, antes dos últimos ajustes de estilo e tipo |
+| Bundle iOS | Não testado | Passou |
 | Configuração nativa | Sem o plugin | Tem a permissão do Face ID e `USE_BIOMETRIC` |
 
 Os testes cobrem ativar, recusar, renovar o token, sair e entrar repetidas vezes, ficar sem internet, trocar de usuário, sessão revogada e desativar.
