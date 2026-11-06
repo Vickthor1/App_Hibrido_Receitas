@@ -3,7 +3,6 @@ import { MaterialCommunityIcons as Icone } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {
-  Alert,
   Modal,
   ScrollView,
   StyleSheet,
@@ -11,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { alertar } from "../utils/alerta";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
@@ -80,7 +80,7 @@ export default function MinhasReceitas() {
   }, [carregar]);
 
   async function handleApagar(id: string) {
-    Alert.alert(
+    alertar(
       "Apagar receita",
       "Tem certeza que deseja apagar esta receita?",
       [
@@ -101,7 +101,7 @@ export default function MinhasReceitas() {
               .eq("user_id", user.id);
 
             if (error) {
-              Alert.alert("Erro", "Não foi possível apagar a receita.");
+              alertar("Erro", "Não foi possível apagar a receita.");
               console.error("Erro ao apagar receita:", error.message);
               return;
             }
@@ -141,7 +141,7 @@ export default function MinhasReceitas() {
           <Icone
             name="book-outline"
             size={48}
-            color={coresTema.outlineVariant}
+            color={coresTema.onSurfaceVariant}
           />
           <Text style={styles.tituloCenter}>
             Você ainda não criou nenhuma receita.

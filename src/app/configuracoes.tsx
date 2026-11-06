@@ -5,7 +5,6 @@ import { useState } from "react";
 
 import {
   ActivityIndicator,
-  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,6 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { alertar } from "../utils/alerta";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -26,11 +26,6 @@ import { useAuth } from "../contexto/AuthContext";
 import { useTema } from "../contexto/TemaContext";
 
 import {
-  isSupabaseConfigured,
-  supabase,
-} from "../lib/supabase";
-
-import {
   fazerUploadAvatar,
   selecionarImagem,
 } from "../servicos/avatar";
@@ -38,7 +33,7 @@ import {
 export default function Configuracoes() {
   const router = useRouter();
 
-  const { user, atualizarAvatar, logout } = useAuth();
+  const { user, atualizarAvatar, atualizarNome, logout } = useAuth();
 
   // Tema claro e escuro
   const { tema, coresTema, alternarTema } = useTema();
@@ -52,7 +47,7 @@ export default function Configuracoes() {
   // Salvar nome
   async function handleSalvarNome() {
     if (!nome.trim() || nome.trim().length < 2) {
-      Alert.alert(
+      alertar(
         "Nome inválido",
         "Informe um nome com pelo menos 2 caracteres."
       );
@@ -62,23 +57,15 @@ export default function Configuracoes() {
     setEnviando(true);
 
     try {
-      if (isSupabaseConfigured && user) {
-        const { error } = await supabase
-          .from("perfis")
-          .upsert({
-            id: user.id,
-            nome: nome.trim(),
-            avatar_url: user.avatarUrl ?? null,
-          });
+      const resultado = await atualizarNome(nome.trim());
 
-        if (error) {
-          throw error;
-        }
+      if (!resultado.ok) {
+        throw new Error(resultado.erro);
       }
 
-      Alert.alert("Sucesso!", "Nome atualizado.");
+      alertar("Sucesso!", "Nome atualizado.");
     } catch {
-      Alert.alert(
+      alertar(
         "Erro",
         "Não foi possível salvar o nome."
       );
@@ -102,7 +89,7 @@ export default function Configuracoes() {
       );
 
       if (!res.ok || !res.url) {
-        Alert.alert(
+        alertar(
           "Erro",
           res.erro ?? "Falha no upload."
         );
@@ -112,19 +99,19 @@ export default function Configuracoes() {
       const upd = await atualizarAvatar(res.url);
 
       if (!upd.ok) {
-        Alert.alert(
+        alertar(
           "Erro",
           upd.erro ?? "Erro ao salvar."
         );
         return;
       }
 
-      Alert.alert(
+      alertar(
         "Sucesso!",
         "Foto atualizada."
       );
     } catch (e) {
-      Alert.alert(
+      alertar(
         "Erro",
         e instanceof Error
           ? e.message

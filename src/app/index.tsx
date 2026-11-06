@@ -23,13 +23,13 @@ import { TopBar } from "../componentes/TopBar";
 
 import {
   buscarCategorias,
-  buscarReceitas,
   filtrarReceitasPorCategoria,
   listarReceitasDisponiveis,
 } from "../servicos/api";
 
 import { useTema } from "../contexto/TemaContext";
 import { useFavoritos } from "../hooks/useFavoritos";
+import { useTraducao } from "../hooks/useTraducao";
 import { Cores } from "../tema/cores";
 import { espacamentos } from "../tema/espacamentos";
 import { Categoria, Receita } from "../tipos/receita";
@@ -48,6 +48,7 @@ export default function Inicio() {
   const [featured, setFeatured] = useState<Receita[]>([]);
   const [featuredIndex, setFeaturedIndex] = useState(0);
   const destaque = featured[featuredIndex] ?? null;
+  const { texto: tituloDestaque } = useTraducao(destaque?.strMeal);
   const [maisAmadas, setMaisAmadas] = useState<Receita[]>([]);
   const [rapidas, setRapidas] = useState<Receita[]>([]);
   const [carregando, setCarregando] = useState(true);
@@ -96,11 +97,11 @@ export default function Inicio() {
     setCarregando(true);
     try {
       const resumos = await filtrarReceitasPorCategoria(cat);
-      const detalhes = await Promise.all(resumos.slice(0, 6).map((r) => buscarReceitas(r.strMeal).then((a) => a[0]).catch(() => null)));
-      const validas = detalhes.filter(Boolean) as Receita[];
+      // Os cartões só usam id, nome e foto, que já vêm no resumo.
+      const validas = resumos as Receita[];
       if (validas.length > 0) {
         setMaisAmadas(validas.slice(0, 4));
-        setRapidas(validas.slice(4, 6));
+        setRapidas(validas.slice(4, 8));
       }
     } catch {} finally { setCarregando(false); }
   }
@@ -123,7 +124,7 @@ export default function Inicio() {
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); carregar(); }} colors={[coresTema.primary]} />}
       showsVerticalScrollIndicator={false}
     >
-      {!isDesktop && <BarraPesquisa onBuscar={handleBuscar} />}
+      {!isDesktop && <BarraPesquisa onBuscar={handleBuscar} onFiltroPress={() => router.push("/busca" as never)} />}
 
       {destaque && (
         <View style={styles.heroWrap}>
@@ -133,7 +134,7 @@ export default function Inicio() {
             <View style={styles.heroTag}><Text style={styles.heroTagText}>RECEITA DO DIA</Text></View>
             <TouchableOpacity style={styles.heroFav} onPress={() => alternarFavorito(destaque)}><Text style={[styles.heroFavText, isFavorito(destaque.idMeal) && styles.favAtivo]}>{isFavorito(destaque.idMeal) ? "♥" : "♡"}</Text></TouchableOpacity>
             <View style={styles.heroBottom}>
-              <Text style={[styles.heroTitulo, isDesktop && styles.heroTituloDesktop]} numberOfLines={2}>{destaque.strMeal}</Text>
+              <Text style={[styles.heroTitulo, isDesktop && styles.heroTituloDesktop]} numberOfLines={2}>{tituloDestaque}</Text>
               <View style={styles.heroMeta}><Text style={styles.heroMetaStar}>★ 4.8</Text><Text style={styles.heroMetaTime}>◷ 25 min</Text></View>
             </View>
           </TouchableOpacity>
@@ -157,7 +158,7 @@ export default function Inicio() {
       </View>
 
       <View style={styles.secao}>
-        <View style={styles.secaoHeader}><Text style={styles.secaoTitulo}>Mais amadas</Text><TouchableOpacity onPress={() => router.push(`/busca?termo=` as never)}><Text style={styles.verTodas}>Ver todas</Text></TouchableOpacity></View>
+        <View style={styles.secaoHeader}><Text style={styles.secaoTitulo}>Mais amadas</Text><TouchableOpacity onPress={() => router.push("/busca" as never)}><Text style={styles.verTodas}>Ver todas</Text></TouchableOpacity></View>
         <View style={[styles.grid, isDesktop && styles.gridDesktop]}>
           {(Array.isArray(maisAmadas) ? maisAmadas : []).map((r) => (
             <View key={r.idMeal} style={[styles.gridItem, isDesktop && styles.gridItemDesktop]}>
@@ -168,7 +169,7 @@ export default function Inicio() {
       </View>
 
       <View style={styles.secao}>
-        <View style={styles.secaoHeader}><Text style={styles.secaoTitulo}>Rápidas e fáceis</Text><TouchableOpacity><Text style={styles.verTodas}>Ver todas</Text></TouchableOpacity></View>
+        <View style={styles.secaoHeader}><Text style={styles.secaoTitulo}>Rápidas e fáceis</Text><TouchableOpacity onPress={() => router.push("/busca" as never)}><Text style={styles.verTodas}>Ver todas</Text></TouchableOpacity></View>
         <View style={[styles.rapidasGrid, isDesktop && styles.rapidasGridDesktop]}>
           {(Array.isArray(rapidas) ? rapidas : []).map((r) => (
             <View key={r.idMeal} style={isDesktop ? styles.rapidasItemDesktop : undefined}>
@@ -209,7 +210,7 @@ const criarStyles = (coresTema: Cores) =>
   heroGradient: { ...StyleSheet.absoluteFill, backgroundColor: "rgba(0,0,0,0.32)" },
   heroTag: { position: "absolute", top: 14, left: 14, backgroundColor: coresTema.primary, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 9999 },
   heroTagText: { color: coresTema.onPrimary, fontSize: 10, fontFamily: "BeVietnamPro_600SemiBold", letterSpacing: 0.4 },
-  heroFav: { position: "absolute", top: 14, right: 14, width: 32, height: 32, borderRadius: 16, backgroundColor: "rgba(255,255,255,0.92)", alignItems: "center", justifyContent: "center" },
+  heroFav: { position: "absolute", top: 14, right: 14, width: 32, height: 32, borderRadius: 16, backgroundColor: coresTema.surfaceContainerLowest + "EB", alignItems: "center", justifyContent: "center" },
   heroFavText: { fontSize: 16, color: coresTema.onSurfaceVariant },
   favAtivo: { color: coresTema.primary },
   heroBottom: { position: "absolute", bottom: 0, left: 0, right: 0, padding: 16, gap: 4 },

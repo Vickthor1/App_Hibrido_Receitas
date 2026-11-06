@@ -5,9 +5,10 @@ import { useRouter } from "expo-router";
 import { MaterialCommunityIcons as Icone } from "@expo/vector-icons";
 import { supabase, isSupabaseConfigured } from "../lib/supabase";
 import { useAuth } from "../contexto/AuthContext";
-import { CabecalhoSecao, styles as s } from "../componentes/CabecalhoSecao";
+import { CabecalhoSecao, criarStyles as criarEstilosCompartilhados } from "../componentes/CabecalhoSecao";
 import { Carregamento } from "../componentes/Carregamento";
-import { cores } from "../tema/cores";
+import { useTema } from "../contexto/TemaContext";
+import { Cores } from "../tema/cores";
 
 interface Avaliacao {
   id: string;
@@ -18,13 +19,19 @@ interface Avaliacao {
 }
 
 export default function Avaliacoes() {
+  const { coresTema } = useTema();
+  const styles = criarStyles(coresTema);
+  const s = criarEstilosCompartilhados(coresTema);
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, carregando: carregandoAuth } = useAuth();
   const [avaliacoes, setAvaliacoes] = useState<Avaliacao[]>([]);
   const [carregando, setCarregando] = useState(true);
 
   const carregar = useCallback(async () => {
-    if (!isSupabaseConfigured || !user) return;
+    if (!isSupabaseConfigured || !user) {
+      setCarregando(false);
+      return;
+    }
     setCarregando(true);
     try {
       const { data } = await supabase.from("avaliacoes").select("*").eq("user_id", user.id).order("created_at", { ascending: false });
@@ -39,14 +46,29 @@ export default function Avaliacoes() {
     carregar();
   }, [carregar]);
 
-  if (carregando) return <Carregamento mensagem="Carregando avaliações..." />;
+  if (carregando || carregandoAuth) return <Carregamento mensagem="Carregando avaliações..." />;
+
+  if (!user) {
+    return (
+      <SafeAreaView style={s.safe}>
+        <CabecalhoSecao titulo="Avaliações" />
+        <View style={styles.center}>
+          <Icone name="lock-outline" size={48} color={coresTema.onSurfaceVariant} />
+          <Text style={styles.titulo}>Entre para ver suas avaliações.</Text>
+          <TouchableOpacity style={styles.btn} onPress={() => router.push("/login" as never)} accessibilityRole="button">
+            <Text style={styles.btnText}>Entrar</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={s.safe}>
       <CabecalhoSecao titulo="Avaliações" />
       {avaliacoes.length === 0 ? (
         <View style={styles.center}>
-          <Icone name="star-outline" size={48} color={cores.outlineVariant} />
+          <Icone name="star-outline" size={48} color={coresTema.onSurfaceVariant} />
           <Text style={styles.titulo}>Você ainda não avaliou nenhuma receita.</Text>
           <Text style={styles.texto}>Abra uma receita e, em breve, você poderá dar sua nota.</Text>
           <TouchableOpacity style={styles.btn} onPress={() => router.push("/" as never)} accessibilityRole="button">
@@ -70,12 +92,13 @@ export default function Avaliacoes() {
   );
 }
 
-const styles = StyleSheet.create({
+const criarStyles = (coresTema: Cores) =>
+  StyleSheet.create({
   center: { flex: 1, alignItems: "center", justifyContent: "center", padding: 32, gap: 8 },
-  titulo: { fontFamily: "BeVietnamPro_700Bold", fontSize: 16, color: cores.onSurface, textAlign: "center" },
-  texto: { fontFamily: "BeVietnamPro_400Regular", fontSize: 13, color: cores.onSurfaceVariant, textAlign: "center" },
-  btn: { marginTop: 8, backgroundColor: cores.primary, paddingHorizontal: 24, paddingVertical: 12, borderRadius: 9999 },
-  btnText: { color: cores.onPrimary, fontFamily: "BeVietnamPro_700Bold", fontSize: 13 },
-  estrelas: { color: cores.star, fontSize: 18 },
-  ver: { color: cores.primary, fontFamily: "BeVietnamPro_700Bold", fontSize: 13, marginTop: 6 },
+  titulo: { fontFamily: "BeVietnamPro_700Bold", fontSize: 16, color: coresTema.onSurface, textAlign: "center" },
+  texto: { fontFamily: "BeVietnamPro_400Regular", fontSize: 13, color: coresTema.onSurfaceVariant, textAlign: "center" },
+  btn: { marginTop: 8, backgroundColor: coresTema.primary, paddingHorizontal: 24, paddingVertical: 12, borderRadius: 9999 },
+  btnText: { color: coresTema.onPrimary, fontFamily: "BeVietnamPro_700Bold", fontSize: 13 },
+  estrelas: { color: coresTema.star, fontSize: 18 },
+  ver: { color: coresTema.primary, fontFamily: "BeVietnamPro_700Bold", fontSize: 13, marginTop: 6 },
 });

@@ -1,9 +1,12 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Image } from "expo-image";
-import { cores } from "../tema/cores";
+import { useTema } from "../contexto/TemaContext";
+import { Cores } from "../tema/cores";
 
 export default function IconeApp({ size = 80 }: { size?: number }) {
+  const { coresTema } = useTema();
+  const styles = criarStyles(coresTema);
   return (
     <View style={[styles.container, { width: size, height: size, borderRadius: size * 0.22 }]}>
       <Image
@@ -15,7 +18,8 @@ export default function IconeApp({ size = 80 }: { size?: number }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { overflow: "hidden", backgroundColor: cores.primaryContainer, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: cores.surfaceVariant },
+const criarStyles = (coresTema: Cores) =>
+  StyleSheet.create({
+  container: { overflow: "hidden", backgroundColor: coresTema.primaryContainer, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: coresTema.surfaceVariant },
   img: { width: "100%", height: "100%" },
 });

@@ -9,8 +9,8 @@ import { Cores } from "../tema/cores";
 const items = [
   { label: "Início", icon: "home", href: "/" },
   { label: "Explorar", icon: "magnify", href: "/busca" },
-  { label: "Populares", icon: "fire", href: "/busca?termo=chicken" },
-  { label: "Sazonais", icon: "flower-outline", href: "/categorias" },
+  { label: "Populares", icon: "fire", href: "/busca?termo=frango" },
+  { label: "Categorias", icon: "grid", href: "/categorias" },
   {
     label: "Favoritos",
     icon: "heart-outline",
@@ -120,7 +120,7 @@ export function Sidebar() {
           }
           accessibilityRole="button"
         >
-          <Text style={styles.createText}>Criar Novo Plano</Text>
+          <Text style={styles.createText}>Adicionar Receita</Text>
         </Pressable>
 
         {isAutenticado ? (

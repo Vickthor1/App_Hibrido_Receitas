@@ -12,7 +12,8 @@ import { BottomNav } from "../../componentes/BottomNav";
 import { AvatarUsuario } from "../../componentes/AvatarUsuario";
 import { CartaoReceita } from "../../componentes/CartaoReceita";
 import { Receita } from "../../tipos/receita";
-import { cores } from "../../tema/cores";
+import { useTema } from "../../contexto/TemaContext";
+import { Cores } from "../../tema/cores";
 import { espacamentos } from "../../tema/espacamentos";
 
 interface PerfilAutor {
@@ -22,6 +23,8 @@ interface PerfilAutor {
 }
 
 export default function AutorPerfilScreen() {
+  const { coresTema } = useTema();
+  const styles = criarStyles(coresTema);
   const router = useRouter();
   const params = useLocalSearchParams<{ id?: string }>();
   const autorId = typeof params.id === "string" ? params.id : "";
@@ -149,23 +152,24 @@ export default function AutorPerfilScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: cores.background },
+const criarStyles = (coresTema: Cores) =>
+  StyleSheet.create({
+  safe: { flex: 1, backgroundColor: coresTema.background },
   center: { flex: 1, alignItems: "center", justifyContent: "center" },
   scroll: { padding: espacamentos.page, gap: 16, paddingBottom: 100 },
-  headerCard: { backgroundColor: cores.surfaceContainerLowest, borderRadius: 16, padding: 20, alignItems: "center", gap: 8, borderWidth: 1, borderColor: cores.surfaceVariant },
-  nome: { fontFamily: "BeVietnamPro_700Bold", fontSize: 22, color: cores.onSurface },
-  handle: { fontFamily: "BeVietnamPro_400Regular", fontSize: 13, color: cores.onSurfaceVariant },
-  stats: { flexDirection: "row", gap: 16, marginTop: 8, borderTopWidth: 1, borderTopColor: cores.outlineVariant + "30", paddingTop: 12, width: "100%" },
+  headerCard: { backgroundColor: coresTema.surfaceContainerLowest, borderRadius: 16, padding: 20, alignItems: "center", gap: 8, borderWidth: 1, borderColor: coresTema.surfaceVariant },
+  nome: { fontFamily: "BeVietnamPro_700Bold", fontSize: 22, color: coresTema.onSurface },
+  handle: { fontFamily: "BeVietnamPro_400Regular", fontSize: 13, color: coresTema.onSurfaceVariant },
+  stats: { flexDirection: "row", gap: 16, marginTop: 8, borderTopWidth: 1, borderTopColor: coresTema.outlineVariant + "30", paddingTop: 12, width: "100%" },
   stat: { alignItems: "center", flex: 1 },
-  statVal: { fontFamily: "BeVietnamPro_700Bold", fontSize: 16, color: cores.primary },
-  statLabel: { fontFamily: "BeVietnamPro_600SemiBold", fontSize: 10, color: cores.onSurfaceVariant, letterSpacing: 0.5 },
-  btnSeguir: { marginTop: 12, backgroundColor: cores.primary, paddingHorizontal: 32, paddingVertical: 10, borderRadius: 9999, width: "100%", alignItems: "center" },
-  btnSeguindo: { backgroundColor: cores.surfaceContainerHigh, borderWidth: 1, borderColor: cores.outlineVariant },
-  btnSeguirTxt: { color: cores.onPrimary, fontFamily: "BeVietnamPro_600SemiBold", fontSize: 13 },
-  btnSeguindoTxt: { color: cores.onSurface },
-  secTitle: { fontFamily: "BeVietnamPro_700Bold", fontSize: 18, color: cores.onSurface, marginTop: 8 },
-  msg: { fontFamily: "BeVietnamPro_400Regular", fontSize: 13, color: cores.onSurfaceVariant, fontStyle: "italic" },
+  statVal: { fontFamily: "BeVietnamPro_700Bold", fontSize: 16, color: coresTema.primary },
+  statLabel: { fontFamily: "BeVietnamPro_600SemiBold", fontSize: 10, color: coresTema.onSurfaceVariant, letterSpacing: 0.5 },
+  btnSeguir: { marginTop: 12, backgroundColor: coresTema.primary, paddingHorizontal: 32, paddingVertical: 10, borderRadius: 9999, width: "100%", alignItems: "center" },
+  btnSeguindo: { backgroundColor: coresTema.surfaceContainerHigh, borderWidth: 1, borderColor: coresTema.outlineVariant },
+  btnSeguirTxt: { color: coresTema.onPrimary, fontFamily: "BeVietnamPro_600SemiBold", fontSize: 13 },
+  btnSeguindoTxt: { color: coresTema.onSurface },
+  secTitle: { fontFamily: "BeVietnamPro_700Bold", fontSize: 18, color: coresTema.onSurface, marginTop: 8 },
+  msg: { fontFamily: "BeVietnamPro_400Regular", fontSize: 13, color: coresTema.onSurfaceVariant, fontStyle: "italic" },
   grid: { flexDirection: "row", flexWrap: "wrap", gap: 12 },
   gridItem: { width: "48%" },
 });

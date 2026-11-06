@@ -128,10 +128,9 @@ export function TopBar({
 
             {/* Populares (redireciona para favoritos ordenados ou busca inicial rica) */}
             <Pressable
-              onPress={() => go("/busca?termo=chicken")}
+              onPress={() => go("/busca?termo=frango")}
               style={({ hovered }: { hovered?: boolean }) => [
                 styles.navItem,
-                pathname.includes("termo=chicken") && styles.navActive,
                 hovered && styles.navHovered,
               ]}
               accessibilityRole="link"
@@ -139,14 +138,13 @@ export function TopBar({
               <Text
                 style={[
                   styles.navText,
-                  pathname.includes("termo=chicken") && styles.navTextActive,
                 ]}
               >
                 Populares
               </Text>
             </Pressable>
 
-            {/* Sazonais (redireciona para categorias/pesquisa sazonal) */}
+            {/* Categorias */}
             <Pressable
               onPress={() => go("/categorias")}
               style={({ hovered }: { hovered?: boolean }) => [
@@ -162,7 +160,7 @@ export function TopBar({
                   pathname === "/categorias" && styles.navTextActive,
                 ]}
               >
-                Sazonais
+                Categorias
               </Text>
             </Pressable>
           </View>

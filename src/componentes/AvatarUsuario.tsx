@@ -2,13 +2,16 @@ import { View, StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import { MaterialCommunityIcons as Icone } from "@expo/vector-icons";
 import { useAuth } from "../contexto/AuthContext";
-import { cores } from "../tema/cores";
+import { useTema } from "../contexto/TemaContext";
+import { Cores } from "../tema/cores";
 
 /**
  * Avatar do usuário — reutilizável em TopBar, Perfil, Menu etc.
  * P1: foto de perfil quando existir | P2: ícone de pessoa quando não existir
  */
 export function AvatarUsuario({ tamanho = 32, onPress }: { tamanho?: number; onPress?: () => void }) {
+  const { coresTema } = useTema();
+  const styles = criarStyles(coresTema);
   const { user } = useAuth();
   const raio = tamanho / 2;
 
@@ -36,12 +39,13 @@ export function AvatarUsuario({ tamanho = 32, onPress }: { tamanho?: number; onP
           accessibilityLabel="Foto de perfil"
         />
       ) : (
-        <Icone name="account" size={tamanho * 0.55} color={cores.onSurfaceVariant} />
+        <Icone name="account" size={tamanho * 0.55} color={coresTema.onSurfaceVariant} />
       )}
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  wrap: { alignItems: "center", justifyContent: "center", overflow: "hidden", borderColor: cores.outline, backgroundColor: cores.surfaceContainerHigh },
+const criarStyles = (coresTema: Cores) =>
+  StyleSheet.create({
+  wrap: { alignItems: "center", justifyContent: "center", overflow: "hidden", borderColor: coresTema.outline, backgroundColor: coresTema.surfaceContainerHigh },
 });

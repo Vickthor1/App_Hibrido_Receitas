@@ -58,6 +58,7 @@ const criarStyles = (coresTema: Cores) =>
     },
 
     icon: {
+      color: coresTema.onSurfaceVariant,
       fontSize: 48,
     },
 

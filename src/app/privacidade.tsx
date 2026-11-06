@@ -1,13 +1,17 @@
 import { useState } from "react";
-import { View, Text, TouchableOpacity, Alert, ScrollView, TextInput } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, TextInput } from "react-native";
+import { alertar } from "../utils/alerta";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { supabase, isSupabaseConfigured } from "../lib/supabase";
 import { useAuth } from "../contexto/AuthContext";
-import { CabecalhoSecao, styles as s } from "../componentes/CabecalhoSecao";
-import { cores } from "../tema/cores";
+import { CabecalhoSecao, criarStyles as criarEstilosCompartilhados } from "../componentes/CabecalhoSecao";
+import { useTema } from "../contexto/TemaContext";
+import { validarSenha } from "../utils/seguranca";
 
 export default function Privacidade() {
+  const { coresTema } = useTema();
+  const s = criarEstilosCompartilhados(coresTema);
   const router = useRouter();
   const { user, logout } = useAuth();
   const [novo, setNovo] = useState("");
@@ -15,12 +19,13 @@ export default function Privacidade() {
   const [enviando, setEnviando] = useState(false);
 
   async function alterarSenha() {
-    if (novo.length < 8) {
-      Alert.alert("Senha fraca", "A nova senha deve ter pelo menos 8 caracteres.");
+    const validacao = validarSenha(novo);
+    if (!validacao.valido) {
+      alertar("Senha fraca", validacao.motivo ?? "Escolha uma senha mais forte.");
       return;
     }
     if (novo !== cnf) {
-      Alert.alert("Senhas diferentes", "A confirmação não corresponde à nova senha.");
+      alertar("Senhas diferentes", "A confirmação não corresponde à nova senha.");
       return;
     }
     setEnviando(true);
@@ -29,11 +34,11 @@ export default function Privacidade() {
         const { error } = await supabase.auth.updateUser({ password: novo });
         if (error) throw error;
       }
-      Alert.alert("Sucesso!", "Senha atualizada. Use-a no próximo login.");
+      alertar("Sucesso!", "Senha atualizada. Use-a no próximo login.");
       setNovo("");
       setCnf("");
     } catch (e) {
-      Alert.alert("Erro", e instanceof Error ? e.message : "Não foi possível alterar a senha.");
+      alertar("Erro", e instanceof Error ? e.message : "Não foi possível alterar a senha.");
     } finally {
       setEnviando(false);
     }
@@ -53,9 +58,9 @@ export default function Privacidade() {
           <Text style={s.cardTitle}>Alterar senha</Text>
           <Text style={s.cardText}>Defina uma nova senha para sua conta.</Text>
           <Text style={s.labelCampo}>Nova senha</Text>
-          <TextInput secureTextEntry value={novo} onChangeText={setNovo} placeholder="••••••••" placeholderTextColor={cores.onSurfaceVariant} style={s.campo} autoCapitalize="none" />
+          <TextInput secureTextEntry value={novo} onChangeText={setNovo} placeholder="••••••••" placeholderTextColor={coresTema.onSurfaceVariant} style={s.campo} autoCapitalize="none" />
           <Text style={s.labelCampo}>Confirmar nova senha</Text>
-          <TextInput secureTextEntry value={cnf} onChangeText={setCnf} placeholder="••••••••" placeholderTextColor={cores.onSurfaceVariant} style={s.campo} autoCapitalize="none" />
+          <TextInput secureTextEntry value={cnf} onChangeText={setCnf} placeholder="••••••••" placeholderTextColor={coresTema.onSurfaceVariant} style={s.campo} autoCapitalize="none" />
           <TouchableOpacity style={[s.btnPrimario, { opacity: enviando ? 0.6 : 1 }]} onPress={alterarSenha} disabled={enviando} accessibilityRole="button">
             <Text style={s.btnPrimarioText}>{enviando ? "Salvando..." : "Alterar senha"}</Text>
           </TouchableOpacity>
@@ -64,7 +69,7 @@ export default function Privacidade() {
         <View style={s.card}>
           <Text style={s.cardTitle}>Sessão</Text>
           <TouchableOpacity style={s.btnSecundario} onPress={() => { logout(); router.replace("/" as never); }} accessibilityRole="button">
-            <Text style={{ color: cores.error, fontFamily: "BeVietnamPro_700Bold" }}>Encerrar sessão (sair)</Text>
+            <Text style={{ color: coresTema.error, fontFamily: "BeVietnamPro_700Bold" }}>Encerrar sessão (sair)</Text>
           </TouchableOpacity>
         </View>
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { View, TextInput, TouchableOpacity, StyleSheet, Text } from "react-native";
-import { cores } from "../tema/cores";
+import { useTema } from "../contexto/TemaContext";
+import { Cores } from "../tema/cores";
 import { espacamentos, arredondamento } from "../tema/espacamentos";
 import { sanitizarEntrada } from "../utils/seguranca";
 
@@ -12,6 +13,8 @@ interface Props {
 }
 
 export function BarraPesquisa({ valorInicial = "", placeholder = "Buscar receitas, ingredientes...", onBuscar, onFiltroPress }: Props) {
+  const { coresTema } = useTema();
+  const styles = criarStyles(coresTema);
   const [texto, setTexto] = useState(valorInicial);
 
   function handleSubmit() {
@@ -26,7 +29,7 @@ export function BarraPesquisa({ valorInicial = "", placeholder = "Buscar receita
         <TextInput
           style={styles.input}
           placeholder={placeholder}
-          placeholderTextColor={cores.onSurfaceVariant}
+          placeholderTextColor={coresTema.onSurfaceVariant}
           value={texto}
           onChangeText={(v) => setTexto(v.slice(0, 60))}
           onSubmitEditing={handleSubmit}
@@ -41,14 +44,15 @@ export function BarraPesquisa({ valorInicial = "", placeholder = "Buscar receita
           </TouchableOpacity>
         )}
       </View>
-      <TouchableOpacity style={styles.filterBtn} onPress={onFiltroPress ?? handleSubmit} activeOpacity={0.8}>
+      <TouchableOpacity style={styles.filterBtn} onPress={onFiltroPress ?? handleSubmit} activeOpacity={0.8} accessibilityRole="button" accessibilityLabel="Filtros">
         <Text style={styles.filterIcon}>⋮</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const criarStyles = (coresTema: Cores) =>
+  StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
@@ -59,10 +63,10 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: cores.surfaceContainerLowest,
+    backgroundColor: coresTema.surfaceContainerLowest,
     borderRadius: arredondamento.pill,
     borderWidth: 1,
-    borderColor: cores.surfaceVariant,
+    borderColor: coresTema.surfaceVariant,
     paddingHorizontal: 14,
     height: 48,
     // sombra card
@@ -72,15 +76,15 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 2,
   },
-  iconSearch: { fontSize: 18, color: cores.onSurfaceVariant, marginRight: 8 },
-  input: { flex: 1, fontSize: 14, color: cores.onSurface, paddingVertical: 0 },
+  iconSearch: { fontSize: 18, color: coresTema.onSurfaceVariant, marginRight: 8 },
+  input: { flex: 1, fontSize: 14, color: coresTema.onSurface, paddingVertical: 0 },
   clearBtn: { padding: 4, marginLeft: 6 },
-  clearText: { color: cores.onSurfaceVariant, fontSize: 12 },
+  clearText: { color: coresTema.onSurfaceVariant, fontSize: 12 },
   filterBtn: {
     width: 48,
     height: 48,
     borderRadius: 12,
-    backgroundColor: cores.primary,
+    backgroundColor: coresTema.primary,
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
@@ -89,5 +93,5 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 3,
   },
-  filterIcon: { color: cores.onPrimary, fontSize: 18, fontWeight: "700" },
+  filterIcon: { color: coresTema.onPrimary, fontSize: 18, fontWeight: "700" },
 });

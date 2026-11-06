@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Switch, Alert, Platform } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Switch, Platform } from "react-native";
+import { alertar } from "../utils/alerta";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons as Icone } from "@expo/vector-icons";
 import { CabecalhoSecao } from "../componentes/CabecalhoSecao";
@@ -30,7 +31,7 @@ export default function LoginBiometricoConfig() {
 
   async function toggleBiometria(valor: boolean) {
     if (Platform.OS === "web") {
-      Alert.alert("Indisponível", "A autenticação biométrica não é suportada em navegadores web.");
+      alertar("Indisponível", "A autenticação biométrica não é suportada em navegadores web.");
       return;
     }
 
@@ -40,18 +41,18 @@ export default function LoginBiometricoConfig() {
         const resultado = await ativarBiometria();
         if (resultado.ok) {
           setAtivo(true);
-          Alert.alert("Sucesso", "Login biométrico ativado com sucesso.");
+          alertar("Sucesso", "Login biométrico ativado com sucesso.");
         } else if (resultado.motivo === "sem_sessao") {
-          Alert.alert("Faça login", "Entre na sua conta para ativar a biometria.");
+          alertar("Faça login", "Entre na sua conta para ativar a biometria.");
         } else if (resultado.motivo !== "cancelado") {
-          Alert.alert("Falha", "Não foi possível ativar a biometria neste aparelho.");
+          alertar("Falha", "Não foi possível ativar a biometria neste aparelho.");
         }
       } catch (e) {
-        Alert.alert("Erro", e instanceof Error ? e.message : "Erro ao ativar biometria.");
+        alertar("Erro", e instanceof Error ? e.message : "Erro ao ativar biometria.");
       }
     } else {
       // Desativar
-      Alert.alert("Desativar biometria", "Tem certeza que deseja desativar o login biométrico?", [
+      alertar("Desativar biometria", "Tem certeza que deseja desativar o login biométrico?", [
         { text: "Cancelar", style: "cancel" },
         {
           text: "Desativar",
@@ -59,7 +60,7 @@ export default function LoginBiometricoConfig() {
           onPress: async () => {
             await removerCredencialBiometrica();
             setAtivo(false);
-            Alert.alert("Sucesso", "Login biométrico desativado.");
+            alertar("Sucesso", "Login biométrico desativado.");
           },
         },
       ]);
