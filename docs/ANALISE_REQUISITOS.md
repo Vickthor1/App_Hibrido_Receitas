@@ -2,7 +2,14 @@
 
 Análise feita em 06/11/2026 sobre a branch `main`, commit `45a6a6d`. Nenhum código do app foi alterado.
 
-> **Atualização:** depois desta análise, o problema 1 (`VLibras.tsx`) e o login biométrico foram corrigidos nesta branch. Detalhes em [BIOMETRIA.md](BIOMETRIA.md). O restante do texto mostra a situação da `main` na data da análise.
+> **Atualização:** o restante deste texto mostra a situação da `main` na data da análise. Depois dela, esta branch recebeu as correções abaixo.
+>
+> - Problemas 1, 3, 4, 5, 8 e 10.
+> - Problema 7 na tela de perfil. O link da tela de autor continua igual.
+> - Itens médios de biometria, cadastro, senha, botões sem efeito, busca no celular e tema escuro. O painel admin ficou fora do tema escuro.
+> - Recuperação de senha e tradução para pt-BR, que também foram adicionadas.
+>
+> **Pendente:** os problemas 2, 6 e 9 continuam abertos. A recuperação de senha precisa das Redirect URLs configuradas no Supabase. A tradução do modo de preparo depende de uma cota gratuita de 5.000 caracteres por dia, e o tradutor reserva só existe no Chrome. Detalhes da biometria em [BIOMETRIA.md](BIOMETRIA.md).
 
 ## Resultado
 
