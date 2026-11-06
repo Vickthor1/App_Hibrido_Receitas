@@ -56,6 +56,7 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "test:security": "node ./scripts/test-security.js",
+    "test:biometria": "node ./scripts/test-biometria.mjs",
     "db:migrate": "node ./scripts/migrar-supabase.js",
     "db:seed": "SUPABASE_SERVICE_ROLE_KEY= node ./scripts/criar-dados-teste.js"
   },

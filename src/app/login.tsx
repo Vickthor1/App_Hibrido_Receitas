@@ -12,12 +12,26 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "../contexto/AuthContext";
-import { verificarSuporteBiometria, restaurarSessaoBiometria } from "../servicos/biometria";
+import {
+  MotivoFalhaBiometria,
+  restaurarSessaoBiometria,
+  temCredencialBiometricaSalva,
+  verificarSuporteBiometria,
+} from "../servicos/biometria";
 import { useEffect } from "react";
 import { cores } from "../tema/cores";
 import { espacamentos } from "../tema/espacamentos";
 
 type Modo = "login" | "registro";
+
+const MENSAGENS_BIOMETRIA: Record<MotivoFalhaBiometria, string> = {
+  indisponivel: "Biometria indisponível neste aparelho.",
+  cancelado: "Autenticação biométrica cancelada.",
+  sem_sessao: "Entre com sua senha para continuar.",
+  sem_credencial: "Entre com sua senha e ative a biometria no perfil.",
+  sessao_expirada: "Sua sessão expirou. Entre com sua senha e ative a biometria novamente.",
+  falha: "Não foi possível entrar agora. Verifique sua internet e tente novamente em 1 minuto ou use sua senha.",
+};
 
 export default function Login() {
   const router = useRouter();
@@ -34,23 +48,37 @@ export default function Login() {
   const [tipoBio, setTipoBio] = useState("Biometria");
 
   useEffect(() => {
-    if (!isAutenticado) {
-      verificarSuporteBiometria().then((res) => {
-        setBiometriaDisponivel(res.disponivel);
-        setTipoBio(res.tipo);
-      });
-    }
+    if (isAutenticado) return;
+
+    let ativo = true;
+
+    Promise.all([
+      verificarSuporteBiometria(),
+      temCredencialBiometricaSalva(),
+    ]).then(([suporte, temCredencial]) => {
+      if (!ativo) return;
+      setBiometriaDisponivel(suporte.disponivel && temCredencial);
+      setTipoBio(suporte.tipo);
+    });
+
+    return () => {
+      ativo = false;
+    };
   }, [isAutenticado]);
 
   async function handleLoginBiometrico() {
     setCarregando(true);
     setErro(null);
     try {
-      const ok = await restaurarSessaoBiometria();
-      if (ok) {
+      const resultado = await restaurarSessaoBiometria();
+      if (resultado.ok) {
         router.replace("/" as never);
-      } else {
-        setErro("Autenticação biométrica cancelada ou sem credencial salva.");
+        return;
+      }
+
+      setErro(MENSAGENS_BIOMETRIA[resultado.motivo ?? "falha"]);
+      if (resultado.motivo === "sessao_expirada" || resultado.motivo === "sem_credencial") {
+        setBiometriaDisponivel(false);
       }
     } catch (e) {
       setErro(e instanceof Error ? e.message : "Erro na biometria.");
@@ -281,6 +309,24 @@ export default function Login() {
                     : "CRIAR CONTA"}
               </Text>
             </TouchableOpacity>
+
+            {modo === "login" && biometriaDisponivel && (
+              <TouchableOpacity
+                style={[
+                  styles.bioBtn,
+                  carregando && styles.btnDisabled,
+                ]}
+                onPress={handleLoginBiometrico}
+                disabled={carregando}
+                activeOpacity={0.85}
+                accessibilityRole="button"
+                accessibilityLabel="Entrar com biometria"
+              >
+                <Text style={styles.bioBtnText}>
+                  Entrar com biometria ({tipoBio})
+                </Text>
+              </TouchableOpacity>
+            )}
 
             <TouchableOpacity
               style={styles.linkRow}

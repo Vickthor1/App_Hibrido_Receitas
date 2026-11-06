@@ -7,15 +7,19 @@ import React, {
   useState,
 } from "react";
 
-import { isSupabaseConfigured, supabase } from "../lib/supabase";
+import {
+  encerrarSessaoLocal,
+  isSupabaseConfigured,
+  supabase,
+} from "../lib/supabase";
 import {
   checkRateLimit,
   validarEmail,
   validarSenha,
 } from "../utils/seguranca";
 import {
-  salvarCredencialBiometrica,
-  removerCredencialBiometrica,
+  biometriaAtivaPara,
+  sincronizarCredencialBiometrica,
 } from "../servicos/biometria";
 
 type User = {
@@ -173,10 +177,12 @@ export function AuthProvider({
 
           const usuario = session?.user;
 
-          if (!usuario) {
+          if (!session || !usuario) {
             setUser(null);
             return;
           }
+
+          void sincronizarCredencialBiometrica(session);
 
           // Busca perfil real atualizado (incluindo avatar_url do banco) para evitar perder a foto ao focar/mudar de aba
           const perfil = await carregarPerfilUsuario(usuario);
@@ -248,9 +254,6 @@ export function AuthProvider({
 
           const perfil = await carregarPerfilUsuario(data.user);
           setUser(perfil);
-          if (data.session?.refresh_token) {
-            await salvarCredencialBiometrica(data.session.refresh_token);
-          }
 
           return { ok: true };
         }
@@ -476,19 +479,23 @@ export function AuthProvider({
   const logout = useCallback(async () => {
     try {
       if (isSupabaseConfigured) {
-        const { error } = await supabase.auth.signOut();
-        if (error) throw error;
+        // Com biometria ativa, a sessão continua válida para o próximo login.
+        if (user && (await biometriaAtivaPara(user.id))) {
+          await encerrarSessaoLocal();
+        } else {
+          const { error } = await supabase.auth.signOut();
+          if (error) throw error;
+        }
       } else {
         await removeItemSeguro(KEY_USER);
       }
-      await removerCredencialBiometrica();
 
       setUser(null);
     } catch (error) {
       console.error("Erro ao sair da conta:", error);
       throw error;
     }
-  }, []);
+  }, [user]);
 
   return (
     <AuthContext.Provider
