@@ -2,6 +2,8 @@
 
 Análise feita em 06/11/2026 sobre a branch `main`, commit `45a6a6d`. Nenhum código do app foi alterado.
 
+> **Atualização:** depois desta análise, o problema 1 (`VLibras.tsx`) e o login biométrico foram corrigidos nesta branch. Detalhes em [BIOMETRIA.md](BIOMETRIA.md). O restante do texto mostra a situação da `main` na data da análise.
+
 ## Resultado
 
 **O app ainda não atende totalmente aos requisitos.** Dos 10 requisitos funcionais, 4 estão atendidos e 6 estão parciais. A versão web funciona e está publicada, mas a versão mobile deve fechar ao abrir, e o projeto foi definido como aplicativo mobile.
@@ -44,7 +46,7 @@ Os requisitos usados são os do [README original](https://github.com/Vickthor1/A
 
 **1. O app deve fechar ao abrir no Android e no iOS.**
 `src/componentes/VLibras.tsx` tem 0 bytes e é renderizado em `src/app/_layout.tsx:36`. Só existe implementação para web (`VLibras.web.tsx`). O bundle Android compila, mas renderizar o componente vazio gera `Element type is invalid`.
-*Correção:* colocar em `VLibras.tsx` um componente que retorne `null`.
+*Correção:* colocar em `VLibras.tsx` um componente que retorne `null`. **Corrigido nesta branch.**
 
 **2. O painel administrativo está sem proteção.**
 - `src/app/admin/dashboard.tsx` não verifica sessão. O site publicado mostra o painel e a contagem de usuários a qualquer visitante.
@@ -84,14 +86,14 @@ Os favoritos locais não são enviados ao Supabase depois do login. Cada tela te
 
 ### Médios
 
-- **Biometria:** o logout apaga a credencial (`AuthContext.tsx:484`), então não há como entrar por biometria depois de sair. O token renovado também não é salvo (`src/servicos/biometria.ts:77`).
+- **Biometria:** não funcionava. **Corrigida nesta branch**; ver [BIOMETRIA.md](BIOMETRIA.md).
 - **Cadastro:** se a confirmação de e-mail estiver ativa, o usuário vai para a tela inicial sem aviso e sem estar logado (`src/app/login.tsx:95`).
 - **Senha:** não há recuperação de senha, e `src/app/privacidade.tsx:18` exige só 8 caracteres, regra mais fraca que a do cadastro.
 - **Botões sem efeito:** "Lembrar-me" (`login.tsx:30`), "Ver todas" de Rápidas (`index.tsx:171`), "Ver todas" de Mais amadas, que abre a busca vazia (`index.tsx:160`), e "Carregar Mais", que repete a busca (`busca.tsx:214`).
 - **Busca:** filtros de categoria e tempo aparecem só no desktop, e o filtro de tempo usa valores inventados.
 - **Tema escuro:** 11 telas usam cores fixas, entre elas login, detalhes e adicionar.
 - **Banco de dados:** `npm run db:migrate` aplica só `schema.sql`, sem a migração de seguidores.
-- **Build nativo:** `app.json` não configura os plugins `expo-image-picker` e `expo-local-authentication`, previstos na documentação do Expo v57.
+- **Build nativo:** `app.json` não configura o plugin `expo-image-picker`, previsto na documentação do Expo v57.
 - **Dependências:** pelo menos 10 pacotes estão fora da versão esperada pelo Expo, entre eles `expo-router` e `react-native`.
 
 ## O README diz algo diferente do código
