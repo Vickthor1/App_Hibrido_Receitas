@@ -38,7 +38,7 @@ export function MenuLateral({
   const styles = criarStyles(coresTema);
 
   const itens: ItemMenu[] = [
-    { label: "Home", icon: "home", href: "/" },
+    { label: "Início", icon: "home", href: "/" },
     { label: "Busca", icon: "magnify", href: "/busca" },
     { label: "Categorias", icon: "grid", href: "/categorias" },
     {

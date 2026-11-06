@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator, Alert, Platform } from "react-native";
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput, ActivityIndicator, Platform } from "react-native";
+import { alertar } from "../../utils/alerta";
 import { MaterialCommunityIcons as Icone } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { supabase, isSupabaseConfigured } from "../../lib/supabase";
@@ -146,16 +147,16 @@ export default function AdminDashboardMaster() {
     try {
       const { error } = await supabase.from("perfis").update({ nome: novoNomeUser.trim() }).eq("id", editandoUser.id);
       if (error) throw error;
-      Alert.alert("Sucesso", "Nome do usuário atualizado.");
+      alertar("Sucesso", "Nome do usuário atualizado.");
       setEditandoUser(null);
       carregarDadosReais();
     } catch (e) {
-      Alert.alert("Erro", e instanceof Error ? e.message : "Não foi possível atualizar.");
+      alertar("Erro", e instanceof Error ? e.message : "Não foi possível atualizar.");
     }
   }
 
   async function excluirUsuario(id: string) {
-    Alert.alert("Excluir Usuário", "Deseja realmente excluir este usuário do banco?", [
+    alertar("Excluir Usuário", "Deseja realmente excluir este usuário do banco?", [
       { text: "Cancelar", style: "cancel" },
       {
         text: "Excluir",
@@ -170,11 +171,11 @@ export default function AdminDashboardMaster() {
             });
             const data = await resp.json();
             if (!resp.ok) throw new Error(data.error);
-            Alert.alert("Sucesso", "Usuário excluído.");
+            alertar("Sucesso", "Usuário excluído.");
             carregarDadosReais();
           } catch {
             await supabase.from("perfis").delete().eq("id", id);
-            Alert.alert("Aviso", "Registro de perfil removido.");
+            alertar("Aviso", "Registro de perfil removido.");
             carregarDadosReais();
           }
         },
@@ -187,25 +188,25 @@ export default function AdminDashboardMaster() {
     try {
       const { error } = await supabase.from("receitas").update({ nome: novoNomeRec.trim() }).eq("id", editandoRec.id);
       if (error) throw error;
-      Alert.alert("Sucesso", "Receita atualizada.");
+      alertar("Sucesso", "Receita atualizada.");
       setEditandoRec(null);
       carregarDadosReais();
     } catch (e) {
-      Alert.alert("Erro", e instanceof Error ? e.message : "Não foi possível atualizar.");
+      alertar("Erro", e instanceof Error ? e.message : "Não foi possível atualizar.");
     }
   }
 
   async function excluirReceita(id: string) {
-    Alert.alert("Excluir Receita", "Deseja realmente excluir esta receita?", [
+    alertar("Excluir Receita", "Deseja realmente excluir esta receita?", [
       { text: "Cancelar", style: "cancel" },
       {
         text: "Excluir",
         style: "destructive",
         onPress: async () => {
           const { error } = await supabase.from("receitas").delete().eq("id", id);
-          if (error) Alert.alert("Erro", error.message);
+          if (error) alertar("Erro", error.message);
           else {
-            Alert.alert("Sucesso", "Receita excluída.");
+            alertar("Sucesso", "Receita excluída.");
             carregarDadosReais();
           }
         },

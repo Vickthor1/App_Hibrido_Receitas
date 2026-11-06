@@ -1,4 +1,5 @@
 
+import * as Linking from "expo-linking";
 import React, {
   createContext,
   useCallback,
@@ -7,16 +8,25 @@ import React, {
   useState,
 } from "react";
 
-import { isSupabaseConfigured, supabase } from "../lib/supabase";
+import {
+  encerrarSessaoLocal,
+  isSupabaseConfigured,
+  supabase,
+} from "../lib/supabase";
 import {
   checkRateLimit,
   validarEmail,
   validarSenha,
 } from "../utils/seguranca";
 import {
-  salvarCredencialBiometrica,
-  removerCredencialBiometrica,
+  biometriaAtivaPara,
+  sincronizarCredencialBiometrica,
 } from "../servicos/biometria";
+import {
+  getItemSeguro,
+  removeItemSeguro,
+  setItemSeguro,
+} from "../utils/storageSeguro";
 
 type User = {
   id: string;
@@ -28,6 +38,7 @@ type User = {
 type Resultado = {
   ok: boolean;
   erro?: string;
+  precisaConfirmar?: boolean;
 };
 
 type AuthState = {
@@ -43,6 +54,10 @@ type AuthState = {
   ) => Promise<Resultado>;
   logout: () => Promise<void>;
   atualizarAvatar: (url: string | null) => Promise<Resultado>;
+  atualizarNome: (nome: string) => Promise<Resultado>;
+  recuperarSenha: (email: string) => Promise<Resultado>;
+  redefinirSenha: (senha: string) => Promise<Resultado>;
+  reenviarConfirmacao: (email: string) => Promise<Resultado>;
 };
 
 const AuthContext = createContext<AuthState | undefined>(undefined);
@@ -58,23 +73,45 @@ function mensagemErro(error: unknown): string {
 }
 
 function traduzirErroSupabase(msg: string): string {
-  if (msg.includes("Invalid login credentials")) {
+  const texto = msg.toLowerCase();
+
+  if (texto.includes("invalid login credentials")) {
     return "Email ou senha incorretos.";
   }
 
-  if (msg.includes("already registered")) {
+  if (texto.includes("already registered") || texto.includes("already exists")) {
     return "Email já cadastrado.";
   }
 
-  if (msg.includes("Email not confirmed")) {
+  if (texto.includes("email not confirmed")) {
     return "Confirme seu email antes de entrar.";
   }
 
-  if (msg.includes("rate limit")) {
+  if (texto.includes("rate limit") || texto.includes("too many")) {
     return "Muitas tentativas. Aguarde e tente novamente.";
   }
 
-  return msg || "Erro de autenticação. Tente novamente.";
+  if (texto.includes("should be different")) {
+    return "A nova senha precisa ser diferente da atual.";
+  }
+
+  if (texto.includes("password")) {
+    return "Senha fraca. Use pelo menos 8 caracteres, com maiúscula, minúscula e número.";
+  }
+
+  if (texto.includes("signups not allowed") || texto.includes("signup is disabled")) {
+    return "Novos cadastros estão desativados no momento.";
+  }
+
+  if (texto.includes("session") || texto.includes("expired")) {
+    return "Sua sessão expirou. Peça um novo link e tente novamente.";
+  }
+
+  if (texto.includes("fetch") || texto.includes("network")) {
+    return "Sem conexão com o servidor. Verifique sua internet.";
+  }
+
+  return "Erro de autenticação. Tente novamente.";
 }
 
 type RegistroLocal = {
@@ -173,10 +210,12 @@ export function AuthProvider({
 
           const usuario = session?.user;
 
-          if (!usuario) {
+          if (!session || !usuario) {
             setUser(null);
             return;
           }
+
+          void sincronizarCredencialBiometrica(session);
 
           // Busca perfil real atualizado (incluindo avatar_url do banco) para evitar perder a foto ao focar/mudar de aba
           const perfil = await carregarPerfilUsuario(usuario);
@@ -248,9 +287,6 @@ export function AuthProvider({
 
           const perfil = await carregarPerfilUsuario(data.user);
           setUser(perfil);
-          if (data.session?.refresh_token) {
-            await salvarCredencialBiometrica(data.session.refresh_token);
-          }
 
           return { ok: true };
         }
@@ -297,7 +333,7 @@ export function AuthProvider({
 
         return {
           ok: false,
-          erro: mensagemErro(error),
+          erro: traduzirErroSupabase(mensagemErro(error)),
         };
       }
     },
@@ -345,6 +381,7 @@ export function AuthProvider({
               data: {
                 nome: nomeLimpo,
               },
+              emailRedirectTo: Linking.createURL("login"),
             },
           });
 
@@ -355,8 +392,15 @@ export function AuthProvider({
             };
           }
 
-          // Se a confirmação por email estiver habilitada,
-          // o usuário pode existir sem sessão ativa.
+          // Com a confirmação por email ativa, um email já cadastrado volta
+          // sem erro, mas com a lista de identidades vazia.
+          if (data.user?.identities?.length === 0) {
+            return {
+              ok: false,
+              erro: "Email já cadastrado.",
+            };
+          }
+
           if (data.session && data.user) {
             setUser({
               id: data.user.id,
@@ -364,9 +408,11 @@ export function AuthProvider({
               nome: nomeLimpo,
               avatarUrl: null,
             });
+
+            return { ok: true };
           }
 
-          return { ok: true };
+          return { ok: true, precisaConfirmar: true };
         }
 
         // Modo offline
@@ -415,7 +461,7 @@ export function AuthProvider({
 
         return {
           ok: false,
-          erro: mensagemErro(error),
+          erro: traduzirErroSupabase(mensagemErro(error)),
         };
       }
     },
@@ -473,22 +519,160 @@ export function AuthProvider({
     [user]
   );
 
+  const atualizarNome = useCallback(
+    async (nome: string): Promise<Resultado> => {
+      if (!user) {
+        return {
+          ok: false,
+          erro: "Usuário não autenticado.",
+        };
+      }
+
+      try {
+        if (isSupabaseConfigured) {
+          const { error } = await supabase
+            .from("perfis")
+            .upsert({
+              id: user.id,
+              nome,
+              avatar_url: user.avatarUrl ?? null,
+            });
+
+          if (error) throw error;
+        } else {
+          await setItemSeguro(
+            KEY_USER,
+            JSON.stringify({ ...user, nome })
+          );
+        }
+
+        setUser((anterior) =>
+          anterior ? { ...anterior, nome } : null
+        );
+
+        return { ok: true };
+      } catch (error) {
+        console.error("Erro ao atualizar nome:", error);
+
+        return {
+          ok: false,
+          erro: "Não foi possível salvar o nome.",
+        };
+      }
+    },
+    [user]
+  );
+
+  const recuperarSenha = useCallback(
+    async (email: string): Promise<Resultado> => {
+      const emailLimpo = email.trim().toLowerCase();
+
+      if (!validarEmail(emailLimpo)) {
+        return { ok: false, erro: "Email inválido." };
+      }
+
+      if (!isSupabaseConfigured) {
+        return {
+          ok: false,
+          erro: "Recuperação indisponível no modo offline.",
+        };
+      }
+
+      const rl = checkRateLimit("auth:recuperar", 3, 60000);
+
+      if (!rl.allowed) {
+        return {
+          ok: false,
+          erro: "Muitas tentativas. Aguarde um minuto.",
+        };
+      }
+
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        emailLimpo,
+        { redirectTo: Linking.createURL("redefinir-senha") }
+      );
+
+      if (error) {
+        return {
+          ok: false,
+          erro: traduzirErroSupabase(error.message),
+        };
+      }
+
+      return { ok: true };
+    },
+    []
+  );
+
+  const redefinirSenha = useCallback(
+    async (senha: string): Promise<Resultado> => {
+      const { error } = await supabase.auth.updateUser({
+        password: senha,
+      });
+
+      if (error) {
+        return {
+          ok: false,
+          erro: traduzirErroSupabase(error.message),
+        };
+      }
+
+      return { ok: true };
+    },
+    []
+  );
+
+  const reenviarConfirmacao = useCallback(
+    async (email: string): Promise<Resultado> => {
+      const rl = checkRateLimit("auth:reenviar", 3, 60000);
+
+      if (!rl.allowed) {
+        return {
+          ok: false,
+          erro: "Muitas tentativas. Aguarde um minuto.",
+        };
+      }
+
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email: email.trim().toLowerCase(),
+        options: {
+          emailRedirectTo: Linking.createURL("login"),
+        },
+      });
+
+      if (error) {
+        return {
+          ok: false,
+          erro: traduzirErroSupabase(error.message),
+        };
+      }
+
+      return { ok: true };
+    },
+    []
+  );
+
   const logout = useCallback(async () => {
     try {
       if (isSupabaseConfigured) {
-        const { error } = await supabase.auth.signOut();
-        if (error) throw error;
+        // Com biometria ativa, a sessão continua válida para o próximo login.
+        if (user && (await biometriaAtivaPara(user.id))) {
+          await encerrarSessaoLocal();
+        } else {
+          const { error } = await supabase.auth.signOut();
+          if (error) throw error;
+        }
       } else {
         await removeItemSeguro(KEY_USER);
       }
-      await removerCredencialBiometrica();
 
       setUser(null);
     } catch (error) {
       console.error("Erro ao sair da conta:", error);
       throw error;
     }
-  }, []);
+  }, [user]);
 
   return (
     <AuthContext.Provider
@@ -501,6 +685,10 @@ export function AuthProvider({
         registrar,
         logout,
         atualizarAvatar,
+        atualizarNome,
+        recuperarSenha,
+        redefinirSenha,
+        reenviarConfirmacao,
       }}
     >
       {children}

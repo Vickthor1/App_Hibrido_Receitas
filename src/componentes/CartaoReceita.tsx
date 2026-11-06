@@ -9,6 +9,7 @@ import {
 } from "react-native";
 
 import { useTema } from "../contexto/TemaContext";
+import { useTraducao } from "../hooks/useTraducao";
 import { Cores } from "../tema/cores";
 import { arredondamento } from "../tema/espacamentos";
 
@@ -27,6 +28,7 @@ interface Props {
 }
 
 export const CartaoReceita = memo(function CartaoReceita({
+  id,
   titulo,
   imagem,
   nota = "4.8",
@@ -39,6 +41,9 @@ export const CartaoReceita = memo(function CartaoReceita({
   const { coresTema } = useTema();
   const styles = criarStyles(coresTema);
 
+  // IDs numéricos são da TheMealDB. Receitas de usuários já estão em português.
+  const { texto: tituloExibido } = useTraducao(titulo, { ativo: /^\d+$/.test(id) });
+
   if (variante === "horizontal") {
     return (
       <Pressable
@@ -48,7 +53,7 @@ export const CartaoReceita = memo(function CartaoReceita({
         ]}
         onPress={onPress}
         accessibilityRole="button"
-        accessibilityLabel={`Receita ${titulo}`}
+        accessibilityLabel={`Receita ${tituloExibido}`}
       >
         {({ hovered }: { hovered?: boolean }) => (
           <>
@@ -73,7 +78,7 @@ export const CartaoReceita = memo(function CartaoReceita({
                 ]}
                 numberOfLines={1}
               >
-                {titulo}
+                {tituloExibido}
               </Text>
 
               <View style={styles.meta}>
@@ -114,7 +119,7 @@ export const CartaoReceita = memo(function CartaoReceita({
       ]}
       onPress={onPress}
       accessibilityRole="button"
-      accessibilityLabel={`Receita ${titulo}`}
+      accessibilityLabel={`Receita ${tituloExibido}`}
     >
       {({ hovered }: { hovered?: boolean }) => (
         <>
@@ -157,7 +162,7 @@ export const CartaoReceita = memo(function CartaoReceita({
               ]}
               numberOfLines={2}
             >
-              {titulo}
+              {tituloExibido}
             </Text>
 
             <View style={styles.meta}>
@@ -227,7 +232,7 @@ const criarStyles = (coresTema: Cores) =>
       position: "absolute",
       top: 8,
       right: 8,
-      backgroundColor: "rgba(255,255,255,0.9)",
+      backgroundColor: coresTema.surfaceContainerLowest + "E6",
       borderRadius: 20,
       width: 28,
       height: 28,

@@ -33,7 +33,18 @@
           "imageWidth": 76
         }
       ],
-      "expo-secure-store"
+      [
+        "expo-secure-store",
+        {
+          "faceIDPermission": "Permitir que o $(PRODUCT_NAME) use o Face ID para entrar na sua conta."
+        }
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Permitir que o $(PRODUCT_NAME) use o Face ID para entrar na sua conta."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

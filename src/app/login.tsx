@@ -1,4 +1,5 @@
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -12,16 +13,53 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "../contexto/AuthContext";
-import { verificarSuporteBiometria, restaurarSessaoBiometria } from "../servicos/biometria";
+import {
+  MotivoFalhaBiometria,
+  restaurarSessaoBiometria,
+  temCredencialBiometricaSalva,
+  verificarSuporteBiometria,
+} from "../servicos/biometria";
 import { useEffect } from "react";
-import { cores } from "../tema/cores";
+import { useTema } from "../contexto/TemaContext";
+import { Cores } from "../tema/cores";
 import { espacamentos } from "../tema/espacamentos";
 
-type Modo = "login" | "registro";
+type Modo = "login" | "registro" | "recuperar";
+
+const CHAVE_EMAIL_LEMBRADO = "@receita_facil:email_lembrado";
+
+const TITULOS: Record<Modo, string> = {
+  login: "Faça o seu login",
+  registro: "Crie sua conta",
+  recuperar: "Recuperar senha",
+};
+
+const ROTULOS_BOTAO: Record<Modo, string> = {
+  login: "ENTRAR",
+  registro: "CRIAR CONTA",
+  recuperar: "ENVIAR LINK",
+};
+
+const MENSAGENS_BIOMETRIA: Record<MotivoFalhaBiometria, string> = {
+  indisponivel: "Biometria indisponível neste aparelho.",
+  cancelado: "Autenticação biométrica cancelada.",
+  sem_sessao: "Entre com sua senha para continuar.",
+  sem_credencial: "Entre com sua senha e ative a biometria no perfil.",
+  sessao_expirada: "Sua sessão expirou. Entre com sua senha e ative a biometria novamente.",
+  falha: "Não foi possível entrar agora. Verifique sua internet e tente novamente em 1 minuto ou use sua senha.",
+};
 
 export default function Login() {
+  const { coresTema } = useTema();
+  const styles = criarStyles(coresTema);
   const router = useRouter();
-  const { login, registrar, isAutenticado } = useAuth();
+  const {
+    login,
+    registrar,
+    recuperarSenha,
+    reenviarConfirmacao,
+    isAutenticado,
+  } = useAuth();
 
   const [modo, setModo] = useState<Modo>("login");
   const [nome, setNome] = useState("");
@@ -29,28 +67,62 @@ export default function Login() {
   const [senha, setSenha] = useState("");
   const [lembrar, setLembrar] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [aviso, setAviso] = useState<string | null>(null);
+  const [podeReenviar, setPodeReenviar] = useState(false);
   const [carregando, setCarregando] = useState(false);
   const [biometriaDisponivel, setBiometriaDisponivel] = useState(false);
   const [tipoBio, setTipoBio] = useState("Biometria");
 
   useEffect(() => {
-    if (!isAutenticado) {
-      verificarSuporteBiometria().then((res) => {
-        setBiometriaDisponivel(res.disponivel);
-        setTipoBio(res.tipo);
-      });
-    }
+    if (isAutenticado) return;
+
+    let ativo = true;
+
+    Promise.all([
+      verificarSuporteBiometria(),
+      temCredencialBiometricaSalva(),
+    ]).then(([suporte, temCredencial]) => {
+      if (!ativo) return;
+      setBiometriaDisponivel(suporte.disponivel && temCredencial);
+      setTipoBio(suporte.tipo);
+    });
+
+    return () => {
+      ativo = false;
+    };
   }, [isAutenticado]);
+
+  useEffect(() => {
+    AsyncStorage.getItem(CHAVE_EMAIL_LEMBRADO)
+      .then((salvo) => {
+        if (!salvo) return;
+        setEmail(salvo);
+        setLembrar(true);
+      })
+      .catch(() => {});
+  }, []);
+
+  function trocarModo(novoModo: Modo) {
+    setModo(novoModo);
+    setErro(null);
+    setAviso(null);
+    setPodeReenviar(false);
+    setSenha("");
+  }
 
   async function handleLoginBiometrico() {
     setCarregando(true);
     setErro(null);
     try {
-      const ok = await restaurarSessaoBiometria();
-      if (ok) {
+      const resultado = await restaurarSessaoBiometria();
+      if (resultado.ok) {
         router.replace("/" as never);
-      } else {
-        setErro("Autenticação biométrica cancelada ou sem credencial salva.");
+        return;
+      }
+
+      setErro(MENSAGENS_BIOMETRIA[resultado.motivo ?? "falha"]);
+      if (resultado.motivo === "sessao_expirada" || resultado.motivo === "sem_credencial") {
+        setBiometriaDisponivel(false);
       }
     } catch (e) {
       setErro(e instanceof Error ? e.message : "Erro na biometria.");
@@ -63,11 +135,17 @@ export default function Login() {
     if (carregando) return;
 
     setErro(null);
+    setAviso(null);
+    setPodeReenviar(false);
 
     const emailLimpo = email.trim().toLowerCase();
 
-    if (!emailLimpo || !senha) {
-      setErro("Preencha o email e a senha.");
+    if (!emailLimpo || (modo !== "recuperar" && !senha)) {
+      setErro(
+        modo === "recuperar"
+          ? "Informe seu email."
+          : "Preencha o email e a senha."
+      );
       return;
     }
 
@@ -79,39 +157,80 @@ export default function Login() {
     setCarregando(true);
 
     try {
+      if (modo === "recuperar") {
+        const resultado = await recuperarSenha(emailLimpo);
+
+        if (!resultado.ok) {
+          setErro(resultado.erro ?? "Não foi possível enviar o link.");
+          return;
+        }
+
+        setAviso(
+          "Se este email tiver cadastro, enviamos um link para criar uma nova senha. Confira também o spam."
+        );
+        return;
+      }
+
       const resultado =
         modo === "login"
           ? await login(emailLimpo, senha)
           : await registrar(nome.trim(), emailLimpo, senha);
 
       if (!resultado.ok) {
-        setErro(
+        const mensagem =
           resultado.erro ??
-            "Não foi possível realizar a autenticação."
+          "Não foi possível realizar a autenticação.";
+
+        setErro(mensagem);
+        setPodeReenviar(mensagem.startsWith("Confirme seu email"));
+        return;
+      }
+
+      if (resultado.precisaConfirmar) {
+        setModo("login");
+        setSenha("");
+        setAviso(
+          `Conta criada! Enviamos um link de confirmação para ${emailLimpo}. Confirme o email para entrar.`
         );
         return;
+      }
+
+      if (modo === "login") {
+        if (lembrar) {
+          await AsyncStorage.setItem(CHAVE_EMAIL_LEMBRADO, emailLimpo);
+        } else {
+          await AsyncStorage.removeItem(CHAVE_EMAIL_LEMBRADO);
+        }
       }
 
       router.replace("/" as never);
     } catch (error) {
       console.error("Erro na tela de login:", error);
 
-      setErro(
-        error instanceof Error
-          ? error.message
-          : "Ocorreu um erro inesperado. Tente novamente."
-      );
+      setErro("Ocorreu um erro inesperado. Tente novamente.");
     } finally {
       setCarregando(false);
     }
   }
 
-  function alternarModo() {
-    setModo((atual) =>
-      atual === "login" ? "registro" : "login"
-    );
+  async function handleReenviar() {
+    setCarregando(true);
     setErro(null);
-    setSenha("");
+
+    const resultado = await reenviarConfirmacao(email);
+
+    setCarregando(false);
+    setPodeReenviar(false);
+
+    if (resultado.ok) {
+      setAviso("Enviamos um novo link de confirmação.");
+    } else {
+      setErro(resultado.erro ?? "Não foi possível reenviar o email.");
+    }
+  }
+
+  function alternarModo() {
+    trocarModo(modo === "login" ? "registro" : "login");
   }
 
   return (
@@ -126,19 +245,15 @@ export default function Login() {
         <View style={styles.centerWrap}>
           <View style={styles.card}>
             <Text style={styles.title}>
-              {modo === "login"
-                ? "Faça o seu login"
-                : "Crie sua conta"}
+              {TITULOS[modo]}
             </Text>
 
             <View style={styles.underline} />
 
+            {modo !== "recuperar" && (
             <View style={styles.tabs}>
               <TouchableOpacity
-                onPress={() => {
-                  setModo("login");
-                  setErro(null);
-                }}
+                onPress={() => trocarModo("login")}
                 style={[
                   styles.tab,
                   modo === "login" && styles.tabActive,
@@ -155,10 +270,7 @@ export default function Login() {
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={() => {
-                  setModo("registro");
-                  setErro(null);
-                }}
+                onPress={() => trocarModo("registro")}
                 style={[
                   styles.tab,
                   modo === "registro" && styles.tabActive,
@@ -174,6 +286,13 @@ export default function Login() {
                 </Text>
               </TouchableOpacity>
             </View>
+            )}
+
+            {modo === "recuperar" && (
+              <Text style={styles.hint}>
+                Informe seu email e enviaremos um link para criar uma nova senha.
+              </Text>
+            )}
 
             {modo === "registro" && (
               <View style={styles.field}>
@@ -185,7 +304,8 @@ export default function Login() {
                   style={styles.input}
                   value={nome}
                   onChangeText={setNome}
-                  placeholder="Digite seu nome"
+                  placeholderTextColor={coresTema.onSurfaceVariant}
+                placeholder="Digite seu nome"
                   autoCapitalize="words"
                   maxLength={60}
                 />
@@ -201,6 +321,7 @@ export default function Login() {
                 style={styles.input}
                 value={email}
                 onChangeText={setEmail}
+                placeholderTextColor={coresTema.onSurfaceVariant}
                 placeholder="Digite seu email"
                 autoCapitalize="none"
                 keyboardType="email-address"
@@ -209,6 +330,7 @@ export default function Login() {
               />
             </View>
 
+            {modo !== "recuperar" && (
             <View style={styles.field}>
               <Text style={styles.label}>
                 Sua senha*
@@ -218,6 +340,7 @@ export default function Login() {
                 style={styles.input}
                 value={senha}
                 onChangeText={setSenha}
+                placeholderTextColor={coresTema.onSurfaceVariant}
                 placeholder="Digite sua senha"
                 secureTextEntry
                 maxLength={128}
@@ -230,6 +353,7 @@ export default function Login() {
                 </Text>
               )}
             </View>
+            )}
 
             {modo === "login" && (
               <TouchableOpacity
@@ -264,6 +388,27 @@ export default function Login() {
               </View>
             )}
 
+            {aviso && (
+              <View style={styles.avisoBox}>
+                <Text style={styles.avisoText}>
+                  {aviso}
+                </Text>
+              </View>
+            )}
+
+            {podeReenviar && (
+              <TouchableOpacity
+                style={styles.linkRow}
+                onPress={handleReenviar}
+                disabled={carregando}
+                accessibilityRole="button"
+              >
+                <Text style={styles.linkHighlight}>
+                  Reenviar email de confirmação
+                </Text>
+              </TouchableOpacity>
+            )}
+
             <TouchableOpacity
               style={[
                 styles.btn,
@@ -276,11 +421,27 @@ export default function Login() {
               <Text style={styles.btnText}>
                 {carregando
                   ? "Aguarde..."
-                  : modo === "login"
-                    ? "ENTRAR"
-                    : "CRIAR CONTA"}
+                  : ROTULOS_BOTAO[modo]}
               </Text>
             </TouchableOpacity>
+
+            {modo === "login" && biometriaDisponivel && (
+              <TouchableOpacity
+                style={[
+                  styles.bioBtn,
+                  carregando && styles.btnDisabled,
+                ]}
+                onPress={handleLoginBiometrico}
+                disabled={carregando}
+                activeOpacity={0.85}
+                accessibilityRole="button"
+                accessibilityLabel="Entrar com biometria"
+              >
+                <Text style={styles.bioBtnText}>
+                  Entrar com biometria ({tipoBio})
+                </Text>
+              </TouchableOpacity>
+            )}
 
             <TouchableOpacity
               style={styles.linkRow}
@@ -302,6 +463,8 @@ export default function Login() {
             {modo === "login" && (
               <TouchableOpacity
                 style={styles.forgotRow}
+                onPress={() => trocarModo("recuperar")}
+                accessibilityRole="button"
               >
                 <Text style={styles.forgotText}>
                   Esqueceu sua senha?{" "}
@@ -337,10 +500,11 @@ export default function Login() {
         );
       }
 
-const styles = StyleSheet.create({
+const criarStyles = (coresTema: Cores) =>
+  StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: cores.background,
+    backgroundColor: coresTema.background,
   },
 
   scroll: {
@@ -358,7 +522,7 @@ const styles = StyleSheet.create({
     right: -80,
     width: 500,
     height: 500,
-    backgroundColor: cores.primary,
+    backgroundColor: coresTema.primary,
     borderRadius: 250,
     transform: [{ rotate: "-12deg" }],
     opacity: 0.95,
@@ -373,7 +537,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    backgroundColor: cores.surfaceContainerLowest,
+    backgroundColor: coresTema.surfaceContainerLowest,
     borderRadius: 16,
     padding: 24,
     gap: 16,
@@ -383,20 +547,20 @@ const styles = StyleSheet.create({
     shadowRadius: 24,
     elevation: 4,
     borderWidth: 1,
-    borderColor: cores.surfaceVariant,
+    borderColor: coresTema.surfaceVariant,
   },
 
   title: {
     fontFamily: "BeVietnamPro_700Bold",
     fontSize: 20,
-    color: cores.onSurface,
+    color: coresTema.onSurface,
     textAlign: "left",
   },
 
   underline: {
     width: 64,
     height: 3,
-    backgroundColor: cores.primary,
+    backgroundColor: coresTema.primary,
     borderRadius: 2,
     marginTop: -8,
     marginBottom: 4,
@@ -406,7 +570,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    borderBottomColor: coresTema.outlineVariant,
     marginBottom: 4,
   },
 
@@ -419,17 +583,17 @@ const styles = StyleSheet.create({
   },
 
   tabActive: {
-    borderBottomColor: cores.primary,
+    borderBottomColor: coresTema.primary,
   },
 
   tabText: {
     fontFamily: "BeVietnamPro_600SemiBold",
     fontSize: 13,
-    color: cores.onSurfaceVariant,
+    color: coresTema.onSurfaceVariant,
   },
 
   tabTextActive: {
-    color: cores.primary,
+    color: coresTema.primary,
   },
 
   field: {
@@ -439,25 +603,25 @@ const styles = StyleSheet.create({
   label: {
     fontFamily: "BeVietnamPro_600SemiBold",
     fontSize: 13,
-    color: cores.onSurface,
+    color: coresTema.onSurface,
   },
 
   input: {
-    backgroundColor: cores.surfaceContainerLow,
+    backgroundColor: coresTema.surfaceContainerLow,
     borderWidth: 1,
-    borderColor: cores.surfaceVariant,
+    borderColor: coresTema.surfaceVariant,
     borderRadius: 8,
     paddingHorizontal: 14,
     height: 44,
     fontFamily: "BeVietnamPro_400Regular",
     fontSize: 14,
-    color: cores.onSurface,
+    color: coresTema.onSurface,
   },
 
   hint: {
     fontFamily: "BeVietnamPro_400Regular",
     fontSize: 11,
-    color: cores.onSurfaceVariant,
+    color: coresTema.onSurfaceVariant,
   },
 
   rememberRow: {
@@ -472,19 +636,19 @@ const styles = StyleSheet.create({
     height: 18,
     borderRadius: 3,
     borderWidth: 1,
-    borderColor: "#bbb",
-    backgroundColor: "#fff",
+    borderColor: coresTema.outline,
+    backgroundColor: coresTema.surfaceContainerLowest,
     alignItems: "center",
     justifyContent: "center",
   },
 
   checkboxActive: {
-    backgroundColor: cores.primary,
-    borderColor: cores.primary,
+    backgroundColor: coresTema.primary,
+    borderColor: coresTema.primary,
   },
 
   checkMark: {
-    color: "#fff",
+    color: coresTema.onPrimary,
     fontSize: 11,
     fontFamily: "BeVietnamPro_700Bold",
   },
@@ -492,30 +656,46 @@ const styles = StyleSheet.create({
   rememberText: {
     fontFamily: "BeVietnamPro_400Regular",
     fontSize: 13,
-    color: cores.onSurface,
+    color: coresTema.onSurface,
+  },
+
+  avisoBox: {
+    backgroundColor: coresTema.surfaceContainerLow,
+    borderColor: coresTema.primary,
+    borderRadius: 8,
+    borderWidth: 1,
+    marginBottom: 12,
+    padding: 10,
+  },
+
+  avisoText: {
+    color: coresTema.onSurface,
+    fontFamily: "BeVietnamPro_400Regular",
+    fontSize: 13,
+    lineHeight: 18,
   },
 
   erroBox: {
-    backgroundColor: cores.errorContainer,
+    backgroundColor: coresTema.errorContainer,
     padding: 12,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#f5c6cb",
+    borderColor: coresTema.error,
   },
 
   erroText: {
-    color: cores.onErrorContainer,
+    color: coresTema.onErrorContainer,
     fontSize: 13,
     fontFamily: "BeVietnamPro_600SemiBold",
   },
 
   btn: {
-    backgroundColor: cores.primary,
+    backgroundColor: coresTema.primary,
     paddingVertical: 13,
     borderRadius: 20,
     alignItems: "center",
     marginTop: 4,
-    shadowColor: cores.primary,
+    shadowColor: coresTema.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 8,
@@ -527,21 +707,21 @@ const styles = StyleSheet.create({
   },
 
   bioBtn: {
-    backgroundColor: cores.surfaceContainerHigh,
+    backgroundColor: coresTema.surfaceContainerHigh,
     paddingVertical: 12,
     borderRadius: 20,
     alignItems: "center",
     marginTop: 8,
     borderWidth: 1,
-    borderColor: cores.outlineVariant,
+    borderColor: coresTema.outlineVariant,
   },
   bioBtnText: {
-    color: cores.onSurface,
+    color: coresTema.onSurface,
     fontFamily: "BeVietnamPro_600SemiBold",
     fontSize: 14,
   },
   btnText: {
-    color: "#fff",
+    color: coresTema.onPrimary,
     fontFamily: "BeVietnamPro_700Bold",
     fontSize: 14,
     letterSpacing: 0.3,
@@ -555,11 +735,11 @@ const styles = StyleSheet.create({
   linkText: {
     fontFamily: "BeVietnamPro_400Regular",
     fontSize: 13,
-    color: cores.onSurfaceVariant,
+    color: coresTema.onSurfaceVariant,
   },
 
   linkHighlight: {
-    color: cores.primary,
+    color: coresTema.primary,
     fontFamily: "BeVietnamPro_700Bold",
   },
 
@@ -570,11 +750,11 @@ const styles = StyleSheet.create({
   forgotText: {
     fontFamily: "BeVietnamPro_400Regular",
     fontSize: 13,
-    color: cores.onSurfaceVariant,
+    color: coresTema.onSurfaceVariant,
   },
 
   forgotHighlight: {
-    color: cores.primary,
+    color: coresTema.primary,
     fontFamily: "BeVietnamPro_600SemiBold",
   },
 
@@ -585,7 +765,7 @@ const styles = StyleSheet.create({
   },
 
   voltarText: {
-    color: cores.onSurfaceVariant,
+    color: coresTema.onSurfaceVariant,
     fontFamily: "BeVietnamPro_500Medium",
     fontSize: 13,
   },
@@ -594,7 +774,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontFamily: "BeVietnamPro_400Regular",
     fontSize: 11,
-    color: cores.onSurfaceVariant,
+    color: coresTema.onSurfaceVariant,
     marginTop: 8,
   },
 });

@@ -9,6 +9,7 @@ import { useFavoritos } from "../hooks/useFavoritos";
 import { TopBar } from "../componentes/TopBar";
 import { BottomNav } from "../componentes/BottomNav";
 import { CartaoReceita } from "../componentes/CartaoReceita";
+import { Carregamento } from "../componentes/Carregamento";
 import { AvatarUsuario } from "../componentes/AvatarUsuario";
 import { Cores } from "../tema/cores";
 import { espacamentos } from "../tema/espacamentos";
@@ -77,7 +78,9 @@ export default function Perfil() {
     }
   }, [user, carregarDadosReaisPerfil]);
 
-  if (carregando || carregandoDados) return null;
+  if (carregando || (isAutenticado && carregandoDados)) {
+    return <Carregamento mensagem="Carregando perfil..." />;
+  }
 
   if (!isAutenticado || !user) {
     return (
@@ -153,7 +156,7 @@ export default function Perfil() {
           </TouchableOpacity>
           {minhasReceitas.slice(0, 3).map((r) => (
             <View key={r.id} style={styles.gridItem}>
-              <CartaoReceita id={r.id} titulo={r.nome} imagem="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&auto=format&fit=crop&q=80" tempo={r.tempo ? `${r.tempo} min` : "30 min"} onPress={() => router.push(`/receita/${r.id}` as never)} />
+              <CartaoReceita id={r.id} titulo={r.nome} imagem="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&auto=format&fit=crop&q=80" tempo={r.tempo ? `${r.tempo} min` : "30 min"} onPress={() => router.push("/minhas-receitas" as never)} />
             </View>
           ))}
         </View>

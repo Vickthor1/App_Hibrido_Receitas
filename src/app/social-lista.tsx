@@ -9,10 +9,13 @@ import { useSeguidor } from "../hooks/useSeguidor";
 import { TopBar } from "../componentes/TopBar";
 import { BottomNav } from "../componentes/BottomNav";
 import { AvatarUsuario } from "../componentes/AvatarUsuario";
-import { cores } from "../tema/cores";
+import { useTema } from "../contexto/TemaContext";
+import { Cores } from "../tema/cores";
 import { espacamentos } from "../tema/espacamentos";
 
 export default function ListaSocialScreen() {
+  const { coresTema } = useTema();
+  const styles = criarStyles(coresTema);
   const router = useRouter();
   const params = useLocalSearchParams<{ id?: string; tipo?: string }>();
   const usuarioId = typeof params.id === "string" ? params.id : "";
@@ -65,6 +68,8 @@ export default function ListaSocialScreen() {
 }
 
 function ItemPerfil({ perfil, onPress }: { perfil: PerfilSocial; onPress: () => void }) {
+  const { coresTema } = useTema();
+  const styles = criarStyles(coresTema);
   const { seguindo, alternarSeguir, éMinhaConta, processando } = useSeguidor(perfil.id);
 
   return (
@@ -93,15 +98,16 @@ function ItemPerfil({ perfil, onPress }: { perfil: PerfilSocial; onPress: () => 
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: cores.background },
+const criarStyles = (coresTema: Cores) =>
+  StyleSheet.create({
+  safe: { flex: 1, backgroundColor: coresTema.background },
   scroll: { padding: espacamentos.page, gap: 12, paddingBottom: 100 },
-  msg: { textAlign: "center", fontFamily: "BeVietnamPro_400Regular", fontSize: 13, color: cores.onSurfaceVariant, marginTop: 32 },
-  card: { backgroundColor: cores.surfaceContainerLowest, borderRadius: 12, padding: 12, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderWidth: 1, borderColor: cores.surfaceVariant },
-  nome: { fontFamily: "BeVietnamPro_600SemiBold", fontSize: 14, color: cores.onSurface },
-  sub: { fontFamily: "BeVietnamPro_400Regular", fontSize: 11, color: cores.onSurfaceVariant },
-  btnSeguir: { backgroundColor: cores.primary, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 9999 },
-  btnSeguindo: { backgroundColor: cores.surfaceContainerHigh, borderWidth: 1, borderColor: cores.outlineVariant },
-  btnSeguirTxt: { color: cores.onPrimary, fontFamily: "BeVietnamPro_600SemiBold", fontSize: 12 },
-  btnSeguindoTxt: { color: cores.onSurface },
+  msg: { textAlign: "center", fontFamily: "BeVietnamPro_400Regular", fontSize: 13, color: coresTema.onSurfaceVariant, marginTop: 32 },
+  card: { backgroundColor: coresTema.surfaceContainerLowest, borderRadius: 12, padding: 12, flexDirection: "row", alignItems: "center", justifyContent: "space-between", borderWidth: 1, borderColor: coresTema.surfaceVariant },
+  nome: { fontFamily: "BeVietnamPro_600SemiBold", fontSize: 14, color: coresTema.onSurface },
+  sub: { fontFamily: "BeVietnamPro_400Regular", fontSize: 11, color: coresTema.onSurfaceVariant },
+  btnSeguir: { backgroundColor: coresTema.primary, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 9999 },
+  btnSeguindo: { backgroundColor: coresTema.surfaceContainerHigh, borderWidth: 1, borderColor: coresTema.outlineVariant },
+  btnSeguirTxt: { color: coresTema.onPrimary, fontFamily: "BeVietnamPro_600SemiBold", fontSize: 12 },
+  btnSeguindoTxt: { color: coresTema.onSurface },
 });

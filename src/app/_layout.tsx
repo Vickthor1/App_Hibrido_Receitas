@@ -65,6 +65,7 @@ function AppLayout() {
           }}
         />
 
+        <Stack.Screen name="redefinir-senha" />
         <Stack.Screen name="ajuda" />
         <Stack.Screen name="notificacoes" />
         <Stack.Screen name="privacidade" />

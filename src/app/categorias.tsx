@@ -16,6 +16,7 @@ import { EstadoVazio } from "../componentes/EstadoVazio";
 import { TopBar } from "../componentes/TopBar";
 import { buscarCategorias } from "../servicos/api";
 import { Categoria } from "../tipos/receita";
+import { descricaoCategoria, rotuloCategoria } from "../locales/pt-BR/receitas";
 
 import { useTema } from "../contexto/TemaContext";
 import { Cores } from "../tema/cores";
@@ -79,8 +80,8 @@ export default function Categorias() {
             onPress={() =>
               router.push(
                 `/busca?termo=${encodeURIComponent(
-                  c.strCategory
-                )}` as never
+                  rotuloCategoria(c.strCategory)
+                )}&filtro=Categorias` as never
               )
             }
           >
@@ -91,14 +92,14 @@ export default function Categorias() {
 
             <View style={styles.info}>
               <Text style={styles.nome}>
-                {c.strCategory}
+                {rotuloCategoria(c.strCategory)}
               </Text>
 
               <Text
                 style={styles.desc}
                 numberOfLines={2}
               >
-                {c.strCategoryDescription}
+                {descricaoCategoria(c.strCategory)}
               </Text>
             </View>
           </TouchableOpacity>

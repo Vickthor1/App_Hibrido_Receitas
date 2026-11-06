@@ -1,10 +1,14 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Platform } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform } from "react-native";
+import { alertar } from "../utils/alerta";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { cores } from "../tema/cores";
+import { useTema } from "../contexto/TemaContext";
+import { Cores } from "../tema/cores";
 
 export default function AdminLogin() {
+  const { coresTema } = useTema();
+  const styles = criarStyles(coresTema);
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [token, setToken] = useState("");
@@ -12,7 +16,7 @@ export default function AdminLogin() {
 
   async function handleLoginAdmin() {
     if (!email || token.length !== 6) {
-      Alert.alert("Atenção", "Insira o e-mail do admin e o código TOTP de 6 dígitos.");
+      alertar("Atenção", "Insira o e-mail do admin e o código TOTP de 6 dígitos.");
       return;
     }
     setCarregando(true);
@@ -33,7 +37,7 @@ export default function AdminLogin() {
       }
       router.replace("/(admin)/dashboard" as never);
     } catch (e) {
-      Alert.alert("Erro", e instanceof Error ? e.message : "Erro desconhecido.");
+      alertar("Erro", e instanceof Error ? e.message : "Erro desconhecido.");
     } finally {
       setCarregando(false);
     }
@@ -56,12 +60,13 @@ export default function AdminLogin() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: cores.background, justifyContent: "center", padding: 20 },
-  card: { backgroundColor: cores.surfaceContainerLowest, borderRadius: 16, padding: 24, gap: 16, borderWidth: 1, borderColor: cores.surfaceVariant },
-  title: { fontFamily: "BeVietnamPro_700Bold", fontSize: 20, color: cores.onSurface },
-  sub: { fontFamily: "BeVietnamPro_400Regular", fontSize: 13, color: cores.onSurfaceVariant },
-  input: { borderWidth: 1, borderColor: cores.outlineVariant, borderRadius: 10, paddingHorizontal: 14, height: 48, backgroundColor: cores.surface, color: cores.onSurface },
-  btn: { backgroundColor: cores.primary, paddingVertical: 14, borderRadius: 9999, alignItems: "center", marginTop: 8 },
-  btnText: { color: cores.onPrimary, fontFamily: "BeVietnamPro_700Bold", fontSize: 15 },
+const criarStyles = (coresTema: Cores) =>
+  StyleSheet.create({
+  safe: { flex: 1, backgroundColor: coresTema.background, justifyContent: "center", padding: 20 },
+  card: { backgroundColor: coresTema.surfaceContainerLowest, borderRadius: 16, padding: 24, gap: 16, borderWidth: 1, borderColor: coresTema.surfaceVariant },
+  title: { fontFamily: "BeVietnamPro_700Bold", fontSize: 20, color: coresTema.onSurface },
+  sub: { fontFamily: "BeVietnamPro_400Regular", fontSize: 13, color: coresTema.onSurfaceVariant },
+  input: { borderWidth: 1, borderColor: coresTema.outlineVariant, borderRadius: 10, paddingHorizontal: 14, height: 48, backgroundColor: coresTema.surface, color: coresTema.onSurface },
+  btn: { backgroundColor: coresTema.primary, paddingVertical: 14, borderRadius: 9999, alignItems: "center", marginTop: 8 },
+  btnText: { color: coresTema.onPrimary, fontFamily: "BeVietnamPro_700Bold", fontSize: 15 },
 });

@@ -1,7 +1,10 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { cores, Cores, coresEscuras } from "../tema/cores";
 
 type Tema = "claro" | "escuro";
+
+const CHAVE_TEMA = "@receita_facil:tema";
 
 interface TemaContextData {
   tema: Tema;
@@ -19,12 +22,21 @@ interface TemaProviderProps {
 export function TemaProvider({ children }: TemaProviderProps) {
   const [tema, setTema] = useState<Tema>("claro");
 
-  function alternarTema() {
-    setTema((atual) => (atual === "claro" ? "escuro" : "claro"));
-  }
+  useEffect(() => {
+    AsyncStorage.getItem(CHAVE_TEMA)
+      .then((salvo) => {
+        if (salvo === "claro" || salvo === "escuro") setTema(salvo);
+      })
+      .catch(() => {});
+  }, []);
 
   function definirTema(novoTema: Tema) {
     setTema(novoTema);
+    AsyncStorage.setItem(CHAVE_TEMA, novoTema).catch(() => {});
+  }
+
+  function alternarTema() {
+    definirTema(tema === "claro" ? "escuro" : "claro");
   }
 
   const coresTema = tema === "claro" ? cores : coresEscuras;

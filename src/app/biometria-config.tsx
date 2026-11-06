@@ -1,19 +1,21 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Switch, Alert, Platform } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Switch, Platform } from "react-native";
+import { alertar } from "../utils/alerta";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons as Icone } from "@expo/vector-icons";
 import { CabecalhoSecao } from "../componentes/CabecalhoSecao";
+import { useAuth } from "../contexto/AuthContext";
 import { useTema } from "../contexto/TemaContext";
 import {
-  verificarSuporteBiometria,
-  restaurarSessaoBiometria,
-  salvarCredencialBiometrica,
+  ativarBiometria,
+  biometriaAtivaPara,
   removerCredencialBiometrica,
-  temCredencialBiometricaSalva,
+  verificarSuporteBiometria,
 } from "../servicos/biometria";
 
 export default function LoginBiometricoConfig() {
   const { coresTema } = useTema();
+  const { user } = useAuth();
   const [suporte, setSuporte] = useState<{ disponivel: boolean; tipo: string }>({ disponivel: false, tipo: "Verificando..." });
   const [ativo, setAtivo] = useState(false);
   const [carregando, setCarregando] = useState(true);
@@ -22,34 +24,35 @@ export default function LoginBiometricoConfig() {
     (async () => {
       const sup = await verificarSuporteBiometria();
       setSuporte(sup);
-      const salva = await temCredencialBiometricaSalva();
-      setAtivo(salva);
+      setAtivo(user ? await biometriaAtivaPara(user.id) : false);
       setCarregando(false);
     })();
-  }, []);
+  }, [user]);
 
   async function toggleBiometria(valor: boolean) {
     if (Platform.OS === "web") {
-      Alert.alert("Indisponível", "A autenticação biométrica não é suportada em navegadores web.");
+      alertar("Indisponível", "A autenticação biométrica não é suportada em navegadores web.");
       return;
     }
 
     if (valor) {
       // Ativar
       try {
-        const ok = await restaurarSessaoBiometria();
-        if (ok) {
+        const resultado = await ativarBiometria();
+        if (resultado.ok) {
           setAtivo(true);
-          Alert.alert("Sucesso", "Login biométrico ativado com sucesso.");
-        } else {
-          Alert.alert("Falha", "Não foi possível confirmar sua biometria ou nenhuma sessão ativa foi encontrada.");
+          alertar("Sucesso", "Login biométrico ativado com sucesso.");
+        } else if (resultado.motivo === "sem_sessao") {
+          alertar("Faça login", "Entre na sua conta para ativar a biometria.");
+        } else if (resultado.motivo !== "cancelado") {
+          alertar("Falha", "Não foi possível ativar a biometria neste aparelho.");
         }
       } catch (e) {
-        Alert.alert("Erro", e instanceof Error ? e.message : "Erro ao ativar biometria.");
+        alertar("Erro", e instanceof Error ? e.message : "Erro ao ativar biometria.");
       }
     } else {
       // Desativar
-      Alert.alert("Desativar biometria", "Tem certeza que deseja desativar o login biométrico?", [
+      alertar("Desativar biometria", "Tem certeza que deseja desativar o login biométrico?", [
         { text: "Cancelar", style: "cancel" },
         {
           text: "Desativar",
@@ -57,7 +60,7 @@ export default function LoginBiometricoConfig() {
           onPress: async () => {
             await removerCredencialBiometrica();
             setAtivo(false);
-            Alert.alert("Sucesso", "Login biométrico desativado.");
+            alertar("Sucesso", "Login biométrico desativado.");
           },
         },
       ]);
@@ -78,7 +81,7 @@ export default function LoginBiometricoConfig() {
           </View>
 
           <Text style={{ fontFamily: "BeVietnamPro_400Regular", fontSize: 13, color: coresTema.onSurfaceVariant, lineHeight: 18 }}>
-            Use sua impressão digital, Face ID ou Touch ID para acessar sua conta rapidamente sem precisar digitar a senha toda vez. Seus dados biométricos ficam estritamente protegidos no hardware do seu dispositivo.
+            Use sua impressão digital, Face ID ou Touch ID para acessar sua conta rapidamente sem precisar digitar a senha toda vez. Seus dados biométricos ficam estritamente protegidos no hardware do seu dispositivo. Ao tocar em Sair, sua sessão continua guardada neste aparelho para o próximo acesso; desative a biometria para removê-la.
           </Text>
 
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingTop: 8, borderTopWidth: 1, borderTopColor: coresTema.outlineVariant + "30" }}>

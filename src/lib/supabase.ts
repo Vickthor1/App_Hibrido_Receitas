@@ -29,9 +29,13 @@ const safeStorage = isWeb
       removeItem: async () => {},
     } as unknown as typeof AsyncStorage);
 
+// Mesmo valor padrão do supabase-js, explícito para encerrarSessaoLocal.
+const storageKey = `sb-${new URL(url).hostname.split(".")[0]}-auth-token`;
+
 export const supabase = createClient(url, anonKey, {
   auth: {
     storage: safeStorage,
+    storageKey,
     autoRefreshToken: isWeb,
     persistSession: isWeb,
     detectSessionInUrl: false,
@@ -39,3 +43,15 @@ export const supabase = createClient(url, anonKey, {
 });
 
 export const isSupabaseConfigured = !!supabaseUrl && !!supabaseAnonKey;
+
+/**
+ * Sai da conta só neste aparelho, mantendo a sessão válida no servidor.
+ * Até signOut({ scope: "local" }) revoga a sessão quando ela existe, então ela
+ * é apagada antes: sem sessão, o signOut não chama o servidor e apenas limpa o
+ * estado e avisa os listeners.
+ */
+export async function encerrarSessaoLocal(): Promise<void> {
+  await safeStorage.removeItem(storageKey);
+  const { error } = await supabase.auth.signOut({ scope: "local" });
+  if (error) throw error;
+}
